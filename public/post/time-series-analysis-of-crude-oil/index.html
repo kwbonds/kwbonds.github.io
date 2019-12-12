@@ -1,0 +1,681 @@
+<!DOCTYPE html>
+<html lang="en-us"><head>
+  <meta charset="utf-8">
+  <title>Time Series Analysis of crude oil</title>
+
+  <!-- mobile responsive meta -->
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="This is meta description">
+  
+  <meta name="author" content="Themefisher">
+  <meta name="generator" content="Hugo 0.60.1" />
+
+  <!-- plugins -->
+  
+  <link rel="stylesheet" href="https://examplesite.com/plugins/bootstrap/bootstrap.min.css ">
+  
+  <link rel="stylesheet" href="https://examplesite.com/plugins/themify-icons/themify-icons.css ">
+  
+
+  <!-- Main Stylesheet -->
+  
+  <link rel="stylesheet" href="https://examplesite.com/scss/style.min.css" media="screen">
+
+  <!--Favicon-->
+  <link rel="shortcut icon" href="https://examplesite.com/images/favicon.png " type="image/x-icon">
+  <link rel="icon" href="https://examplesite.com/images/favicon.png " type="image/x-icon">
+
+</head><body>
+<!-- preloader start -->
+<div class="preloader">
+  
+</div>
+<!-- preloader end -->
+<!-- navigation -->
+<header class="fixed-top navigation">
+  <div class="container">
+    
+    <nav class="navbar navbar-expand-lg navbar-light bg-transparent">
+      <a class="navbar-brand"href="https://examplesite.com/"><img class="img-fluid" src="/images/resume.png" alt="Northendlab | Blog Template"></a>
+      <button class="navbar-toggler border-0" type="button" data-toggle="collapse" data-target="#navigation">
+        <i class="ti-menu h3"></i>
+      </button>
+
+      <div class="collapse navbar-collapse text-center" id="navigation">
+        <ul class="navbar-nav ml-auto">
+          <li class="nav-item">
+            <a class="nav-link" href="https://examplesite.com/"> Home </a>
+          </li>
+          
+            
+            <li class="nav-item">
+              <a class="nav-link" href="https://github.com/kwbonds">Project Repos</a>
+            </li>
+            
+          
+            
+            <li class="nav-item">
+              <a class="nav-link" href="https://examplesite.com/contact">Contact</a>
+            </li>
+            
+          
+        </ul>
+        
+        <!-- search -->
+        <div class="search">
+          <button id="searchOpen" class="search-btn"><i class="ti-search"></i></button>
+          <div class="search-wrapper">
+            <form action="https://examplesite.com//search" class="h-100">
+              <input class="search-box px-4" id="search-query" name="s" type="search" placeholder="Type & Hit Enter...">
+            </form>
+            <button id="searchClose" class="search-close"><i class="ti-close text-dark"></i></button>
+          </div>
+        </div>
+        
+      </div>
+    </nav>
+  </div>
+</header>
+<!-- /navigation --> <div class="py-5 d-none d-lg-block"></div> 
+
+<section class="section">
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-8 mx-auto block shadow mb-5">
+        <h2>Time Series Analysis of crude oil</h2>
+        <div class="mb-3"><span>by <a href="/author/kevin-bonds">Kevin bonds</a></span>,
+          <span>at 30 November 2019</span>, category :
+          
+          <a href="/categories/time-series">Time series</a>
+          
+          <a href="/categories/arima">A r i m a</a>
+          
+        </div>
+        
+        <div class="content mb-5">
+          
+
+
+<p>In order to illustrate data modeling techniques, and also experiment and learn, the following data analysis will be carried out and discussed. This blog will be an iterative process–meaning it may be incomplete to the viewer at any given time. Nonetheless, it will be public in it’s unfinished state for the purpose of feedback and discussion. All code for this analysis can be found at: <a href="https://github.com/kwbonds/crudeoil_products" class="uri">https://github.com/kwbonds/crudeoil_products</a>. Please Feel free to clone/fork. And please comment to me at <a href="mailto:kevin.w.bonds@gmail.com" class="email">kevin.w.bonds@gmail.com</a> with any helpful suggestions or feedback. I greatly incourage it.</p>
+<p>I’ll attempt to show some basic data ingestion, data preparation, visualization, and predictive modeling techniques in the process. I will use the <em>R</em> programming language with R Markdown for this document.</p>
+<p>The first thing to do, is to load the needed libraries. I like to keep these collected at the top of any analysis, rather that scattered throughout, for future reference. A quick thank you to all the package developers for the following packages.</p>
+<pre class="r"><code>library(tidyverse)
+library(readxl)
+library(lubridate)
+library(zoo)
+library(knitr)
+library(ggplot2)
+library(yardstick)
+library(Metrics)
+library(astsa)</code></pre>
+<div id="collecting-data" class="section level1">
+<h1>Collecting data</h1>
+<p>I’ll start with some time series analysis using crude oil products. This data can be found as an xls file that can be downloaded from: <a href="https://www.eia.gov/dnav/pet/PET_PRI_SPT_S1_M.htm" class="uri">https://www.eia.gov/dnav/pet/PET_PRI_SPT_S1_M.htm</a>.</p>
+<p>I’ll load the data and do some quick formatting. After taking a quick look, I’ll begin modeling the data and making some predictions.</p>
+<div id="loading-the-data" class="section level2">
+<h2>Loading the data</h2>
+<p>Load the individual Excel tabs into tables and join them into one big table. Then add Month-over_Month and Year-over-Year for later. We’ll do additional work to add other features in a bit.</p>
+<pre class="r"><code># Read rest of data directly from xlsx file into tables
+# raw_data_path &lt;- &quot;/Users/Kevin/Documents/FitBit/fitbit_interiew_project/DATA/raw_data_sheet.xlsx&quot;
+# sheets &lt;- raw_data_path %&gt;%
+#        excel_sheets() %&gt;% 
+#        set_names()
+#crude_oil &lt;- read_excel(raw_data_path, sheet = sheets[2], skip = 2, col_types = c(&quot;date&quot;, &quot;numeric&quot;, &quot;numeric&quot;)) %&gt;% 
+#        mutate(&quot;Date2&quot; = as.Date(as.yearmon(Date, &quot;%b-%Y&quot;), frac = 1),
+#               &quot;Month&quot; = month(Date2),
+#               &quot;Year&quot; = year(Date2))</code></pre>
+<pre class="r"><code>crude_oil &lt;- readRDS(&quot;../../crude_oil.rds&quot;)</code></pre>
+<pre class="r"><code>crude_oil &lt;- crude_oil %&gt;% 
+        mutate(&quot;Date2&quot; = as.Date(as.yearmon(Date, &quot;%b-%Y&quot;), frac = 1),
+               &quot;Month&quot; = month(Date2),
+               &quot;Year&quot; = year(Date2),
+               &quot;MoM_crude_oil&quot; = 
+                       (`Cushing, OK WTI Spot Price FOB (Dollars per Barrel)` - 
+                                lag(`Cushing, OK WTI Spot Price FOB (Dollars per Barrel)`))/ 
+                       lag(`Cushing, OK WTI Spot Price FOB (Dollars per Barrel)`),
+               &quot;YoY_crude_oil&quot; = 
+                       (`Cushing, OK WTI Spot Price FOB (Dollars per Barrel)` - 
+                                lag(`Cushing, OK WTI Spot Price FOB (Dollars per Barrel)`, 12))/ 
+                       lag(`Cushing, OK WTI Spot Price FOB (Dollars per Barrel)`, 12))</code></pre>
+</div>
+<div id="adding-some-quick-stats" class="section level2">
+<h2>Adding some quick stats</h2>
+<pre class="r"><code># Calculate yearly stats
+year_stats &lt;- crude_oil %&gt;% 
+        group_by(Year) %&gt;% 
+        summarize( &quot;yr_mean_crude&quot; = mean(`Cushing, OK WTI Spot Price FOB (Dollars per Barrel)`),
+                   &quot;yr_median_crude&quot; = median(`Cushing, OK WTI Spot Price FOB (Dollars per Barrel)`))
+# Join to larger dataframe
+crude_oil &lt;- left_join(crude_oil, year_stats, on = c(&quot;Year&quot; = &quot;Year&quot;))
+kable(crude_oil[12:17,], caption= &quot;Table with Yearly Stats&quot;)</code></pre>
+<table>
+<caption>(#tab:yearly_stats)Table with Yearly Stats</caption>
+<thead>
+<tr class="header">
+<th align="left">Date</th>
+<th align="right">Cushing, OK WTI Spot Price FOB (Dollars per Barrel)</th>
+<th align="right">Europe Brent Spot Price FOB (Dollars per Barrel)</th>
+<th align="left">Date2</th>
+<th align="right">Month</th>
+<th align="right">Year</th>
+<th align="right">MoM_crude_oil</th>
+<th align="right">YoY_crude_oil</th>
+<th align="right">yr_mean_crude</th>
+<th align="right">yr_median_crude</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">1986-12-15</td>
+<td align="right">16.11</td>
+<td align="right">NA</td>
+<td align="left">1986-12-31</td>
+<td align="right">12</td>
+<td align="right">1986</td>
+<td align="right">0.0584757</td>
+<td align="right">NA</td>
+<td align="right">15.03667</td>
+<td align="right">15.000</td>
+</tr>
+<tr class="even">
+<td align="left">1987-01-15</td>
+<td align="right">18.65</td>
+<td align="right">NA</td>
+<td align="left">1987-01-31</td>
+<td align="right">1</td>
+<td align="right">1987</td>
+<td align="right">0.1576660</td>
+<td align="right">-0.1866550</td>
+<td align="right">19.17167</td>
+<td align="right">19.145</td>
+</tr>
+<tr class="odd">
+<td align="left">1987-02-15</td>
+<td align="right">17.75</td>
+<td align="right">NA</td>
+<td align="left">1987-02-28</td>
+<td align="right">2</td>
+<td align="right">1987</td>
+<td align="right">-0.0482574</td>
+<td align="right">0.1481242</td>
+<td align="right">19.17167</td>
+<td align="right">19.145</td>
+</tr>
+<tr class="even">
+<td align="left">1987-03-15</td>
+<td align="right">18.30</td>
+<td align="right">NA</td>
+<td align="left">1987-03-31</td>
+<td align="right">3</td>
+<td align="right">1987</td>
+<td align="right">0.0309859</td>
+<td align="right">0.4512292</td>
+<td align="right">19.17167</td>
+<td align="right">19.145</td>
+</tr>
+<tr class="odd">
+<td align="left">1987-04-15</td>
+<td align="right">18.68</td>
+<td align="right">NA</td>
+<td align="left">1987-04-30</td>
+<td align="right">4</td>
+<td align="right">1987</td>
+<td align="right">0.0207650</td>
+<td align="right">0.4548287</td>
+<td align="right">19.17167</td>
+<td align="right">19.145</td>
+</tr>
+<tr class="even">
+<td align="left">1987-05-15</td>
+<td align="right">19.44</td>
+<td align="right">18.58</td>
+<td align="left">1987-05-31</td>
+<td align="right">5</td>
+<td align="right">1987</td>
+<td align="right">0.0406852</td>
+<td align="right">0.2639792</td>
+<td align="right">19.17167</td>
+<td align="right">19.145</td>
+</tr>
+</tbody>
+</table>
+<pre class="r"><code>#conv_gasoline &lt;- read_excel(raw_data_path, sheet = sheets[3], skip = 2, col_types = c(&quot;date&quot;, &quot;numeric&quot;, &quot;numeric&quot;)) %&gt;% 
+#        mutate(&quot;Month&quot; = month(Date), &quot;Year&quot; = year(Date))
+#RBOB_gasoline &lt;- read_excel(raw_data_path, sheet = sheets[4], skip = 2, col_types = c(&quot;date&quot;, &quot;numeric&quot;)) %&gt;% 
+#        mutate(&quot;Month&quot; = month(Date), &quot;Year&quot; = year(Date))
+#heating_oil &lt;- read_excel(raw_data_path, sheet = sheets[5], skip = 2, col_types = c(&quot;date&quot;, &quot;numeric&quot;)) %&gt;% 
+#        mutate(&quot;Month&quot; = month(Date), &quot;Year&quot; = year(Date))
+#uls_diesel &lt;- read_excel(raw_data_path, sheet = sheets[6], skip = 2, col_types = c(&quot;date&quot;, &quot;numeric&quot;, &quot;numeric&quot;, &quot;numeric&quot;)) %&gt;% 
+#        mutate(&quot;Month&quot; = month(Date), &quot;Year&quot; = year(Date))
+#jet &lt;- read_excel(raw_data_path, sheet = sheets[7], skip = 2, col_types = c(&quot;date&quot;, &quot;numeric&quot;)) %&gt;% 
+#        mutate(&quot;Month&quot; = month(Date), &quot;Year&quot; = year(Date))
+#propane &lt;- read_excel(raw_data_path, sheet = sheets[8], skip = 2, col_types = c(&quot;date&quot;, &quot;numeric&quot;)) %&gt;% 
+#        mutate(&quot;Month&quot; = month(Date), &quot;Year&quot; = year(Date))
+# kable(crude_oil[12:17,], caption= &quot;Table with MoM and YoY&quot;)</code></pre>
+<pre class="r"><code>conv_gasoline &lt;- readRDS(&quot;../../conv_gasoline.rds&quot;)
+RBOB_gasoline &lt;- readRDS(&quot;../../RBOB_gasoline.rds&quot;)
+heating_oil &lt;- readRDS(&quot;../../heating_oil.rds&quot;)
+uls_diesel &lt;- readRDS(&quot;../../uls_diesel.rds&quot;)
+jet &lt;- readRDS(&quot;../../jet.rds&quot;)
+propane &lt;- readRDS(&quot;../../propane.rds&quot;)</code></pre>
+<p>Since prices are taken at the end of the month, dates are converted to month end just for clarity.</p>
+<pre class="r"><code># Join conv_gasoline and heating_oil
+energy_df &lt;- 
+        left_join(crude_oil, conv_gasoline[,2:5], on = c(&quot;Year&quot; = &quot;Year&quot;, &quot;Month&quot; = &quot;Month&quot;)) %&gt;% 
+        left_join(heating_oil[,2:4], on = c(&quot;Year&quot; = &quot;Year&quot;, &quot;Month&quot; = &quot;Month&quot;)) %&gt;%
+        left_join(uls_diesel[-1], on = c(&quot;Year&quot; = &quot;Year&quot;, &quot;Month&quot; = &quot;Month&quot;)) %&gt;% 
+        left_join(RBOB_gasoline[-1], on = c(&quot;Year&quot; = &quot;Year&quot;, &quot;Month&quot; = &quot;Month&quot;)) %&gt;% 
+        left_join(jet[-1], on = c(&quot;Year&quot; = &quot;Year&quot;, &quot;Month&quot; = &quot;Month&quot;)) %&gt;% 
+        left_join(propane[-1], on = c(&quot;Year&quot; = &quot;Year&quot;, &quot;Month&quot; = &quot;Month&quot;))
+energy_df &lt;- energy_df %&gt;% select(&quot;Date&quot;= `Date2`, c(5:6, 2:3, 7:length(energy_df)))
+kable(head(energy_df))</code></pre>
+<table>
+<thead>
+<tr class="header">
+<th align="left">Date</th>
+<th align="right">Month</th>
+<th align="right">Year</th>
+<th align="right">Cushing, OK WTI Spot Price FOB (Dollars per Barrel)</th>
+<th align="right">Europe Brent Spot Price FOB (Dollars per Barrel)</th>
+<th align="right">MoM_crude_oil</th>
+<th align="right">YoY_crude_oil</th>
+<th align="right">yr_mean_crude</th>
+<th align="right">yr_median_crude</th>
+<th align="right">New York Harbor Conventional Gasoline Regular Spot Price FOB (Dollars per Gallon)</th>
+<th align="right">U.S. Gulf Coast Conventional Gasoline Regular Spot Price FOB (Dollars per Gallon)</th>
+<th align="right">New York Harbor No. 2 Heating Oil Spot Price FOB (Dollars per Gallon)</th>
+<th align="right">New York Harbor Ultra-Low Sulfur No 2 Diesel Spot Price (Dollars per Gallon)</th>
+<th align="right">U.S. Gulf Coast Ultra-Low Sulfur No 2 Diesel Spot Price (Dollars per Gallon)</th>
+<th align="right">Los Angeles, CA Ultra-Low Sulfur CARB Diesel Spot Price (Dollars per Gallon)</th>
+<th align="right">Los Angeles Reformulated RBOB Regular Gasoline Spot Price (Dollars per Gallon)</th>
+<th align="right">U.S. Gulf Coast Kerosene-Type Jet Fuel Spot Price FOB (Dollars per Gallon)</th>
+<th align="right">Mont Belvieu, TX Propane Spot Price FOB (Dollars per Gallon)</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">1986-01-31</td>
+<td align="right">1</td>
+<td align="right">1986</td>
+<td align="right">22.93</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">15.03667</td>
+<td align="right">15</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+</tr>
+<tr class="even">
+<td align="left">1986-02-28</td>
+<td align="right">2</td>
+<td align="right">1986</td>
+<td align="right">15.46</td>
+<td align="right">NA</td>
+<td align="right">-0.3257741</td>
+<td align="right">NA</td>
+<td align="right">15.03667</td>
+<td align="right">15</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+</tr>
+<tr class="odd">
+<td align="left">1986-03-31</td>
+<td align="right">3</td>
+<td align="right">1986</td>
+<td align="right">12.61</td>
+<td align="right">NA</td>
+<td align="right">-0.1843467</td>
+<td align="right">NA</td>
+<td align="right">15.03667</td>
+<td align="right">15</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+</tr>
+<tr class="even">
+<td align="left">1986-04-30</td>
+<td align="right">4</td>
+<td align="right">1986</td>
+<td align="right">12.84</td>
+<td align="right">NA</td>
+<td align="right">0.0182395</td>
+<td align="right">NA</td>
+<td align="right">15.03667</td>
+<td align="right">15</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+</tr>
+<tr class="odd">
+<td align="left">1986-05-31</td>
+<td align="right">5</td>
+<td align="right">1986</td>
+<td align="right">15.38</td>
+<td align="right">NA</td>
+<td align="right">0.1978193</td>
+<td align="right">NA</td>
+<td align="right">15.03667</td>
+<td align="right">15</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+</tr>
+<tr class="even">
+<td align="left">1986-06-30</td>
+<td align="right">6</td>
+<td align="right">1986</td>
+<td align="right">13.43</td>
+<td align="right">NA</td>
+<td align="right">-0.1267880</td>
+<td align="right">NA</td>
+<td align="right">15.03667</td>
+<td align="right">15</td>
+<td align="right">0.42</td>
+<td align="right">0.409</td>
+<td align="right">0.38</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div id="modeling-crude-oil" class="section level1">
+<h1>Modeling crude oil</h1>
+<p>Let’s go ahead and try some ARIMA modeling. To create a time series model for crude oil price we should determine what sort of model may best fit. Looking at the plot of the data:</p>
+<pre class="r"><code>ggplot(energy_df, aes(x = energy_df$Date, y = energy_df$`Cushing, OK WTI Spot Price FOB (Dollars per Barrel)`)) + geom_line() + ylab(&quot;WTI Spot Price (Dollars per Barrel)&quot;) + xlab(&quot;Date&quot;) + ggtitle(&quot;Monthly average for West Texas Crude Oil&quot;)</code></pre>
+<p><img src="/post/2019-12-10-time-series-analysis-of-crude-oil_files/figure-html/unnamed-chunk-4-1.png" width="672" /></p>
+<p>It appears the data is not stabilized. There is a general trend and possibly some exponential behavior. Let’s try standardizing the data by log-differencing to remove trend and growth.</p>
+<pre class="r"><code>cop &lt;-  ts(energy_df$`Cushing, OK WTI Spot Price FOB (Dollars per Barrel)`, start= c(1986,1), end = c(2019,8), frequency = 12)</code></pre>
+<pre class="r"><code>crude_oil_returns &lt;- log(cop)
+plot(crude_oil_returns, type = &quot;l&quot;)</code></pre>
+<p><img src="/post/2019-12-10-time-series-analysis-of-crude-oil_files/figure-html/unnamed-chunk-6-1.png" width="672" /></p>
+<pre class="r"><code>plot(diff(crude_oil_returns), type = &quot;l&quot;)</code></pre>
+<p><img src="/post/2019-12-10-time-series-analysis-of-crude-oil_files/figure-html/unnamed-chunk-7-1.png" width="672" /></p>
+<p>This is looking pretty stabilized. So this suggests that an integrated model is appropriate (d = 1). So let’s check the ACF and PACF of the logged data to see if we can determine if an Auto-regressive model, Moving Average model or a combined model is best.</p>
+<pre class="r"><code>acf2(crude_oil_returns)</code></pre>
+<p><img src="/post/2019-12-10-time-series-analysis-of-crude-oil_files/figure-html/unnamed-chunk-8-1.png" width="672" /></p>
+<p>The above suggests a ARIMA(1,1,0) model because the acf is tailing off and the PACF cuts at lag 1 (suggesting AR = 1). I’ll use the <em>sarima</em> package to create the model and to do some forecasting. <em>sarima</em> has some nice tools for this.</p>
+<pre class="r"><code>ar_sim_x &lt;- sarima(crude_oil_returns, p = 1, d = 1, q = 0)</code></pre>
+<p><img src="/post/2019-12-10-time-series-analysis-of-crude-oil_files/figure-html/model_1-1.png" width="864" /></p>
+<pre class="r"><code>ar_sim_x</code></pre>
+<pre><code>## $fit
+## 
+## Call:
+## stats::arima(x = xdata, order = c(p, d, q), seasonal = list(order = c(P, D, 
+##     Q), period = S), xreg = constant, transform.pars = trans, fixed = fixed, 
+##     optim.control = list(trace = trc, REPORT = 1, reltol = tol))
+## 
+## Coefficients:
+##          ar1  constant
+##       0.2834    0.0017
+## s.e.  0.0491    0.0058
+## 
+## sigma^2 estimated as 0.006958:  log likelihood = 429.16,  aic = -852.32
+## 
+## $degrees_of_freedom
+## [1] 401
+## 
+## $ttable
+##          Estimate     SE t.value p.value
+## ar1        0.2834 0.0491  5.7729  0.0000
+## constant   0.0017 0.0058  0.2958  0.7676
+## 
+## $AIC
+## [1] -2.114934
+## 
+## $AICc
+## [1] -2.11486
+## 
+## $BIC
+## [1] -2.085165</code></pre>
+<p>We can see from above, the AR1 parameter is significant as the p.value is zero. Also, we note to AIC and BIC for comparison with subsequent models. We want these to be as small as possible.</p>
+<p>Let’s try adding a parameter and see if that improves things? We are looking for the Akaike Information Criterion (AIC) and the Bayesian Information Criterion (BIC) to judge the strength of the model. The lower these values the more information is captured.</p>
+<pre class="r"><code>ar_sim_x_2 &lt;- sarima(crude_oil_returns, p = 2, d = 1, q = 0)</code></pre>
+<p><img src="/post/2019-12-10-time-series-analysis-of-crude-oil_files/figure-html/model_2-1.png" width="864" /></p>
+<pre class="r"><code>ar_sim_x_2</code></pre>
+<pre><code>## $fit
+## 
+## Call:
+## stats::arima(x = xdata, order = c(p, d, q), seasonal = list(order = c(P, D, 
+##     Q), period = S), xreg = constant, transform.pars = trans, fixed = fixed, 
+##     optim.control = list(trace = trc, REPORT = 1, reltol = tol))
+## 
+## Coefficients:
+##          ar1      ar2  constant
+##       0.2927  -0.0359    0.0018
+## s.e.  0.0508   0.0511    0.0056
+## 
+## sigma^2 estimated as 0.006949:  log likelihood = 429.41,  aic = -850.81
+## 
+## $degrees_of_freedom
+## [1] 400
+## 
+## $ttable
+##          Estimate     SE t.value p.value
+## ar1        0.2927 0.0508  5.7616  0.0000
+## ar2       -0.0359 0.0511 -0.7014  0.4835
+## constant   0.0018 0.0056  0.3222  0.7474
+## 
+## $AIC
+## [1] -2.111192
+## 
+## $AICc
+## [1] -2.111043
+## 
+## $BIC
+## [1] -2.0715</code></pre>
+<p>That does not. We can see that the added parameter is not statistically significant and the BIC and AIC both go up. After a few more less probable attempts we can be certain that the first model is looking best.</p>
+<p>Now let’s see if adding seasonality to the model will improve it. Looking at the ACF/PCF for the differenced data.</p>
+<pre class="r"><code>acf2(diff(diff(crude_oil_returns), 48))</code></pre>
+<p><img src="/post/2019-12-10-time-series-analysis-of-crude-oil_files/figure-html/seasonal_acf-1.png" width="672" /></p>
+<p>From the ACF/PACF it seems that the ACF may trail off at each log (12 months) and the PCF cuts off. But the signal is small if any. We can try to add a seasonal AR and see what happens.</p>
+<pre class="r"><code>ar_sim_x_3 &lt;- sarima(crude_oil_returns, p = 1, d = 1, q = 0, P = 1, D = 0, Q = 0, S = 12)</code></pre>
+<p><img src="/post/2019-12-10-time-series-analysis-of-crude-oil_files/figure-html/model_3-1.png" width="864" /></p>
+<pre class="r"><code>ar_sim_x_3</code></pre>
+<pre><code>## $fit
+## 
+## Call:
+## stats::arima(x = xdata, order = c(p, d, q), seasonal = list(order = c(P, D, 
+##     Q), period = S), xreg = constant, transform.pars = trans, fixed = fixed, 
+##     optim.control = list(trace = trc, REPORT = 1, reltol = tol))
+## 
+## Coefficients:
+##          ar1    sar1  constant
+##       0.2832  0.0241    0.0017
+## s.e.  0.0491  0.0535    0.0059
+## 
+## sigma^2 estimated as 0.006954:  log likelihood = 429.26,  aic = -850.52
+## 
+## $degrees_of_freedom
+## [1] 400
+## 
+## $ttable
+##          Estimate     SE t.value p.value
+## ar1        0.2832 0.0491  5.7699  0.0000
+## sar1       0.0241 0.0535  0.4494  0.6534
+## constant   0.0017 0.0059  0.2851  0.7757
+## 
+## $AIC
+## [1] -2.110472
+## 
+## $AICc
+## [1] -2.110323
+## 
+## $BIC
+## [1] -2.070781</code></pre>
+<p>This model is not better. The seasonal AR is not significant and the AIC and BIC have increased. Seems adding a seasonal component doesn’t improve the model.</p>
+<p>Now that we are satisfied with the non-seasonal ARIMA(1,1,0), let’s forecast 6 months ahead. We’ll use the sarima package</p>
+<pre class="r"><code>oil_for &lt;- sarima.for(cop, n.ahead = 6, 1,1,0)</code></pre>
+<p><img src="/post/2019-12-10-time-series-analysis-of-crude-oil_files/figure-html/unnamed-chunk-12-1.png" width="672" /></p>
+<pre class="r"><code>oil_for$pred</code></pre>
+<pre><code>##           Jan      Feb Mar Apr May Jun Jul Aug      Sep      Oct      Nov
+## 2019                                           53.90442 53.60729 53.53667
+## 2020 53.59547 53.65225                                                   
+##           Dec
+## 2019 53.55037
+## 2020</code></pre>
+</div>
+<div id="gas-prices" class="section level1">
+<h1>Gas Prices</h1>
+<pre class="r"><code>gas_price &lt;- ts(energy_df$`New York Harbor Conventional Gasoline Regular Spot Price FOB (Dollars per Gallon)`, start= c(1986,1), end = c(2019,8), frequency = 12)</code></pre>
+<pre class="r"><code>plot(diff(gas_price), type = &quot;l&quot;)</code></pre>
+<p><img src="/post/2019-12-10-time-series-analysis-of-crude-oil_files/figure-html/unnamed-chunk-14-1.png" width="672" /></p>
+<pre class="r"><code>gas_returns &lt;- log(gas_price)
+plot(gas_returns, type = &quot;l&quot;)</code></pre>
+<p><img src="/post/2019-12-10-time-series-analysis-of-crude-oil_files/figure-html/unnamed-chunk-15-1.png" width="672" /></p>
+<pre class="r"><code>plot(diff(gas_returns), type = &quot;l&quot;)</code></pre>
+<p><img src="/post/2019-12-10-time-series-analysis-of-crude-oil_files/figure-html/unnamed-chunk-16-1.png" width="672" /></p>
+<pre class="r"><code>acf2(gas_returns)</code></pre>
+<p><img src="/post/2019-12-10-time-series-analysis-of-crude-oil_files/figure-html/acf2_gas_prices-1.png" width="672" /></p>
+<pre class="r"><code>gas_mdl &lt;- sarima(gas_returns, p = 2, d = 1, q = 0)</code></pre>
+<p><img src="/post/2019-12-10-time-series-analysis-of-crude-oil_files/figure-html/gas_mdl_1-1.png" width="672" /></p>
+<pre class="r"><code>gas_mdl</code></pre>
+<pre class="r"><code>gas_mdl &lt;- sarima(gas_returns, p = 1, d = 1, q = 2)</code></pre>
+<p><img src="/post/2019-12-10-time-series-analysis-of-crude-oil_files/figure-html/gas_mdl_2-1.png" width="672" /></p>
+<pre class="r"><code>gas_mdl</code></pre>
+<pre class="r"><code>sarima.for(gas_price, 1,1,2, n.ahead = 6)</code></pre>
+<p><img src="/post/2019-12-10-time-series-analysis-of-crude-oil_files/figure-html/unnamed-chunk-17-1.png" width="672" /></p>
+<pre><code>## $pred
+##           Jan      Feb Mar Apr May Jun Jul Aug      Sep      Oct      Nov
+## 2019                                           1.614915 1.637612 1.656848
+## 2020 1.687288 1.699412                                                   
+##           Dec
+## 2019 1.673238
+## 2020         
+## 
+## $se
+##            Jan       Feb Mar Apr May Jun Jul Aug       Sep       Oct       Nov
+## 2019                                             0.1279105 0.2074903 0.2557773
+## 2020 0.3180102 0.3403182                                                      
+##            Dec
+## 2019 0.2907294
+## 2020</code></pre>
+</div>
+
+        </div>
+      </div>
+      <div class="col-lg-8 mx-auto block shadow">
+        
+        
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<footer class="py-4 bg-light border-top">
+  <div class="container">
+    <div class="row justify-content-between align-items-center">
+      <div class="col-lg-4 text-center text-lg-left mb-4 mb-lg-0">
+        <a href="https://examplesite.com/"><img src="/images/resume.png" class="img-fluid"
+            alt="Northendlab | Blog Template"></a>
+      </div>
+      <div class="col-lg-4 text-center mb-4 mb-lg-0">
+        <ul class="list-inline mb-0">
+          
+          <li class="list-inline-item"><a class="text-dark d-block p-2" href="https://github.com/kwbonds">Project Repos</a>
+          </li>
+          
+          <li class="list-inline-item"><a class="text-dark d-block p-2" href="https://examplesite.com/contact">Contact</a>
+          </li>
+          
+        </ul>
+      </div>
+      <div class="col-lg-4 text-lg-right text-center mb-4 mb-lg-0">
+        <ul class="list-inline social-icon mb-0">
+          
+          <li class="list-inline-item"><a href="https://join.skype.com/invite/u45PzQhKsLp5"><i class="ti-skype"></i></a></li>
+          
+          <li class="list-inline-item"><a href="https://twitter.com/KevinWBonds"><i class="ti-twitter-alt"></i></a></li>
+          
+          <li class="list-inline-item"><a href="https://github.com/kwbonds"><i class="ti-github"></i></a></li>
+          
+          <li class="list-inline-item"><a href="https://www.linkedin.com/in/kevin-bonds/"><i class="ti-linkedin"></i></a></li>
+          
+        </ul>
+      </div>
+      <div class="col-12 text-center mt-4">
+        <span></span>
+      </div>
+    </div>
+  </div>
+</footer>
+
+
+
+
+<script>
+  var indexURL = "https://examplesite.com/index.json"
+</script>
+
+
+<!-- JS Plugins -->
+
+<script src="https://examplesite.com/plugins/jQuery/jquery.min.js"></script>
+
+<script src="https://examplesite.com/plugins/bootstrap/bootstrap.min.js"></script>
+
+<script src="https://examplesite.com/plugins/search/fuse.min.js"></script>
+
+<script src="https://examplesite.com/plugins/search/mark.js"></script>
+
+<script src="https://examplesite.com/plugins/search/search.js"></script>
+
+<!-- Main Script -->
+
+<script src="https://examplesite.com/js/script.min.js"></script>
+<!-- google analitycs -->
+<script>
+  (function (i, s, o, g, r, a, m) {
+    i['GoogleAnalyticsObject'] = r;
+    i[r] = i[r] || function () {
+      (i[r].q = i[r].q || []).push(arguments)
+    }, i[r].l = 1 * new Date();
+    a = s.createElement(o),
+      m = s.getElementsByTagName(o)[0];
+    a.async = 1;
+    a.src = g;
+    m.parentNode.insertBefore(a, m)
+  })(window, document, 'script', '//www.google-analytics.com/analytics.js', 'ga');
+  ga('create', 'Your ID', 'auto');
+  ga('send', 'pageview');
+</script></body>
+</html>

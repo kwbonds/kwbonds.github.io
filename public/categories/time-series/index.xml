@@ -2,21 +2,21 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Time Series on Northendlab | Blog Template</title>
-    <link>/categories/time-series/</link>
+    <link>https://examplesite.com/categories/time-series/</link>
     <description>Recent content in Time Series on Northendlab | Blog Template</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <lastBuildDate>Sat, 30 Nov 2019 00:00:00 +0000</lastBuildDate>
     
-	<atom:link href="/categories/time-series/index.xml" rel="self" type="application/rss+xml" />
+	<atom:link href="https://examplesite.com/categories/time-series/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
       <title>Time Series Analysis of crude oil</title>
-      <link>/post/time-series-analysis-of-crude-oil/</link>
+      <link>https://examplesite.com/post/time-series-analysis-of-crude-oil/</link>
       <pubDate>Sat, 30 Nov 2019 00:00:00 +0000</pubDate>
       
-      <guid>/post/time-series-analysis-of-crude-oil/</guid>
+      <guid>https://examplesite.com/post/time-series-analysis-of-crude-oil/</guid>
       <description>In order to illustrate data modeling techniques, and also experiment and learn, the following data analysis will be carried out and discussed.</description>
     </item>
     

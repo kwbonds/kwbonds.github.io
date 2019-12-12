@@ -2,48 +2,48 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Northendlab | Blog Template</title>
-    <link>/</link>
+    <link>https://examplesite.com/</link>
     <description>Recent content on Northendlab | Blog Template</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <lastBuildDate>Tue, 10 Dec 2019 00:00:00 +0000</lastBuildDate>
     
-	<atom:link href="/index.xml" rel="self" type="application/rss+xml" />
+	<atom:link href="https://examplesite.com/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
       <title>Twitter Sentiment Analysis</title>
-      <link>/post/twitter-sentiment-analysis/</link>
+      <link>https://examplesite.com/post/twitter-sentiment-analysis/</link>
       <pubDate>Tue, 10 Dec 2019 00:00:00 +0000</pubDate>
       
-      <guid>/post/twitter-sentiment-analysis/</guid>
+      <guid>https://examplesite.com/post/twitter-sentiment-analysis/</guid>
       <description>The following is an analysis of the Twitter Sentiment Analysis Dataset available at: http://thinknook.</description>
     </item>
     
     <item>
       <title>Time Series Analysis of crude oil</title>
-      <link>/post/time-series-analysis-of-crude-oil/</link>
+      <link>https://examplesite.com/post/time-series-analysis-of-crude-oil/</link>
       <pubDate>Sat, 30 Nov 2019 00:00:00 +0000</pubDate>
       
-      <guid>/post/time-series-analysis-of-crude-oil/</guid>
+      <guid>https://examplesite.com/post/time-series-analysis-of-crude-oil/</guid>
       <description>In order to illustrate data modeling techniques, and also experiment and learn, the following data analysis will be carried out and discussed.</description>
     </item>
     
     <item>
       <title>John Doe</title>
-      <link>/author/john-doe/</link>
+      <link>https://examplesite.com/author/john-doe/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
-      <guid>/author/john-doe/</guid>
+      <guid>https://examplesite.com/author/john-doe/</guid>
       <description>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</description>
     </item>
     
     <item>
       <title>Mark Dinn</title>
-      <link>/author/mark-dinn/</link>
+      <link>https://examplesite.com/author/mark-dinn/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
-      <guid>/author/mark-dinn/</guid>
+      <guid>https://examplesite.com/author/mark-dinn/</guid>
       <description>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</description>
     </item>
     
