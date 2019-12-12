@@ -2,30 +2,30 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Posts on Northendlab | Blog Template</title>
-    <link>https://examplesite.com/post/</link>
+    <link>/post/</link>
     <description>Recent content in Posts on Northendlab | Blog Template</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <lastBuildDate>Tue, 10 Dec 2019 00:00:00 +0000</lastBuildDate>
     
-	<atom:link href="https://examplesite.com/post/index.xml" rel="self" type="application/rss+xml" />
+	<atom:link href="/post/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
       <title>Twitter Sentiment Analysis</title>
-      <link>https://examplesite.com/post/twitter-sentiment-analysis/</link>
+      <link>/post/twitter-sentiment-analysis/</link>
       <pubDate>Tue, 10 Dec 2019 00:00:00 +0000</pubDate>
       
-      <guid>https://examplesite.com/post/twitter-sentiment-analysis/</guid>
+      <guid>/post/twitter-sentiment-analysis/</guid>
       <description>The following is an analysis of the Twitter Sentiment Analysis Dataset available at: http://thinknook.</description>
     </item>
     
     <item>
       <title>Time Series Analysis of crude oil</title>
-      <link>https://examplesite.com/post/time-series-analysis-of-crude-oil/</link>
+      <link>/post/time-series-analysis-of-crude-oil/</link>
       <pubDate>Sat, 30 Nov 2019 00:00:00 +0000</pubDate>
       
-      <guid>https://examplesite.com/post/time-series-analysis-of-crude-oil/</guid>
+      <guid>/post/time-series-analysis-of-crude-oil/</guid>
       <description>In order to illustrate data modeling techniques, and also experiment and learn, the following data analysis will be carried out and discussed.</description>
     </item>
     

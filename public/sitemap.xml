@@ -3,105 +3,105 @@
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   
   <url>
-    <loc>https://examplesite.com/categories/</loc>
+    <loc>/categories/</loc>
     <lastmod>2019-12-10T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>https://examplesite.com/categories/feature-engineering/</loc>
+    <loc>/categories/feature-engineering/</loc>
     <lastmod>2019-12-10T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>https://examplesite.com/</loc>
+    <loc>/</loc>
     <lastmod>2019-12-10T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>https://examplesite.com/post/</loc>
+    <loc>/post/</loc>
     <lastmod>2019-12-10T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>https://examplesite.com/categories/sentiment-analysis/</loc>
+    <loc>/categories/sentiment-analysis/</loc>
     <lastmod>2019-12-10T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>https://examplesite.com/tags/sentiment-analysis/</loc>
+    <loc>/tags/sentiment-analysis/</loc>
     <lastmod>2019-12-10T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>https://examplesite.com/tags/</loc>
+    <loc>/tags/</loc>
     <lastmod>2019-12-10T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>https://examplesite.com/tags/text-analysis/</loc>
+    <loc>/tags/text-analysis/</loc>
     <lastmod>2019-12-10T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>https://examplesite.com/categories/text-analysis/</loc>
+    <loc>/categories/text-analysis/</loc>
     <lastmod>2019-12-10T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>https://examplesite.com/post/twitter-sentiment-analysis/</loc>
+    <loc>/post/twitter-sentiment-analysis/</loc>
     <lastmod>2019-12-10T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>https://examplesite.com/tags/arima/</loc>
+    <loc>/tags/arima/</loc>
     <lastmod>2019-11-30T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>https://examplesite.com/categories/arima/</loc>
+    <loc>/categories/arima/</loc>
     <lastmod>2019-11-30T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>https://examplesite.com/tags/time-series/</loc>
+    <loc>/tags/time-series/</loc>
     <lastmod>2019-11-30T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>https://examplesite.com/categories/time-series/</loc>
+    <loc>/categories/time-series/</loc>
     <lastmod>2019-11-30T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>https://examplesite.com/post/time-series-analysis-of-crude-oil/</loc>
+    <loc>/post/time-series-analysis-of-crude-oil/</loc>
     <lastmod>2019-11-30T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>https://examplesite.com/contact/</loc>
+    <loc>/contact/</loc>
     <lastmod>2019-07-06T15:27:17+06:00</lastmod>
   </url>
   
   <url>
-    <loc>https://examplesite.com/search/</loc>
+    <loc>/search/</loc>
     <lastmod>2019-07-06T15:27:17+06:00</lastmod>
   </url>
   
   <url>
-    <loc>https://examplesite.com/tools/</loc>
+    <loc>/tools/</loc>
     <lastmod>2019-07-06T15:27:17+06:00</lastmod>
   </url>
   
   <url>
-    <loc>https://examplesite.com/author/</loc>
+    <loc>/author/</loc>
   </url>
   
   <url>
-    <loc>https://examplesite.com/author/john-doe/</loc>
+    <loc>/author/john-doe/</loc>
   </url>
   
   <url>
-    <loc>https://examplesite.com/author/mark-dinn/</loc>
+    <loc>/author/mark-dinn/</loc>
   </url>
   
 </urlset>
