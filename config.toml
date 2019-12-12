@@ -2,7 +2,7 @@
 baseURL = "https://examplesite.com/"
 languageCode = "en-us"
 # site title 
-title = "Northendlab | Blog Template"
+title = "Kevin Bonds | Portfolio"
 # theme
 theme = "northendlab-hugo"
 author = "Kevin Bonds"
