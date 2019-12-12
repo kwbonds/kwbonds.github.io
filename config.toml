@@ -83,7 +83,7 @@ logo = "images/resume.png"
 author = "Themefisher"
 description = "Data Science Portfilio"
 # google analitycs ID
-googleAnalitycsID = "Your ID"
+googleAnalitycsID = "UA-113458466-2"
 # contact form action
 contactFormAction = "https://formspree.io/xzbzwkwp" # contact form works with : https://formspree.io
 # copyright
