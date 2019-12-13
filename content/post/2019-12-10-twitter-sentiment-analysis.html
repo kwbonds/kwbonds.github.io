@@ -97,7 +97,7 @@ str(raw_tweets)</code></pre>
 raw_tweets$Sentiment &lt;- as.factor(raw_tweets$Sentiment)
 levels(raw_tweets$Sentiment) &lt;- c(&quot;Negative&quot;, &quot;Positive&quot;)
 raw_tweets$SentimentSource &lt;- as.factor(raw_tweets$SentimentSource)</code></pre>
-<p>We have greater that 78,931 rows. Even though tweets are somewhat short, this is a lot of data. Tokenization will undoubtedly create many more features than can be handled efficiently, if we were to try to use this much data. We should probably train on about 5% of this data and use as much of the rest as we want to test. We will make sure to maintain the proportionality along the way. Let’s see what that is.</p>
+<p>So we have 78,931 rows. Even though tweets are somewhat short, this is a lot of data. Tokenization would create too many features to be handled efficiently, if we were to try to use this much data. Therefore, we should train on about 5% of these data–and use as much of the rest as we want to test. We will make sure to maintain the proportionality along the way. Let’s see what that is.</p>
 <p>What proportion of “Sentiment” do we have in our corpus?</p>
 <pre class="r"><code># Get the proportion of Sentiment in the corpus
 prop.table(table(raw_tweets[, &quot;Sentiment&quot;]))</code></pre>
