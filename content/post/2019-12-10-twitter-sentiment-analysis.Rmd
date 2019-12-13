@@ -16,9 +16,7 @@ tags:
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-The following is an analysis of the _Twitter Sentiment Analysis Dataset_ available at: http://thinknook.com/twitter-sentiment-analysis-training-corpus-dataset-2012-09-22/. I will attempt to use this data to train a model to label unseen tweets into **"Positive"** or **"Negative"** sentiment. I will walk through my methodology and include code. 
-
-The github repo for my work can be found here: https://github.com/kwbonds/TwitterSentimentAnalysis. The file is > 50 MB, so I have taken a stratified sample and loaded it for this example (mainly so that this website will load). If you want to begin with the original, you will need to download it from the source above and read it into your working directory as an object named _raw_tweets_.
+The following is an analysis of the _Twitter Sentiment Analysis Dataset_ available at: http://thinknook.com/twitter-sentiment-analysis-training-corpus-dataset-2012-09-22/. I will attempt to use this data to train a model to label unseen tweets into **"Positive"** or **"Negative"** sentiment. I will walk through my methodology and include code. The github repo for my work can be found here: https://github.com/kwbonds/TwitterSentimentAnalysis. ^[The file is > 50 MB, so I have taken a stratified sample and loaded it for this example (mainly so that this website will load). If you want to begin with the original, you will need to download it from the source above and read it into your working directory as an object named _raw_tweets_.]
 
 ### Libraries Used
 ```{r setup, message=FALSE, warning=FALSE}
@@ -36,7 +34,8 @@ library(gridExtra)
 #### Load Data from .zip file
 ```{r raw_tweets, warning=FALSE, message=FALSE, cache=TRUE, eval=FALSE, include=FALSE}
 # Read in the zip file
-raw_tweets <-  read_csv(unzip("/Users/Kevin/Documents/TweetSentimentAnalysis/data/Sentiment-Analysis-Dataset.zip"))
+raw_tweets <-  read_csv(unzip("/Users/Kevin/Documents/TweetSentimentAnalysis/
+                              data/Sentiment-Analysis-Dataset.zip"))
 ```
 
 ```{r load_raw_tweets}
@@ -64,7 +63,7 @@ levels(raw_tweets$Sentiment) <- c("Negative", "Positive")
 raw_tweets$SentimentSource <- as.factor(raw_tweets$SentimentSource)
 ```
 
-We have greater that 1.5M rows. Even though tweets are somewhat short, this is a lot of data. Tokenization will undoubtedly create many more features than can be handled efficiently if we were to try to use this much data. We should probably train on about 5% of this data and use as much of the rest as we want to test. We will make sure to maintain the proportionality along the way. Let's see what that is.
+We have greater that `r format(nrow(raw_tweets), digits = 2, big.mark = ",")` rows. Even though tweets are somewhat short, this is a lot of data. Tokenization will undoubtedly create many more features than can be handled efficiently, if we were to try to use this much data. We should probably train on about 5% of this data and use as much of the rest as we want to test. We will make sure to maintain the proportionality along the way. Let's see what that is.
 
 What proportion of "Sentiment" do we have in our corpus?
 
@@ -83,15 +82,18 @@ prop.table(table(raw_tweets[, "SentimentSource"]))
 I'm not sure what this _SentimentSource_ column is, but it looks like the vast majority is "Sentiment140". We'll ignore it for now.
 
 ### Count Features
-Let's add some features based on counts of how many hashtags, weblinks, and @refs are in each tweet.
+Let's add some features based on counts of how many hash-tags, web-links, and @refs are in each tweet.
 
 ```{r count_features}
 # Count how many http links are in the tweet
-raw_tweets$web_count <- str_count(raw_tweets$SentimentText, "http:/*[A-z+/+.+0-9]*")
+raw_tweets$web_count <- str_count(raw_tweets$SentimentText, 
+                                  "http:/*[A-z+/+.+0-9]*")
 # Count haw many hashtags are in the tweet
-raw_tweets$hashtag_count <- str_count(raw_tweets$SentimentText, "#[A-z+0-9]*")
+raw_tweets$hashtag_count <- str_count(raw_tweets$SentimentText, 
+                                      "#[A-z+0-9]*")
 # Count how many @reply tags are in the tweet
-raw_tweets$at_ref_count <- str_count(raw_tweets$SentimentText, "@[A-z+0-9]*")
+raw_tweets$at_ref_count <- str_count(raw_tweets$SentimentText, 
+                                     "@[A-z+0-9]*")
 # Count the number of characters in the tweet
 raw_tweets$text_length <- nchar(raw_tweets$SentimentText)
 ```
@@ -109,12 +111,7 @@ One thing to note: looking into the data it appears that there is a problem with
 # get the max character length in the corpus
 max(raw_tweets$text_length)
 ```
-Upon manual inspection we can see that several texts are getting crammed into the column of one.
-
-```{r}
-# Get the record with the max number of the characters
-kable(raw_tweets[which(raw_tweets$text_length == max(raw_tweets$text_length)), "SentimentText"], caption = "Example Text")
-```
+Upon manual inspection we can see that several texts are getting crammed into the column of one--resulting in a very long string not properly parsed. 
 
 How many do we have that are over the 280 character limit?
 
@@ -149,20 +146,33 @@ count(raw_tweets[which(raw_tweets$SentimentSource == "Kaggle"),])$n
 
 ```{r grid_plot, fig.width=6, warning=FALSE, message=FALSE}
 # Create 3 plots and display side-by-side
-plot1 <- ggplot(raw_tweets,aes(x = text_length, fill = Sentiment)) +
-        geom_histogram(binwidth = 5, position = "identity", alpha = 0.5) +
+plot1 <- ggplot(raw_tweets,aes(x = text_length, 
+                               fill = Sentiment)) +
+        geom_histogram(binwidth = 5, 
+                       position = "identity", 
+                       alpha = 0.5) +
         xlim(-1,140) +
-        labs(y = "Text Count", x = "Length of Text",
+        labs(y = "Text Count", 
+             x = "Length of Text",
              title = "Distribution of Text Lengths")
-plot2 <- ggplot(raw_tweets,aes(x = at_ref_count , fill = Sentiment)) +
-        geom_histogram(binwidth = 1, position = "stack") +
+
+plot2 <- ggplot(raw_tweets,
+                aes(x = at_ref_count, 
+                    fill = Sentiment)) +
+        geom_histogram(binwidth = 1, 
+                       position = "stack") +
         xlim(-1,3) +
         labs(y = "Text Count", x = "Count of @ref",
              title = "Distribution of @ref")
-plot3 <- ggplot(raw_tweets,aes(x = hashtag_count , fill = Sentiment)) +
-        geom_histogram(binwidth = 1, position = "stack") +
+
+plot3 <- ggplot(raw_tweets, 
+                aes(x = hashtag_count, 
+                    fill = Sentiment)) +
+        geom_histogram(binwidth = 1, 
+                       position = "stack") +
         xlim(-1,3) +
-        labs(y = "Text Count", x = "Count of hashtags",
+        labs(y = "Text Count", 
+             x = "Count of Hashtags",
              title = "Distribution of Hashtags")
 
 grid.arrange(plot1, plot2, plot3, nrow=3, ncol=1)
@@ -175,19 +185,21 @@ Let's start creating our test/train set and start modeling.
 
 ### Stratified Sampling
 
-Let's create a data partition. First we'll take 4% of the data for training and validation. We'll reserve the indexes so we can further partition later.
+Let's create a data partition. First we'll take 10% of the `r format(nrow(raw_tweets), digits = 2, big.mark = ",")` tweets to build our model. We'll further split this into test and train data sets. We'll preserve the indexes so we can further partition later if necessary.
 
 ```{r}
 # Set seed for randomizer
 set.seed(42)
 # Retrieve indexes for partitioning
-partition_1_indexes <- createDataPartition(raw_tweets$Sentiment, times = 1, p = 0.05, list = FALSE)
+partition_1_indexes <- createDataPartition(raw_tweets$Sentiment, 
+                                           times = 1, p = 0.10, list = FALSE)
 # Create dataframe
 train_validate <- raw_tweets[partition_1_indexes, c(2,4)]
 # Reset seed
 set.seed(42)
 # Retrieve indexes for train and test partition
-train_indexes <- createDataPartition(train_validate$Sentiment, times = 1, p = 0.60, list = FALSE)
+train_indexes <- createDataPartition(train_validate$Sentiment, 
+                                     times = 1, p = 0.60, list = FALSE)
 # Use the indexes to create the train and test dataframes
 train <- train_validate[train_indexes, ]
 test <- train_validate[-train_indexes, ]
@@ -195,7 +207,7 @@ test <- train_validate[-train_indexes, ]
 nrow(train)
 ```
 
-So, now we have `r nrow(train)` tweets. Check proportions just to be safe.
+So, now we have `r format(nrow(train), digits = 2, big.mark = ",")` tweets. Check proportions just to be safe.
 
 ```{r}
 # Check proportion is same as original table
@@ -212,9 +224,13 @@ There are lots of decisions to be made when doing this sort of text analysis. Do
 
 ```{r}
 # Convert SentimentText column to tokens
-train_tokens <- tokens(train$SentimentText, what = "word", 
-                       remove_numbers = TRUE, remove_punct = TRUE, remove_twitter = FALSE,
-                       remove_symbols = TRUE, remove_hyphens = TRUE)
+train_tokens <- tokens(train$SentimentText, 
+                       what = "word", 
+                       remove_numbers = TRUE, 
+                       remove_punct = TRUE, 
+                       remove_twitter = TRUE,
+                       remove_symbols = TRUE, 
+                       remove_hyphens = TRUE)
 ```
 
 Let's look at a few to illustrate what we did. 
@@ -229,18 +245,18 @@ These are the tokens, from the 29th record, of the training data set. i.e. the t
 train[29,2]
 ```
 
-Also this one:
+Also this one has some Uppercase, special characters, and stop words:
 
 ```{r}
-train_tokens[[26]]
+train_tokens[[30]]
 ```
-We see some upper case is present. Let's change all to lower to reduce the possible combinations.
+Let's change all Uppercase to lower to reduce the possible combinations.
 
 ```{r}
 # Convert to lower-case
 train_tokens <- tokens_tolower(train_tokens)
-# Check same token as before
-train_tokens[[26]]
+# Check same tokens as before
+train_tokens[[29]]
 ```
 
 ### Remove Stopwords
@@ -249,15 +265,16 @@ Let's remove stopwords using the quanteda packages built in _stopwords()_ functi
 
 ```{r}
 # Remove stopwords
-train_tokens <- tokens_select(train_tokens, stopwords(), 
+train_tokens <- tokens_select(train_tokens, 
+                              stopwords(), 
                               selection = "remove")
-train_tokens[[26]]
+train_tokens[[29]]
 ```
 
 And record 29 again:
 
 ```{r}
-train_tokens[[29]]
+train_tokens[[30]]
 ```
 
 ### Stemming
@@ -266,17 +283,26 @@ Next, we need to stem the tokens. Stemming is a method of getting to the word ro
 
 ```{r}
 # Stem tokens
-train_tokens <- tokens_wordstem(train_tokens, language = "english")
+train_tokens <- tokens_wordstem(train_tokens, 
+                                language = "english")
 train_tokens[[29]]
 ```
 
-You can see that "listened" becomes "listen", and "ticks" becomes "tick", etc.
+```{r}
+# Stem tokens
+train_tokens <- tokens_wordstem(train_tokens, 
+                                language = "english")
+train_tokens[[30]]
+```
+
+You can see that "allowed" becomes "allow", and "drums" becomes "drum", etc.
 
 ### Create a Document-Feature Matrix
 
 ```{r}
 # Create a DFM
-train_dfm <- dfm(train_tokens, tolower = FALSE)
+train_dfm <- dfm(train_tokens, 
+                 tolower = FALSE)
 ```
 
 Let's take a quick look at a wordcloud of what is in the dfm.
@@ -309,21 +335,17 @@ Now we have a nice DFM. The columns are the features, and the column-space is th
 
 ```{r}
 # Bind the DFM, Sentiment together as a dataframe
-train_df <- cbind("Sentiment" = as.factor(train$Sentiment), as.data.frame(train_dfm))
-kable(train_df[1:10, 1:15])
+train_df <- cbind("Sentiment" = as.factor(train$Sentiment), 
+                  as.data.frame(train_dfm))
+kable(train_df[5:15, 35:50])
 ```
 
-```{r}
-# Return a sample of the column names 
-names(train_df[60:75])
-```
-
-Unfortunately, R cannot handle some of these tokens as columns in a data frame. The names cannot begin with an integer or a special character for example. We need to fix these. Here is how.
+Unfortunately, R cannot handle some of these tokens as columns in a data frame. The names cannot begin with an integer or a special character for example. We can use the `make.names()` function, to insure we don't have any invalid names.
 
 ```{r}
 # Alter any names that don't work as columns
-names(train_df) <- make.names(names(train_df), unique = TRUE)
-names(train_df[60:75])
+names(train_df) <- make.names(names(train_df), 
+                              unique = TRUE)
 ```
 
 ### Setting up for K-fold Cross Validation
@@ -333,24 +355,31 @@ We will set up a control plan for 30 models. We should be able to use this plan 
 # Set seed
 set.seed(42)
 # Define indexes for the training control 
-cv_folds <- createMultiFolds(train$Sentiment, k = 10, times = 3)
+cv_folds <- createMultiFolds(train$Sentiment, 
+                             k = 10, times = 3)
 # Build training control object
-cv_cntrl <- trainControl(method = "repeatedcv", number = 10,
-                         repeats = 3, index = cv_folds)
+cv_cntrl <- trainControl(method = "repeatedcv", 
+                         number = 10,
+                         repeats = 3, 
+                         index = cv_folds)
 ```
 
 ### Train the First Model
 
-Let's train the first model to see what kind of accuracy we have. Let's use a single decision tree algorithm. This algorithm will, however, create 30 * 7 or 210 models. 
+Let's train the first model to see what kind of accuracy we have. Let's use a single decision tree algorithm. This algorithm will, however, create 30 * 7 or 210 models. ^[Note: I am loading a pre-processed model. Training the model takes a long time. If you wishd to run the model yourself, you will have to modify the code below. You'll need to remove the `eval=FALSE` on the next to sections and add `eval=FALSE` to the `load("../../rpart1.rds")` section.] 
 
-```{r rpart_model_1, eval=FALSE}
-# Train a decision tree model using the training control we setup
-# rpart1 <- train(Sentiment ~ ., data = train_df, method = "rpart", 
-                    trControl = cv_cntrl, tuneLength = 7)
+```{r rpart_model_1, eval=FALSE, echo=TRUE}
+# Train a decision tree model using 
+# the training control we setup
+ rpart1 <- train(Sentiment ~ ., 
+                 data = train_df, 
+                 method = "rpart", 
+                 trControl = cv_cntrl, 
+                 tuneLength = 7)
 ```
 
-```{r eval=FALSE}
-# save(rpart1, file = "rpart1.rds")
+```{r eval=FALSE, echo=FALSE}
+# save(rpart1, file = "../../rpart1.rds")
 ```
 
 
@@ -363,7 +392,7 @@ load("../../rpart1.rds")
 rpart1
 ```
 
-Outputting the model results we see that we have an almost 64% accuracy already. That isn't bad. Really we want to get to about 90% if we can. This is already better than a coin flip and we haven't even begun. Let's take some steps to improve things.
+Outputting the model results we see that we have an accuracy `r paste(format(max(rpart1$results$Accuracy) * 100, digits = 3), "%", sep = "")` accuracy already. That isn't bad. Really we want to get to about 90% if we can. This is already better than a coin flip and we haven't even begun. Let's take some steps to improve things.
 
 #### To be continued...
 

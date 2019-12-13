@@ -98,8 +98,7 @@
           
 
 
-<p>The following is an analysis of the <em>Twitter Sentiment Analysis Dataset</em> available at: <a href="http://thinknook.com/twitter-sentiment-analysis-training-corpus-dataset-2012-09-22/" class="uri">http://thinknook.com/twitter-sentiment-analysis-training-corpus-dataset-2012-09-22/</a>. I will attempt to use this data to train a model to label unseen tweets into <strong>“Positive”</strong> or <strong>“Negative”</strong> sentiment. I will walk through my methodology and include code.</p>
-<p>The github repo for my work can be found here: <a href="https://github.com/kwbonds/TwitterSentimentAnalysis" class="uri">https://github.com/kwbonds/TwitterSentimentAnalysis</a>. The file is &gt; 50 MB, so I have taken a stratified sample and loaded it for this example (mainly so that this website will load). If you want to begin with the original, you will need to download it from the source above and read it into your working directory as an object named <em>raw_tweets</em>.</p>
+<p>The following is an analysis of the <em>Twitter Sentiment Analysis Dataset</em> available at: <a href="http://thinknook.com/twitter-sentiment-analysis-training-corpus-dataset-2012-09-22/" class="uri">http://thinknook.com/twitter-sentiment-analysis-training-corpus-dataset-2012-09-22/</a>. I will attempt to use this data to train a model to label unseen tweets into <strong>“Positive”</strong> or <strong>“Negative”</strong> sentiment. I will walk through my methodology and include code. The github repo for my work can be found here: <a href="https://github.com/kwbonds/TwitterSentimentAnalysis" class="uri">https://github.com/kwbonds/TwitterSentimentAnalysis</a>. <a href="#fn1" class="footnote-ref" id="fnref1"><sup>1</sup></a></p>
 <div id="libraries-used" class="section level3">
 <h3>Libraries Used</h3>
 <pre class="r"><code>library(tidyverse)
@@ -119,9 +118,9 @@ library(gridExtra)</code></pre>
 <p>Take a quick look at what we have.</p>
 <pre class="r"><code># Examine the structure of the raw_tweets dataframe
 str(raw_tweets)</code></pre>
-<pre><code>## Classes &#39;tbl_df&#39;, &#39;tbl&#39; and &#39;data.frame&#39;:    157861 obs. of  4 variables:
-##  $ ItemID         : num  8 9 18 26 35 89 120 129 141 161 ...
-##  $ Sentiment      : num  0 1 1 0 0 0 0 1 0 0 ...
+<pre><code>## Classes &#39;tbl_df&#39;, &#39;tbl&#39; and &#39;data.frame&#39;:    78931 obs. of  4 variables:
+##  $ ItemID         : num  8 9 18 26 35 89 129 141 161 204 ...
+##  $ Sentiment      : num  0 1 1 0 0 0 1 0 0 1 ...
 ##  $ SentimentSource: chr  &quot;Sentiment140&quot; &quot;Sentiment140&quot; &quot;Sentiment140&quot; &quot;Sentiment140&quot; ...
 ##  $ SentimentText  : chr  &quot;Sunny Again        Work Tomorrow  :-|       TV Tonight&quot; &quot;handed in my uniform today . i miss you already&quot; &quot;Feeling strangely fine. Now I&#39;m gonna go listen to some Semisonic to celebrate&quot; &quot;BoRinG   ): whats wrong with him??     Please tell me........   :-/&quot; ...
 ##  - attr(*, &quot;problems&quot;)=Classes &#39;tbl_df&#39;, &#39;tbl&#39; and &#39;data.frame&#39;: 27 obs. of  5 variables:
@@ -182,31 +181,34 @@ str(raw_tweets)</code></pre>
 raw_tweets$Sentiment &lt;- as.factor(raw_tweets$Sentiment)
 levels(raw_tweets$Sentiment) &lt;- c(&quot;Negative&quot;, &quot;Positive&quot;)
 raw_tweets$SentimentSource &lt;- as.factor(raw_tweets$SentimentSource)</code></pre>
-<p>We have greater that 1.5M rows. Even though tweets are somewhat short, this is a lot of data. Tokenization will undoubtedly create many more features than can be handled efficiently if we were to try to use this much data. We should probably train on about 5% of this data and use as much of the rest as we want to test. We will make sure to maintain the proportionality along the way. Let’s see what that is.</p>
+<p>We have greater that 78,931 rows. Even though tweets are somewhat short, this is a lot of data. Tokenization will undoubtedly create many more features than can be handled efficiently, if we were to try to use this much data. We should probably train on about 5% of this data and use as much of the rest as we want to test. We will make sure to maintain the proportionality along the way. Let’s see what that is.</p>
 <p>What proportion of “Sentiment” do we have in our corpus?</p>
 <pre class="r"><code># Get the proportion of Sentiment in the corpus
 prop.table(table(raw_tweets[, &quot;Sentiment&quot;]))</code></pre>
 <pre><code>## 
 ##  Negative  Positive 
-## 0.4987426 0.5012574</code></pre>
+## 0.4977005 0.5022995</code></pre>
 <p>Looks like almost 50/50. Nice. In this case a random sample would probably give us very similar proportions, we will use techniques to hard maintain this proportion i.e. just as if we had an unbalanced data set.</p>
 <pre class="r"><code># Get the proportion of the SentimentSource
 prop.table(table(raw_tweets[, &quot;SentimentSource&quot;]))</code></pre>
 <pre><code>## 
 ##       Kaggle Sentiment140 
-## 0.0009058602 0.9990941398</code></pre>
+##  0.001026213  0.998973787</code></pre>
 <p>I’m not sure what this <em>SentimentSource</em> column is, but it looks like the vast majority is “Sentiment140”. We’ll ignore it for now.</p>
 </div>
 </div>
 <div id="count-features" class="section level3">
 <h3>Count Features</h3>
-<p>Let’s add some features based on counts of how many hashtags, weblinks, and <span class="citation">@refs</span> are in each tweet.</p>
+<p>Let’s add some features based on counts of how many hash-tags, web-links, and <span class="citation">@refs</span> are in each tweet.</p>
 <pre class="r"><code># Count how many http links are in the tweet
-raw_tweets$web_count &lt;- str_count(raw_tweets$SentimentText, &quot;http:/*[A-z+/+.+0-9]*&quot;)
+raw_tweets$web_count &lt;- str_count(raw_tweets$SentimentText, 
+                                  &quot;http:/*[A-z+/+.+0-9]*&quot;)
 # Count haw many hashtags are in the tweet
-raw_tweets$hashtag_count &lt;- str_count(raw_tweets$SentimentText, &quot;#[A-z+0-9]*&quot;)
+raw_tweets$hashtag_count &lt;- str_count(raw_tweets$SentimentText, 
+                                      &quot;#[A-z+0-9]*&quot;)
 # Count how many @reply tags are in the tweet
-raw_tweets$at_ref_count &lt;- str_count(raw_tweets$SentimentText, &quot;@[A-z+0-9]*&quot;)
+raw_tweets$at_ref_count &lt;- str_count(raw_tweets$SentimentText, 
+                                     &quot;@[A-z+0-9]*&quot;)
 # Count the number of characters in the tweet
 raw_tweets$text_length &lt;- nchar(raw_tweets$SentimentText)</code></pre>
 <pre class="r"><code># View the first few rows 
@@ -294,36 +296,11 @@ kable(head(raw_tweets))</code></pre>
 <pre class="r"><code># get the max character length in the corpus
 max(raw_tweets$text_length)</code></pre>
 <pre><code>## [1] 1045</code></pre>
-<p>Upon manual inspection we can see that several texts are getting crammed into the column of one.</p>
-<pre class="r"><code># Get the record with the max number of the characters
-kable(raw_tweets[which(raw_tweets$text_length == max(raw_tweets$text_length)), &quot;SentimentText&quot;], caption = &quot;Example Text&quot;)</code></pre>
-<table>
-<caption><span id="tab:unnamed-chunk-6">Table 1: </span>Example Text</caption>
-<thead>
-<tr class="header">
-<th align="left">SentimentText</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td align="left">Brokeback Mountain &quot; was also very excellent.</td>
-</tr>
-</tbody>
-</table>
-<p>8837,0,Kaggle,&quot; brokeback mountain was terrible.
-8838,0,Sentiment140,# <span class="citation">@Catherine42</span> I wouldn’t mind but I only had 1/2 a portion &amp; then left 1/2 the cream just fruit for me then until my hols x
-8839,1,Sentiment140,# <span class="citation">@DeliciousLunch</span> … dark chocolate cookies? oh you tease! I’m writing to day n dipping into twitter for company
-8840,1,Sentiment140,# followfriday <span class="citation">@mstuyvenberg</span> <span class="citation">@feb_unsw</span> <span class="citation">@hazelmail</span> <span class="citation">@beckescreet</span> - all almost as cool as he-man and she-ra
-8841,1,Sentiment140,# followfriday <span class="citation">@presentsqueen</span> because she talks sense
-8842,1,Sentiment140,# New York is the most amazing city i’ve ever been to
-8843,0,Sentiment140,# number times I bottomed out just in our driveway = 4… a 6.5 hour trip to mass.. I’m scared
-8844,0,Sentiment140,# of NYC celebrity street vendors &gt; # of POA celebrities <a href="http://streetvendor.org/media/pdfs/Side2.pdf" class="uri">http://streetvendor.org/media/pdfs/Side2.pdf</a>
-8845,1,Sentiment140,###### yay ##### thanks <span class="citation">@matclayton</span> #####
-8846,0,Sentiment140,&quot;#<span class="math inline">\(%#\)</span>^#%@ I HATE THE DENTIST, i don’t want to go!!! |</p>
+<p>Upon manual inspection we can see that several texts are getting crammed into the column of one–resulting in a very long string not properly parsed.</p>
 <p>How many do we have that are over the 280 character limit?</p>
 <pre class="r"><code># Count of the tweets that are over the character limit
 count(raw_tweets[which(raw_tweets$text_length &gt; 280),])$n</code></pre>
-<pre><code>## [1] 5</code></pre>
+<pre><code>## [1] 4</code></pre>
 <p>Looking at these we see a few more examples like above, but also see a bunch or garbage text (i.e. special characters). We’ll remove special characters later. This will take care of this by proxy. Also, we’ll remove incomplete cases (after cleaning) in case we are left with only empty strings.</p>
 <p>For now let’s just remove all tweets that are over the limit. We have an abundance of data so it’s ok to remove some noise. And check to make sure they are gone.</p>
 <pre class="r"><code># Remove any tweets that are over 280 character counts
@@ -334,7 +311,7 @@ count(raw_tweets[which(raw_tweets$text_length &gt; 280),])$n</code></pre>
 <p>Also, I did notice that many of the problem tweets above came from the “Kaggle” source. Kaggle is a Data Science competition platform. It is a great resource for competition and learning. My theory is that this data was used and enriched during a Kaggle competition. It seems disproportionate that several of the problem tweets were from this source. Let’s remove them all.</p>
 <pre class="r"><code># Count of &quot;Kaggle&quot; records
 count(raw_tweets[which(raw_tweets$SentimentSource == &quot;Kaggle&quot;),])$n</code></pre>
-<pre><code>## [1] 142</code></pre>
+<pre><code>## [1] 80</code></pre>
 <pre class="r"><code># Remove the &quot;Kaggle&quot; treets
 raw_tweets &lt;- raw_tweets[-which(raw_tweets$SentimentSource == &quot;Kaggle&quot;),]
 # Check that they have been removed
@@ -344,20 +321,33 @@ count(raw_tweets[which(raw_tweets$SentimentSource == &quot;Kaggle&quot;),])$n</c
 <div id="visualize-distributions-of-engineered-features" class="section level3">
 <h3>Visualize Distributions of Engineered Features</h3>
 <pre class="r"><code># Create 3 plots and display side-by-side
-plot1 &lt;- ggplot(raw_tweets,aes(x = text_length, fill = Sentiment)) +
-        geom_histogram(binwidth = 5, position = &quot;identity&quot;, alpha = 0.5) +
+plot1 &lt;- ggplot(raw_tweets,aes(x = text_length, 
+                               fill = Sentiment)) +
+        geom_histogram(binwidth = 5, 
+                       position = &quot;identity&quot;, 
+                       alpha = 0.5) +
         xlim(-1,140) +
-        labs(y = &quot;Text Count&quot;, x = &quot;Length of Text&quot;,
+        labs(y = &quot;Text Count&quot;, 
+             x = &quot;Length of Text&quot;,
              title = &quot;Distribution of Text Lengths&quot;)
-plot2 &lt;- ggplot(raw_tweets,aes(x = at_ref_count , fill = Sentiment)) +
-        geom_histogram(binwidth = 1, position = &quot;stack&quot;) +
+
+plot2 &lt;- ggplot(raw_tweets,
+                aes(x = at_ref_count, 
+                    fill = Sentiment)) +
+        geom_histogram(binwidth = 1, 
+                       position = &quot;stack&quot;) +
         xlim(-1,3) +
         labs(y = &quot;Text Count&quot;, x = &quot;Count of @ref&quot;,
              title = &quot;Distribution of @ref&quot;)
-plot3 &lt;- ggplot(raw_tweets,aes(x = hashtag_count , fill = Sentiment)) +
-        geom_histogram(binwidth = 1, position = &quot;stack&quot;) +
+
+plot3 &lt;- ggplot(raw_tweets, 
+                aes(x = hashtag_count, 
+                    fill = Sentiment)) +
+        geom_histogram(binwidth = 1, 
+                       position = &quot;stack&quot;) +
         xlim(-1,3) +
-        labs(y = &quot;Text Count&quot;, x = &quot;Count of hashtags&quot;,
+        labs(y = &quot;Text Count&quot;, 
+             x = &quot;Count of Hashtags&quot;,
              title = &quot;Distribution of Hashtags&quot;)
 
 grid.arrange(plot1, plot2, plot3, nrow=3, ncol=1)</code></pre>
@@ -367,29 +357,31 @@ grid.arrange(plot1, plot2, plot3, nrow=3, ncol=1)</code></pre>
 </div>
 <div id="stratified-sampling" class="section level3">
 <h3>Stratified Sampling</h3>
-<p>Let’s create a data partition. First we’ll take 4% of the data for training and validation. We’ll reserve the indexes so we can further partition later.</p>
+<p>Let’s create a data partition. First we’ll take 10% of the 78,847 tweets to build our model. We’ll further split this into test and train data sets. We’ll preserve the indexes so we can further partition later if necessary.</p>
 <pre class="r"><code># Set seed for randomizer
 set.seed(42)
 # Retrieve indexes for partitioning
-partition_1_indexes &lt;- createDataPartition(raw_tweets$Sentiment, times = 1, p = 0.05, list = FALSE)
+partition_1_indexes &lt;- createDataPartition(raw_tweets$Sentiment, 
+                                           times = 1, p = 0.10, list = FALSE)
 # Create dataframe
 train_validate &lt;- raw_tweets[partition_1_indexes, c(2,4)]
 # Reset seed
 set.seed(42)
 # Retrieve indexes for train and test partition
-train_indexes &lt;- createDataPartition(train_validate$Sentiment, times = 1, p = 0.60, list = FALSE)
+train_indexes &lt;- createDataPartition(train_validate$Sentiment, 
+                                     times = 1, p = 0.60, list = FALSE)
 # Use the indexes to create the train and test dataframes
 train &lt;- train_validate[train_indexes, ]
 test &lt;- train_validate[-train_indexes, ]
 # Return the number of records in the training set
 nrow(train)</code></pre>
-<pre><code>## [1] 4733</code></pre>
-<p>So, now we have 4733 tweets. Check proportions just to be safe.</p>
+<pre><code>## [1] 4732</code></pre>
+<p>So, now we have 4,732 tweets. Check proportions just to be safe.</p>
 <pre class="r"><code># Check proportion is same as original table
 prop.table(table(train$Sentiment))</code></pre>
 <pre><code>## 
 ##  Negative  Positive 
-## 0.4988379 0.5011621</code></pre>
+## 0.4976754 0.5023246</code></pre>
 <p>And we have almost exactly the same proportions as our original, much larger, data set.</p>
 </div>
 <div id="tokenization" class="section level3">
@@ -397,82 +389,93 @@ prop.table(table(train$Sentiment))</code></pre>
 <p>Let’s now tokenize our text data. This is the first step in turning raw text into features. We want the individual words to become features. We’ll cleanup some things, engineer some features, and maybe create some combinations of words a little later.</p>
 <p>There are lots of decisions to be made when doing this sort of text analysis. Do we want our features to contain punctuation, hyphenated words, etc.? Typically in text analysis, special characters, punctuation, and numbers are removed because they don’t tend to contain much information to retrieve. However, since this is Twitter data, our corpus does contain some emoticons 😂 that are represented as special characters (ex: “:-)”, “:-/” ). If we remove them we will lose the textual representations of emotion. But, in looking closely at the data, these emoticons are surprisingly not very prevalent. So let’s just remove them.</p>
 <pre class="r"><code># Convert SentimentText column to tokens
-train_tokens &lt;- tokens(train$SentimentText, what = &quot;word&quot;, 
-                       remove_numbers = TRUE, remove_punct = TRUE, remove_twitter = FALSE,
-                       remove_symbols = TRUE, remove_hyphens = TRUE)</code></pre>
+train_tokens &lt;- tokens(train$SentimentText, 
+                       what = &quot;word&quot;, 
+                       remove_numbers = TRUE, 
+                       remove_punct = TRUE, 
+                       remove_twitter = TRUE,
+                       remove_symbols = TRUE, 
+                       remove_hyphens = TRUE)</code></pre>
 <p>Let’s look at a few to illustrate what we did.</p>
 <pre class="r"><code># Inspect tweets tokens
 train_tokens[[29]]</code></pre>
-<pre><code>##  [1] &quot;#momoams&quot;            &quot;nice&quot;                &quot;interval&quot;           
-##  [4] &quot;tunes&quot;               &quot;at&quot;                  &quot;http&quot;               
-##  [7] &quot;www.mobilemonday.nl&quot; &quot;live&quot;                &quot;im&quot;                 
-## [10] &quot;going&quot;               &quot;to&quot;                  &quot;stay&quot;               
-## [13] &quot;at&quot;                  &quot;home&quot;                &quot;and&quot;                
-## [16] &quot;watch&quot;</code></pre>
+<pre><code>##  [1] &quot;quot&quot;    &quot;she&quot;     &quot;has&quot;     &quot;a&quot;       &quot;great&quot;   &quot;smile&quot;   &quot;quot&quot;   
+##  [8] &quot;Thank&quot;   &quot;you&quot;     &quot;I&quot;       &quot;GOT&quot;     &quot;that&quot;    &quot;comment&quot; &quot;from&quot;   
+## [15] &quot;DEMI&quot;    &quot;quot&quot;    &quot;S&quot;       &quot;single&quot;  &quot;la&quot;      &quot;la&quot;      &quot;land&quot;   
+## [22] &quot;music&quot;   &quot;video&quot;   &quot;haha&quot;    &quot;she&quot;     &quot;really&quot;  &quot;has&quot;     &quot;a&quot;      
+## [29] &quot;good&quot;    &quot;SMILE&quot;</code></pre>
 <p>These are the tokens, from the 29th record, of the training data set. i.e. the tweet below.</p>
 <pre class="r"><code>train[29,2]</code></pre>
 <pre><code>## # A tibble: 1 x 1
 ##   SentimentText                                                                 
 ##   &lt;chr&gt;                                                                         
-## 1 #momoams nice interval tunes at http://www.mobilemonday.nl/live im going to s…</code></pre>
-<p>Also this one:</p>
-<pre class="r"><code>train_tokens[[26]]</code></pre>
-<pre><code>##  [1] &quot;something&quot; &quot;wrong&quot;     &quot;with&quot;      &quot;my&quot;        &quot;computer&quot;  &quot;drives&quot;   
-##  [7] &quot;and&quot;       &quot;i&quot;         &quot;cant&quot;      &quot;access&quot;    &quot;my&quot;        &quot;memory&quot;   
-## [13] &quot;cards&quot;     &quot;so&quot;        &quot;cant&quot;      &quot;process&quot;   &quot;any&quot;       &quot;photos&quot;   
-## [19] &quot;that&quot;      &quot;sucks&quot;</code></pre>
-<p>We see some upper case is present. Let’s change all to lower to reduce the possible combinations.</p>
+## 1 &amp;quot; she has a great smile   &amp;quot; Thank you! I GOT that comment from DEMI…</code></pre>
+<p>Also this one has some Uppercase, special characters, and stop words:</p>
+<pre class="r"><code>train_tokens[[30]]</code></pre>
+<pre><code>##  [1] &quot;Wasn&#39;t&quot;  &quot;allowed&quot; &quot;on&quot;      &quot;the&quot;     &quot;drums&quot;   &quot;stuck&quot;   &quot;on&quot;     
+##  [8] &quot;the&quot;     &quot;bass&quot;    &quot;instead&quot; &quot;I&#39;m&quot;     &quot;no&quot;      &quot;Jack&quot;    &quot;Bruce&quot;  
+## [15] &quot;but&quot;     &quot;still&quot;   &quot;blew&quot;    &quot;my&quot;      &quot;other&quot;   &quot;band&quot;    &quot;members&quot;
+## [22] &quot;away&quot;    &quot;Natch&quot;</code></pre>
+<p>Let’s change all Uppercase to lower to reduce the possible combinations.</p>
 <pre class="r"><code># Convert to lower-case
 train_tokens &lt;- tokens_tolower(train_tokens)
-# Check same token as before
-train_tokens[[26]]</code></pre>
-<pre><code>##  [1] &quot;something&quot; &quot;wrong&quot;     &quot;with&quot;      &quot;my&quot;        &quot;computer&quot;  &quot;drives&quot;   
-##  [7] &quot;and&quot;       &quot;i&quot;         &quot;cant&quot;      &quot;access&quot;    &quot;my&quot;        &quot;memory&quot;   
-## [13] &quot;cards&quot;     &quot;so&quot;        &quot;cant&quot;      &quot;process&quot;   &quot;any&quot;       &quot;photos&quot;   
-## [19] &quot;that&quot;      &quot;sucks&quot;</code></pre>
+# Check same tokens as before
+train_tokens[[29]]</code></pre>
+<pre><code>##  [1] &quot;quot&quot;    &quot;she&quot;     &quot;has&quot;     &quot;a&quot;       &quot;great&quot;   &quot;smile&quot;   &quot;quot&quot;   
+##  [8] &quot;thank&quot;   &quot;you&quot;     &quot;i&quot;       &quot;got&quot;     &quot;that&quot;    &quot;comment&quot; &quot;from&quot;   
+## [15] &quot;demi&quot;    &quot;quot&quot;    &quot;s&quot;       &quot;single&quot;  &quot;la&quot;      &quot;la&quot;      &quot;land&quot;   
+## [22] &quot;music&quot;   &quot;video&quot;   &quot;haha&quot;    &quot;she&quot;     &quot;really&quot;  &quot;has&quot;     &quot;a&quot;      
+## [29] &quot;good&quot;    &quot;smile&quot;</code></pre>
 </div>
 <div id="remove-stopwords" class="section level3">
 <h3>Remove Stopwords</h3>
 <p>Let’s remove stopwords using the quanteda packages built in <em>stopwords()</em> function and look at record 26 again.</p>
 <pre class="r"><code># Remove stopwords
-train_tokens &lt;- tokens_select(train_tokens, stopwords(), 
+train_tokens &lt;- tokens_select(train_tokens, 
+                              stopwords(), 
                               selection = &quot;remove&quot;)
-train_tokens[[26]]</code></pre>
-<pre><code>##  [1] &quot;something&quot; &quot;wrong&quot;     &quot;computer&quot;  &quot;drives&quot;    &quot;cant&quot;      &quot;access&quot;   
-##  [7] &quot;memory&quot;    &quot;cards&quot;     &quot;cant&quot;      &quot;process&quot;   &quot;photos&quot;    &quot;sucks&quot;</code></pre>
+train_tokens[[29]]</code></pre>
+<pre><code>##  [1] &quot;quot&quot;    &quot;great&quot;   &quot;smile&quot;   &quot;quot&quot;    &quot;thank&quot;   &quot;got&quot;     &quot;comment&quot;
+##  [8] &quot;demi&quot;    &quot;quot&quot;    &quot;s&quot;       &quot;single&quot;  &quot;la&quot;      &quot;la&quot;      &quot;land&quot;   
+## [15] &quot;music&quot;   &quot;video&quot;   &quot;haha&quot;    &quot;really&quot;  &quot;good&quot;    &quot;smile&quot;</code></pre>
 <p>And record 29 again:</p>
-<pre class="r"><code>train_tokens[[29]]</code></pre>
-<pre><code>##  [1] &quot;#momoams&quot;            &quot;nice&quot;                &quot;interval&quot;           
-##  [4] &quot;tunes&quot;               &quot;http&quot;                &quot;www.mobilemonday.nl&quot;
-##  [7] &quot;live&quot;                &quot;im&quot;                  &quot;going&quot;              
-## [10] &quot;stay&quot;                &quot;home&quot;                &quot;watch&quot;</code></pre>
+<pre class="r"><code>train_tokens[[30]]</code></pre>
+<pre><code>##  [1] &quot;allowed&quot; &quot;drums&quot;   &quot;stuck&quot;   &quot;bass&quot;    &quot;instead&quot; &quot;jack&quot;    &quot;bruce&quot;  
+##  [8] &quot;still&quot;   &quot;blew&quot;    &quot;band&quot;    &quot;members&quot; &quot;away&quot;    &quot;natch&quot;</code></pre>
 </div>
 <div id="stemming" class="section level3">
 <h3>Stemming</h3>
 <p>Next, we need to stem the tokens. Stemming is a method of getting to the word root. This way, we won’t have multiple versions of the same root word. We can illustrate below.</p>
 <pre class="r"><code># Stem tokens
-train_tokens &lt;- tokens_wordstem(train_tokens, language = &quot;english&quot;)
+train_tokens &lt;- tokens_wordstem(train_tokens, 
+                                language = &quot;english&quot;)
 train_tokens[[29]]</code></pre>
-<pre><code>##  [1] &quot;#momoam&quot;             &quot;nice&quot;                &quot;interv&quot;             
-##  [4] &quot;tune&quot;                &quot;http&quot;                &quot;www.mobilemonday.nl&quot;
-##  [7] &quot;live&quot;                &quot;im&quot;                  &quot;go&quot;                 
-## [10] &quot;stay&quot;                &quot;home&quot;                &quot;watch&quot;</code></pre>
-<p>You can see that “listened” becomes “listen”, and “ticks” becomes “tick”, etc.</p>
+<pre><code>##  [1] &quot;quot&quot;    &quot;great&quot;   &quot;smile&quot;   &quot;quot&quot;    &quot;thank&quot;   &quot;got&quot;     &quot;comment&quot;
+##  [8] &quot;demi&quot;    &quot;quot&quot;    &quot;s&quot;       &quot;singl&quot;   &quot;la&quot;      &quot;la&quot;      &quot;land&quot;   
+## [15] &quot;music&quot;   &quot;video&quot;   &quot;haha&quot;    &quot;realli&quot;  &quot;good&quot;    &quot;smile&quot;</code></pre>
+<pre class="r"><code># Stem tokens
+train_tokens &lt;- tokens_wordstem(train_tokens, 
+                                language = &quot;english&quot;)
+train_tokens[[30]]</code></pre>
+<pre><code>##  [1] &quot;allow&quot;   &quot;drum&quot;    &quot;stuck&quot;   &quot;bass&quot;    &quot;instead&quot; &quot;jack&quot;    &quot;bruce&quot;  
+##  [8] &quot;still&quot;   &quot;blew&quot;    &quot;band&quot;    &quot;member&quot;  &quot;away&quot;    &quot;natch&quot;</code></pre>
+<p>You can see that “allowed” becomes “allow”, and “drums” becomes “drum”, etc.</p>
 </div>
 <div id="create-a-document-feature-matrix" class="section level3">
 <h3>Create a Document-Feature Matrix</h3>
 <pre class="r"><code># Create a DFM
-train_dfm &lt;- dfm(train_tokens, tolower = FALSE)</code></pre>
+train_dfm &lt;- dfm(train_tokens, 
+                 tolower = FALSE)</code></pre>
 <p>Let’s take a quick look at a wordcloud of what is in the dfm.</p>
 <pre class="r"><code># Create wordcloud
 train_dfm %&gt;% textplot_wordcloud()</code></pre>
 <p><img src="/post/2019-12-10-twitter-sentiment-analysis_files/figure-html/wordcloud-1.png" width="672" /></p>
 <pre class="r"><code># Convert to matrix
 train_dfm &lt;- as.matrix(train_dfm)</code></pre>
-<p>We now have a matrix–the length of our original data frame–now with 9594 features in the term. That is a lot of features. We are definitely suffering from the “curse of dimensionality”. We’ll need to do some feature reduction at some point.</p>
+<p>We now have a matrix–the length of our original data frame–now with 9157 features in the term. That is a lot of features. We are definitely suffering from the “curse of dimensionality”. We’ll need to do some feature reduction at some point.</p>
 <pre class="r"><code># Check dimensions of the DFM
 dim(train_dfm)</code></pre>
-<pre><code>## [1] 4733 9594</code></pre>
+<pre><code>## [1] 4732 9157</code></pre>
 <p>Let’s look at the first 6 documents (as rows) and the first 20 features of the term (as columns).</p>
 <pre class="r"><code># View part of the matrix
 kable(head(train_dfm[1:6, 1:20]))</code></pre>
@@ -480,208 +483,47 @@ kable(head(train_dfm[1:6, 1:20]))</code></pre>
 <thead>
 <tr class="header">
 <th></th>
-<th align="right">want</th>
-<th align="right">octo</th>
-<th align="right">drive</th>
-<th align="right">lt</th>
-<th align="right">face</th>
-<th align="right">miss</th>
-<th align="right">zoro</th>
-<th align="right">tonight</th>
-<th align="right">sri</th>
-<th align="right">matt</th>
-<th align="right">hear</th>
-<th align="right">non</th>
-<th align="right">robsten</th>
-<th align="right">post</th>
-<th align="right">make</th>
-<th align="right">sad</th>
-<th align="right">mean</th>
-<th align="right">knew</th>
-<th align="right">see</th>
-<th align="right">other</th>
+<th align="right">case</th>
+<th align="right">feel</th>
+<th align="right">emo</th>
+<th align="right">camp</th>
+<th align="right">wee</th>
+<th align="right">bit</th>
+<th align="right">alr</th>
+<th align="right">bring</th>
+<th align="right">human</th>
+<th align="right">right</th>
+<th align="right">watch</th>
+<th align="right">world</th>
+<th align="right">report</th>
+<th align="right">hope</th>
+<th align="right">it’ll</th>
+<th align="right">work</th>
+<th align="right">think</th>
+<th align="right">felt</th>
+<th align="right">realli</th>
+<th align="right">sick</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
 <td>text1</td>
-<td align="right">1</td>
-<td align="right">1</td>
-<td align="right">1</td>
-<td align="right">0</td>
-<td align="right">0</td>
-<td align="right">0</td>
-<td align="right">0</td>
-<td align="right">0</td>
-<td align="right">0</td>
-<td align="right">0</td>
-<td align="right">0</td>
-<td align="right">0</td>
-<td align="right">0</td>
-<td align="right">0</td>
-<td align="right">0</td>
-<td align="right">0</td>
-<td align="right">0</td>
-<td align="right">0</td>
-<td align="right">0</td>
-<td align="right">0</td>
-</tr>
-<tr class="even">
-<td>text2</td>
-<td align="right">0</td>
-<td align="right">0</td>
-<td align="right">0</td>
-<td align="right">1</td>
-<td align="right">1</td>
-<td align="right">1</td>
-<td align="right">1</td>
-<td align="right">1</td>
-<td align="right">0</td>
-<td align="right">0</td>
-<td align="right">0</td>
-<td align="right">0</td>
-<td align="right">0</td>
-<td align="right">0</td>
-<td align="right">0</td>
-<td align="right">0</td>
-<td align="right">0</td>
-<td align="right">0</td>
-<td align="right">0</td>
-<td align="right">0</td>
-</tr>
-<tr class="odd">
-<td>text3</td>
-<td align="right">0</td>
-<td align="right">0</td>
-<td align="right">0</td>
-<td align="right">0</td>
-<td align="right">0</td>
-<td align="right">0</td>
-<td align="right">0</td>
-<td align="right">0</td>
-<td align="right">1</td>
-<td align="right">1</td>
-<td align="right">1</td>
-<td align="right">0</td>
-<td align="right">0</td>
-<td align="right">0</td>
-<td align="right">0</td>
-<td align="right">0</td>
-<td align="right">0</td>
-<td align="right">0</td>
-<td align="right">0</td>
-<td align="right">0</td>
-</tr>
-<tr class="even">
-<td>text4</td>
-<td align="right">0</td>
-<td align="right">0</td>
-<td align="right">0</td>
-<td align="right">0</td>
-<td align="right">0</td>
-<td align="right">0</td>
-<td align="right">0</td>
-<td align="right">0</td>
-<td align="right">0</td>
-<td align="right">0</td>
-<td align="right">0</td>
-<td align="right">1</td>
-<td align="right">1</td>
-<td align="right">1</td>
 <td align="right">1</td>
 <td align="right">2</td>
 <td align="right">1</td>
 <td align="right">1</td>
 <td align="right">1</td>
 <td align="right">1</td>
-</tr>
-<tr class="odd">
-<td>text5</td>
-<td align="right">0</td>
-<td align="right">0</td>
-<td align="right">0</td>
-<td align="right">0</td>
-<td align="right">0</td>
-<td align="right">0</td>
-<td align="right">0</td>
-<td align="right">0</td>
-<td align="right">0</td>
-<td align="right">0</td>
-<td align="right">0</td>
-<td align="right">0</td>
-<td align="right">0</td>
-<td align="right">0</td>
-<td align="right">0</td>
-<td align="right">0</td>
-<td align="right">0</td>
-<td align="right">0</td>
-<td align="right">0</td>
-<td align="right">0</td>
-</tr>
-<tr class="even">
-<td>text6</td>
-<td align="right">0</td>
-<td align="right">0</td>
-<td align="right">0</td>
-<td align="right">0</td>
-<td align="right">0</td>
-<td align="right">0</td>
-<td align="right">0</td>
-<td align="right">0</td>
-<td align="right">0</td>
-<td align="right">0</td>
-<td align="right">0</td>
-<td align="right">0</td>
-<td align="right">0</td>
-<td align="right">0</td>
-<td align="right">0</td>
-<td align="right">0</td>
-<td align="right">0</td>
-<td align="right">0</td>
-<td align="right">0</td>
-<td align="right">0</td>
-</tr>
-</tbody>
-</table>
-<p>Now we have a nice DFM. The columns are the features, and the column-space is the term. The rows are the documents and the row-space are the corpus.</p>
-<pre class="r"><code># Bind the DFM, Sentiment together as a dataframe
-train_df &lt;- cbind(&quot;Sentiment&quot; = as.factor(train$Sentiment), as.data.frame(train_dfm))
-kable(train_df[1:10, 1:15])</code></pre>
-<table>
-<thead>
-<tr class="header">
-<th></th>
-<th align="left">Sentiment</th>
-<th align="right">want</th>
-<th align="right">octo</th>
-<th align="right">drive</th>
-<th align="right">lt</th>
-<th align="right">face</th>
-<th align="right">miss</th>
-<th align="right">zoro</th>
-<th align="right">tonight</th>
-<th align="right">sri</th>
-<th align="right">matt</th>
-<th align="right">hear</th>
-<th align="right">non</th>
-<th align="right">robsten</th>
-<th align="right">post</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td>text1</td>
-<td align="left">Negative</td>
 <td align="right">1</td>
 <td align="right">1</td>
 <td align="right">1</td>
-<td align="right">0</td>
-<td align="right">0</td>
-<td align="right">0</td>
-<td align="right">0</td>
-<td align="right">0</td>
-<td align="right">0</td>
-<td align="right">0</td>
+<td align="right">1</td>
+<td align="right">1</td>
+<td align="right">1</td>
+<td align="right">1</td>
+<td align="right">1</td>
+<td align="right">1</td>
+<td align="right">1</td>
 <td align="right">0</td>
 <td align="right">0</td>
 <td align="right">0</td>
@@ -689,7 +531,19 @@ kable(train_df[1:10, 1:15])</code></pre>
 </tr>
 <tr class="even">
 <td>text2</td>
-<td align="left">Negative</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
 <td align="right">0</td>
 <td align="right">0</td>
 <td align="right">0</td>
@@ -697,17 +551,9 @@ kable(train_df[1:10, 1:15])</code></pre>
 <td align="right">1</td>
 <td align="right">1</td>
 <td align="right">1</td>
-<td align="right">1</td>
-<td align="right">0</td>
-<td align="right">0</td>
-<td align="right">0</td>
-<td align="right">0</td>
-<td align="right">0</td>
-<td align="right">0</td>
 </tr>
 <tr class="odd">
 <td>text3</td>
-<td align="left">Negative</td>
 <td align="right">0</td>
 <td align="right">0</td>
 <td align="right">0</td>
@@ -716,16 +562,21 @@ kable(train_df[1:10, 1:15])</code></pre>
 <td align="right">0</td>
 <td align="right">0</td>
 <td align="right">0</td>
-<td align="right">1</td>
-<td align="right">1</td>
-<td align="right">1</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
 <td align="right">0</td>
 <td align="right">0</td>
 <td align="right">0</td>
 </tr>
 <tr class="even">
 <td>text4</td>
-<td align="left">Negative</td>
 <td align="right">0</td>
 <td align="right">0</td>
 <td align="right">0</td>
@@ -737,13 +588,24 @@ kable(train_df[1:10, 1:15])</code></pre>
 <td align="right">0</td>
 <td align="right">0</td>
 <td align="right">0</td>
-<td align="right">1</td>
-<td align="right">1</td>
-<td align="right">1</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
 </tr>
 <tr class="odd">
 <td>text5</td>
-<td align="left">Positive</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
 <td align="right">0</td>
 <td align="right">0</td>
 <td align="right">0</td>
@@ -761,12 +623,85 @@ kable(train_df[1:10, 1:15])</code></pre>
 </tr>
 <tr class="even">
 <td>text6</td>
-<td align="left">Negative</td>
 <td align="right">0</td>
 <td align="right">0</td>
 <td align="right">0</td>
 <td align="right">0</td>
 <td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">1</td>
+</tr>
+</tbody>
+</table>
+<p>Now we have a nice DFM. The columns are the features, and the column-space is the term. The rows are the documents and the row-space are the corpus.</p>
+<pre class="r"><code># Bind the DFM, Sentiment together as a dataframe
+train_df &lt;- cbind(&quot;Sentiment&quot; = as.factor(train$Sentiment), 
+                  as.data.frame(train_dfm))
+kable(train_df[5:15, 35:50])</code></pre>
+<table>
+<thead>
+<tr class="header">
+<th></th>
+<th align="right">eurgh</th>
+<th align="right">silli</th>
+<th align="right">cold</th>
+<th align="right">tire</th>
+<th align="right">need</th>
+<th align="right">stuff</th>
+<th align="right">back</th>
+<th align="right">gov’t</th>
+<th align="right">motor</th>
+<th align="right">just</th>
+<th align="right">peed</th>
+<th align="right">littl</th>
+<th align="right">http</th>
+<th align="right">bit.li</th>
+<th align="right">aldxf</th>
+<th align="right">via</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>text5</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+</tr>
+<tr class="even">
+<td>text6</td>
+<td align="right">1</td>
+<td align="right">3</td>
+<td align="right">1</td>
+<td align="right">1</td>
+<td align="right">1</td>
+<td align="right">1</td>
+<td align="right">1</td>
 <td align="right">0</td>
 <td align="right">0</td>
 <td align="right">0</td>
@@ -779,7 +714,6 @@ kable(train_df[1:10, 1:15])</code></pre>
 </tr>
 <tr class="odd">
 <td>text7</td>
-<td align="left">Positive</td>
 <td align="right">0</td>
 <td align="right">0</td>
 <td align="right">0</td>
@@ -787,17 +721,20 @@ kable(train_df[1:10, 1:15])</code></pre>
 <td align="right">0</td>
 <td align="right">0</td>
 <td align="right">0</td>
-<td align="right">0</td>
-<td align="right">0</td>
-<td align="right">0</td>
-<td align="right">0</td>
-<td align="right">0</td>
-<td align="right">0</td>
-<td align="right">0</td>
+<td align="right">1</td>
+<td align="right">1</td>
+<td align="right">1</td>
+<td align="right">1</td>
+<td align="right">1</td>
+<td align="right">2</td>
+<td align="right">2</td>
+<td align="right">1</td>
+<td align="right">1</td>
 </tr>
 <tr class="even">
 <td>text8</td>
-<td align="left">Negative</td>
+<td align="right">0</td>
+<td align="right">0</td>
 <td align="right">0</td>
 <td align="right">0</td>
 <td align="right">0</td>
@@ -815,7 +752,46 @@ kable(train_df[1:10, 1:15])</code></pre>
 </tr>
 <tr class="odd">
 <td>text9</td>
-<td align="left">Positive</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">1</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+</tr>
+<tr class="even">
+<td>text10</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+</tr>
+<tr class="odd">
+<td>text11</td>
+<td align="right">0</td>
+<td align="right">0</td>
 <td align="right">0</td>
 <td align="right">0</td>
 <td align="right">0</td>
@@ -832,14 +808,72 @@ kable(train_df[1:10, 1:15])</code></pre>
 <td align="right">0</td>
 </tr>
 <tr class="even">
-<td>text10</td>
-<td align="left">Negative</td>
+<td>text12</td>
 <td align="right">0</td>
 <td align="right">0</td>
 <td align="right">0</td>
 <td align="right">0</td>
 <td align="right">0</td>
-<td align="right">1</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+</tr>
+<tr class="odd">
+<td>text13</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+</tr>
+<tr class="even">
+<td>text14</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+</tr>
+<tr class="odd">
+<td>text15</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
 <td align="right">0</td>
 <td align="right">0</td>
 <td align="right">0</td>
@@ -851,18 +885,10 @@ kable(train_df[1:10, 1:15])</code></pre>
 </tr>
 </tbody>
 </table>
-<pre class="r"><code># Return a sample of the column names 
-names(train_df[60:75])</code></pre>
-<pre><code>##  [1] &quot;show&quot;      &quot;16th&quot;      &quot;brunswick&quot; &quot;im&quot;        &quot;prissi&quot;    &quot;happi&quot;    
-##  [7] &quot;elvi&quot;      &quot;gotta&quot;     &quot;stop&quot;      &quot;eat&quot;       &quot;someon&quot;    &quot;take&quot;     
-## [13] &quot;food&quot;      &quot;away&quot;      &quot;pleas&quot;     &quot;honorari&quot;</code></pre>
-<p>Unfortunately, R cannot handle some of these tokens as columns in a data frame. The names cannot begin with an integer or a special character for example. We need to fix these. Here is how.</p>
+<p>Unfortunately, R cannot handle some of these tokens as columns in a data frame. The names cannot begin with an integer or a special character for example. We can use the <code>make.names()</code> function, to insure we don’t have any invalid names.</p>
 <pre class="r"><code># Alter any names that don&#39;t work as columns
-names(train_df) &lt;- make.names(names(train_df), unique = TRUE)
-names(train_df[60:75])</code></pre>
-<pre><code>##  [1] &quot;show&quot;      &quot;X16th&quot;     &quot;brunswick&quot; &quot;im&quot;        &quot;prissi&quot;    &quot;happi&quot;    
-##  [7] &quot;elvi&quot;      &quot;gotta&quot;     &quot;stop&quot;      &quot;eat&quot;       &quot;someon&quot;    &quot;take&quot;     
-## [13] &quot;food&quot;      &quot;away&quot;      &quot;pleas&quot;     &quot;honorari&quot;</code></pre>
+names(train_df) &lt;- make.names(names(train_df), 
+                              unique = TRUE)</code></pre>
 </div>
 <div id="setting-up-for-k-fold-cross-validation" class="section level3">
 <h3>Setting up for K-fold Cross Validation</h3>
@@ -870,46 +896,59 @@ names(train_df[60:75])</code></pre>
 <pre class="r"><code># Set seed
 set.seed(42)
 # Define indexes for the training control 
-cv_folds &lt;- createMultiFolds(train$Sentiment, k = 10, times = 3)
+cv_folds &lt;- createMultiFolds(train$Sentiment, 
+                             k = 10, times = 3)
 # Build training control object
-cv_cntrl &lt;- trainControl(method = &quot;repeatedcv&quot;, number = 10,
-                         repeats = 3, index = cv_folds)</code></pre>
+cv_cntrl &lt;- trainControl(method = &quot;repeatedcv&quot;, 
+                         number = 10,
+                         repeats = 3, 
+                         index = cv_folds)</code></pre>
 </div>
 <div id="train-the-first-model" class="section level3">
 <h3>Train the First Model</h3>
-<p>Let’s train the first model to see what kind of accuracy we have. Let’s use a single decision tree algorithm. This algorithm will, however, create 30 * 7 or 210 models.</p>
-<pre class="r"><code># Train a decision tree model using the training control we setup
-# rpart1 &lt;- train(Sentiment ~ ., data = train_df, method = &quot;rpart&quot;, 
-                    trControl = cv_cntrl, tuneLength = 7)</code></pre>
-<pre class="r"><code># save(rpart1, file = &quot;rpart1.rds&quot;)</code></pre>
+<p>Let’s train the first model to see what kind of accuracy we have. Let’s use a single decision tree algorithm. This algorithm will, however, create 30 * 7 or 210 models. <a href="#fn2" class="footnote-ref" id="fnref2"><sup>2</sup></a></p>
+<pre class="r"><code># Train a decision tree model using 
+# the training control we setup
+ rpart1 &lt;- train(Sentiment ~ ., 
+                 data = train_df, 
+                 method = &quot;rpart&quot;, 
+                 trControl = cv_cntrl, 
+                 tuneLength = 7)</code></pre>
 <pre class="r"><code># Inspect the model output
 rpart1</code></pre>
 <pre><code>## CART 
 ## 
-## 4733 samples
-## 9594 predictors
+## 4732 samples
+## 9157 predictors
 ##    2 classes: &#39;Negative&#39;, &#39;Positive&#39; 
 ## 
 ## No pre-processing
 ## Resampling: Cross-Validated (10 fold, repeated 3 times) 
-## Summary of sample sizes: 4259, 4260, 4259, 4260, 4260, 4260, ... 
+## Summary of sample sizes: 4258, 4258, 4259, 4259, 4259, 4260, ... 
 ## Resampling results across tuning parameters:
 ## 
-##   cp           Accuracy   Kappa     
-##   0.003134265  0.6089869  0.21688531
-##   0.004150784  0.6036337  0.20611242
-##   0.007482705  0.5941303  0.18716196
-##   0.011435832  0.5693452  0.13856572
-##   0.013341804  0.5481439  0.09742912
-##   0.023295214  0.5341925  0.07030849
-##   0.047437526  0.5131327  0.02673463
+##   cp            Accuracy   Kappa     
+##   0.0004246285  0.6254591  0.24905423
+##   0.0012738854  0.6288400  0.25581092
+##   0.0014437367  0.6289804  0.25608746
+##   0.0076433121  0.5839126  0.16641297
+##   0.0162774239  0.5546603  0.10857242
+##   0.0184713376  0.5383143  0.07756101
+##   0.0441613588  0.5101443  0.01978729
 ## 
 ## Accuracy was used to select the optimal model using the largest value.
-## The final value used for the model was cp = 0.003134265.</code></pre>
-<p>Outputting the model results we see that we have an almost 64% accuracy already. That isn’t bad. Really we want to get to about 90% if we can. This is already better than a coin flip and we haven’t even begun. Let’s take some steps to improve things.</p>
+## The final value used for the model was cp = 0.001443737.</code></pre>
+<p>Outputting the model results we see that we have an accuracy 62.9% accuracy already. That isn’t bad. Really we want to get to about 90% if we can. This is already better than a coin flip and we haven’t even begun. Let’s take some steps to improve things.</p>
 <div id="to-be-continued" class="section level4">
 <h4>To be continued…</h4>
 </div>
+</div>
+<div class="footnotes">
+<hr />
+<ol>
+<li id="fn1"><p>The file is &gt; 50 MB, so I have taken a stratified sample and loaded it for this example (mainly so that this website will load). If you want to begin with the original, you will need to download it from the source above and read it into your working directory as an object named <em>raw_tweets</em>.<a href="#fnref1" class="footnote-back">↩</a></p></li>
+<li id="fn2"><p>Note: I am loading a pre-processed model. Training the model takes a long time. If you wishd to run the model yourself, you will have to modify the code below. You’ll need to remove the <code>eval=FALSE</code> on the next to sections and add <code>eval=FALSE</code> to the <code>load(&quot;../../rpart1.rds&quot;)</code> section.<a href="#fnref2" class="footnote-back">↩</a></p></li>
+</ol>
 </div>
 
         </div>
