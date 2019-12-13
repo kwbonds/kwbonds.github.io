@@ -63,7 +63,7 @@ levels(raw_tweets$Sentiment) <- c("Negative", "Positive")
 raw_tweets$SentimentSource <- as.factor(raw_tweets$SentimentSource)
 ```
 
-We have greater that `r format(nrow(raw_tweets), digits = 2, big.mark = ",")` rows. Even though tweets are somewhat short, this is a lot of data. Tokenization will undoubtedly create many more features than can be handled efficiently, if we were to try to use this much data. We should probably train on about 5% of this data and use as much of the rest as we want to test. We will make sure to maintain the proportionality along the way. Let's see what that is.
+So we have `r format(nrow(raw_tweets), digits = 2, big.mark = ",")` rows. Even though tweets are somewhat short, this is a lot of data. Tokenization would create too many features, to be handled efficiently, if we were to try to use this much data. Therefore, we should train and train on about 5% of these data--and validate on some of the rest later. We will make sure to maintain the proportionality along the way. Let's see what that is.
 
 What proportion of "Sentiment" do we have in our corpus?
 
