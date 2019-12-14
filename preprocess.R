@@ -42,3 +42,22 @@ propane <- read_excel(raw_data_path, sheet = sheets[8], skip = 2, col_types = c(
         mutate("Month" = month(Date), "Year" = year(Date))
 saveRDS(propane, "propane.rds")
 
+
+######## WORDCLOUD2 ###############
+
+col_sum_names <- colSums(train_df[, -1])
+
+word_cloud_twitter <- data.frame(col_sum_names)
+word_cloud_twitter$tokens <- names(col_sum_names)
+word_cloud_twitter <- word_cloud_twitter[,2:1]
+names(word_cloud_twitter) <- c("word", "freq")
+
+wordcloud2(word_cloud_twitter, figPath = "static/images/twitter.jpg", 
+           color = 'skyblue',
+           size = 1, fontWeight = 'bold',
+           ellipticity = 1.0 )
+
+wordcloud2(word_cloud_twitter, shape = 'star', figPath = "static/images/twitter.jpg" )
+
+###################################
+

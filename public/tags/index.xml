@@ -2,48 +2,48 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Tags on Kevin Bonds | Portfolio</title>
-    <link>https://nervous-wright-ea05a8.netlify.com/tags/</link>
+    <link>/tags/</link>
     <description>Recent content in Tags on Kevin Bonds | Portfolio</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <lastBuildDate>Tue, 10 Dec 2019 00:00:00 +0000</lastBuildDate>
     
-	<atom:link href="https://nervous-wright-ea05a8.netlify.com/tags/index.xml" rel="self" type="application/rss+xml" />
+	<atom:link href="/tags/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
       <title>Sentiment Analysis</title>
-      <link>https://nervous-wright-ea05a8.netlify.com/tags/sentiment-analysis/</link>
+      <link>/tags/sentiment-analysis/</link>
       <pubDate>Tue, 10 Dec 2019 00:00:00 +0000</pubDate>
       
-      <guid>https://nervous-wright-ea05a8.netlify.com/tags/sentiment-analysis/</guid>
+      <guid>/tags/sentiment-analysis/</guid>
       <description></description>
     </item>
     
     <item>
       <title>Text Analysis</title>
-      <link>https://nervous-wright-ea05a8.netlify.com/tags/text-analysis/</link>
+      <link>/tags/text-analysis/</link>
       <pubDate>Tue, 10 Dec 2019 00:00:00 +0000</pubDate>
       
-      <guid>https://nervous-wright-ea05a8.netlify.com/tags/text-analysis/</guid>
+      <guid>/tags/text-analysis/</guid>
       <description></description>
     </item>
     
     <item>
       <title>ARIMA</title>
-      <link>https://nervous-wright-ea05a8.netlify.com/tags/arima/</link>
+      <link>/tags/arima/</link>
       <pubDate>Sat, 30 Nov 2019 00:00:00 +0000</pubDate>
       
-      <guid>https://nervous-wright-ea05a8.netlify.com/tags/arima/</guid>
+      <guid>/tags/arima/</guid>
       <description></description>
     </item>
     
     <item>
       <title>Time Series</title>
-      <link>https://nervous-wright-ea05a8.netlify.com/tags/time-series/</link>
+      <link>/tags/time-series/</link>
       <pubDate>Sat, 30 Nov 2019 00:00:00 +0000</pubDate>
       
-      <guid>https://nervous-wright-ea05a8.netlify.com/tags/time-series/</guid>
+      <guid>/tags/time-series/</guid>
       <description></description>
     </item>
     
