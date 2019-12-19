@@ -1,0 +1,88 @@
+---
+title: Twitter sentiment analysis part:2
+author: Kevin Bonds
+date: '2019-12-16'
+slug: twitter-sentiment-analysis-part-2
+categories:
+  - Sentiment Analysis
+  - Text Analysis
+tags:
+  - Text Analysis
+  - Sentiment Analysis
+---
+
+## Under Constuction
+<!--more-->
+
+### Libraries Used
+```{r setup, message=FALSE, warning=FALSE}
+library(tidyverse)
+library(readr)
+library(ggplot2)
+library(caret)
+library(knitr)
+library(quanteda)
+library(doSNOW)
+library(gridExtra)
+
+```
+
+```{r part_1_load, echo=FALSE}
+load("../../Tweet_image_part_1.RData")
+```
+
+```{r echo=FALSE, results='hide'}
+vec<-paste(unlist(train$SentimentText), sep = " ", collapse = " ")
+vec[which(c(1, diff(vec)) != 0)]
+
+vec<-paste(unlist(train$SentimentText), unlist(test$SentimentText), sep = " ", collapse = " ")
+````
+
+```{r Load_POS,echo=TRUE, include=FALSE, eval=FALSE}
+train_lem_final <- read_tsv("../../train_lem_final.txt", col_names = c("Word", "POS", "Lema"))
+index_lem <- which(train_lem_final$Lema %in% c("<unknown>", NA))
+train_lem_final <- train_lem_final[-index_lem, ]
+
+# file with Parts of Speach mappings
+source("../../POS_tbl.R")
+
+# Join mapping table
+train_lem_final <- left_join(train_lem_final, POS_tbl, by = c("POS"="POS.Tag"))
+
+# Add a stopword flag
+train_lem_final <- unique(train_lem_final)
+stop_vec <- train_lem_final$Word %in% stopwords()
+train_lem_final$stop <- stop_vec 
+```
+
+
+So let's look into these tweets using quanteda a little more. We'll use quanteda's text 
+
+```{r}
+corpus_lem <- corpus(train$SentimentText)
+```
+
+```{r}
+head(summary(corpus_lem))
+```
+
+```{r}
+docvars(corpus_lem, "Sentiment") <- train$Sentiment
+
+```
+
+```{r}
+head(summary(corpus_lem))
+```
+
+```{r}
+kwic(corpus_lem, "diversity")
+```
+
+This illustrates an important point about text analysis. I expected to find tweets about inclusion. Instead, it seems there was a dance troop called Diversity that won a "Britain's Got Talent". 
+
+```{r}
+texts(corpus_lem)[2935]
+```
+
+

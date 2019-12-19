@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en-us"><head>
   <meta charset="utf-8">
-  <title>Posts</title>
+  <title>Twitter sentiment analysis part:2</title>
 
   <!-- mobile responsive meta -->
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
@@ -78,88 +78,73 @@
 </header>
 <!-- /navigation --> <div class="py-5 d-none d-lg-block"></div> 
 
-
 <section class="section">
   <div class="container">
     <div class="row">
-      <div class="col-lg-8 mx-auto px-0">
-        <h2 class="mb-4">Posts are showing from <span class="text-primary">Posts</span> categories</h2>
-        <div class="bg-white shadow block">
+      <div class="col-lg-8 mx-auto block shadow mb-5">
+        <h2>Twitter sentiment analysis part:2</h2>
+        <div class="mb-3"><span>by <a href="/author/kevin-bonds">Kevin bonds</a></span>,
+          <span>at 16 December 2019</span>, category :
           
+          <a href="/categories/sentiment-analysis">Sentiment analysis</a>
           
-          <article class="mb-5">
-            <h2 class="h4"><a class="text-dark" href="/post/twitter-sentiment-analysis-part-2/">Twitter sentiment analysis part:2</a></h2>
-            <div class="mb-3"><span>by <a href="/author/kevin-bonds">Kevin bonds</a></span>,
-              <span>at 16 December 2019</span>, category :
-              
-              <a href="/categories/sentiment-analysis">Sentiment analysis</a>
-              
-              <a href="/categories/text-analysis">Text analysis</a>
-              
-            </div>
-            <p>
+          <a href="/categories/text-analysis">Text analysis</a>
+          
+        </div>
+        
+        <div class="content mb-5">
+          <div id="libraries-used" class="section level3">
+<h3>Libraries Used</h3>
+<pre class="r"><code>library(tidyverse)
+library(readr)
+library(ggplot2)
+library(caret)
+library(knitr)
+library(quanteda)
+library(doSNOW)
+library(gridExtra)</code></pre>
+<p>So let’s look into these tweets using quanteda a little more. We’ll use quanteda’s text</p>
+<pre class="r"><code>corpus_lem &lt;- corpus(train$SentimentText)</code></pre>
+<pre class="r"><code>head(summary(corpus_lem))</code></pre>
+<pre><code>##    Text Types Tokens Sentences
+## 1 text1    29     34         1
+## 2 text2    27     31         2
+## 3 text3     2      3         1
+## 4 text4     3      4         1
+## 5 text5     2      2         1
+## 6 text6    11     15         1</code></pre>
+<pre class="r"><code>docvars(corpus_lem, &quot;Sentiment&quot;) &lt;- train$Sentiment</code></pre>
+<pre class="r"><code>head(summary(corpus_lem))</code></pre>
+<pre><code>##    Text Types Tokens Sentences Sentiment
+## 1 text1    29     34         1  Negative
+## 2 text2    27     31         2  Negative
+## 3 text3     2      3         1  Negative
+## 4 text4     3      4         1  Negative
+## 5 text5     2      2         1  Positive
+## 6 text6    11     15         1  Negative</code></pre>
+<pre class="r"><code>kwic(corpus_lem, &quot;diversity&quot;)</code></pre>
+<pre><code>##                                                              
+##    [text368, 6] @degsy@anti_social i&#39;m not sure | diversity |
+##  [text2935, 10]                        a nap... | Diversity |
+##                           
+##  have shed enough tears to
+##  won! yeah! gonna</code></pre>
+<p>This illustrates an important point about text analysis. I expected to find tweets about inclusion. Instead, it seems there was a dance troop called Diversity that won a “Britain’s Got Talent”.</p>
+<pre class="r"><code>texts(corpus_lem)[2935]</code></pre>
+<pre><code>##                                                                                                                      text2935 
+## &quot;just woke up from a nap... Diversity won! yeah! gonna hunt for vids on yt  on a sadder note, im very congested this morning&quot;</code></pre>
+</div>
+</div>
 
-
-<div id="under-constuction" class="section level2">
-<h2>Under Constuction</h2>
-</p>
-            <a href="/post/twitter-sentiment-analysis-part-2/" class="btn btn-sm btn-outline-primary">read more</a>
-          </article>
-          
-          <article class="mb-5">
-            <h2 class="h4"><a class="text-dark" href="/post/twitter-sentiment-analysis/">Twitter Sentiment Analysis</a></h2>
-            <div class="mb-3"><span>by <a href="/author/kevin-bonds">Kevin bonds</a></span>,
-              <span>at 10 December 2019</span>, category :
-              
-              <a href="/categories/text-analysis">Text analysis</a>
-              
-              <a href="/categories/sentiment-analysis">Sentiment analysis</a>
-              
-              <a href="/categories/feature-engineering">Feature engineering</a>
-              
-            </div>
-            <p>
-
-
-<p>The following is an analysis of the <em>Twitter Sentiment Analysis Dataset</em> available at: <a href="http://thinknook.com/twitter-sentiment-analysis-training-corpus-dataset-2012-09-22/" class="uri">http://thinknook.com/twitter-sentiment-analysis-training-corpus-dataset-2012-09-22/</a>. I will attempt to use this data to train a model to label unseen tweets into <strong>“Positive”</strong> or <strong>“Negative”</strong> sentiment. I will walk through my methodology and include code. </p>
-            <a href="/post/twitter-sentiment-analysis/" class="btn btn-sm btn-outline-primary">read more</a>
-          </article>
-          
-          <article class="mb-5">
-            <h2 class="h4"><a class="text-dark" href="/post/time-series-analysis-of-crude-oil/">Time Series Analysis of crude oil</a></h2>
-            <div class="mb-3"><span>by <a href="/author/kevin-bonds">Kevin bonds</a></span>,
-              <span>at 30 November 2019</span>, category :
-              
-              <a href="/categories/time-series">Time series</a>
-              
-              <a href="/categories/arima">A r i m a</a>
-              
-            </div>
-            <p>In order to illustrate data modeling techniques, and also experiment and learn, the following data analysis will be carried out and discussed.</p>
-            <a href="/post/time-series-analysis-of-crude-oil/" class="btn btn-sm btn-outline-primary">read more</a>
-          </article>
-          
-          
-          <div class="mt-5">
-            <!-- pagination -->
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            <!-- /pagination -->
-          </div>
         </div>
       </div>
+      <div class="col-lg-8 mx-auto block shadow">
+        
+        
+      </div>
     </div>
+  </div>
 </section>
-
 
 
 <footer class="py-4 bg-light border-top">

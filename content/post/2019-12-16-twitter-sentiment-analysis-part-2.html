@@ -1,0 +1,60 @@
+---
+title: Twitter sentiment analysis part:2
+author: Kevin Bonds
+date: '2019-12-16'
+slug: twitter-sentiment-analysis-part-2
+categories:
+  - Sentiment Analysis
+  - Text Analysis
+tags:
+  - Text Analysis
+  - Sentiment Analysis
+---
+
+
+
+<div id="under-constuction" class="section level2">
+<h2>Under Constuction</h2>
+<!--more-->
+<div id="libraries-used" class="section level3">
+<h3>Libraries Used</h3>
+<pre class="r"><code>library(tidyverse)
+library(readr)
+library(ggplot2)
+library(caret)
+library(knitr)
+library(quanteda)
+library(doSNOW)
+library(gridExtra)</code></pre>
+<p>So let’s look into these tweets using quanteda a little more. We’ll use quanteda’s text</p>
+<pre class="r"><code>corpus_lem &lt;- corpus(train$SentimentText)</code></pre>
+<pre class="r"><code>head(summary(corpus_lem))</code></pre>
+<pre><code>##    Text Types Tokens Sentences
+## 1 text1    29     34         1
+## 2 text2    27     31         2
+## 3 text3     2      3         1
+## 4 text4     3      4         1
+## 5 text5     2      2         1
+## 6 text6    11     15         1</code></pre>
+<pre class="r"><code>docvars(corpus_lem, &quot;Sentiment&quot;) &lt;- train$Sentiment</code></pre>
+<pre class="r"><code>head(summary(corpus_lem))</code></pre>
+<pre><code>##    Text Types Tokens Sentences Sentiment
+## 1 text1    29     34         1  Negative
+## 2 text2    27     31         2  Negative
+## 3 text3     2      3         1  Negative
+## 4 text4     3      4         1  Negative
+## 5 text5     2      2         1  Positive
+## 6 text6    11     15         1  Negative</code></pre>
+<pre class="r"><code>kwic(corpus_lem, &quot;diversity&quot;)</code></pre>
+<pre><code>##                                                              
+##    [text368, 6] @degsy@anti_social i&#39;m not sure | diversity |
+##  [text2935, 10]                        a nap... | Diversity |
+##                           
+##  have shed enough tears to
+##  won! yeah! gonna</code></pre>
+<p>This illustrates an important point about text analysis. I expected to find tweets about inclusion. Instead, it seems there was a dance troop called Diversity that won a “Britain’s Got Talent”.</p>
+<pre class="r"><code>texts(corpus_lem)[2935]</code></pre>
+<pre><code>##                                                                                                                      text2935 
+## &quot;just woke up from a nap... Diversity won! yeah! gonna hunt for vids on yt  on a sadder note, im very congested this morning&quot;</code></pre>
+</div>
+</div>

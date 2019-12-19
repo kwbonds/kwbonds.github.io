@@ -16,7 +16,7 @@ tags:
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-The following is an analysis of the _Twitter Sentiment Analysis Dataset_ available at: http://thinknook.com/twitter-sentiment-analysis-training-corpus-dataset-2012-09-22/. I will attempt to use this data to train a model to label unseen tweets into **"Positive"** or **"Negative"** sentiment. I will walk through my methodology and include code. The github repo for my work can be found here: https://github.com/kwbonds/TwitterSentimentAnalysis. ^[The file is > 50 MB, so I have taken a stratified sample and loaded it for this example (mainly so that this website will load). If you want to begin with the original, you will need to download it from the source above and read it into your working directory as an object named _raw_tweets_.]
+The following is an analysis of the _Twitter Sentiment Analysis Dataset_ available at: http://thinknook.com/twitter-sentiment-analysis-training-corpus-dataset-2012-09-22/. I will attempt to use this data to train a model to label unseen tweets into **"Positive"** or **"Negative"** sentiment. I will walk through my methodology and include code. <!--more--> The github repo for my work can be found here: https://github.com/kwbonds/TwitterSentimentAnalysis. ^[The file is > 50 MB, so I have taken a stratified sample and loaded it for this example (mainly so that this website will load). If you want to begin with the original, you will need to download it from the source above and read it into your working directory as an object named _raw_tweets_.]
 
 ### Libraries Used
 ```{r setup, message=FALSE, warning=FALSE}
@@ -395,4 +395,8 @@ rpart1
 Outputting the model results we see that we have an accuracy `r paste(format(max(rpart1$results$Accuracy) * 100, digits = 3), "%", sep = "")` accuracy already. That isn't bad. Really we want to get to about 90% if we can. This is already better than a coin flip and we haven't even begun. Let's take some steps to improve things.
 
 #### To be continued...
+
+```{r}
+
+```
 
