@@ -3,6 +3,7 @@ library(tidyverse)
 library(readxl)
 library(lubridate)
 library(zoo)
+
 raw_tweets_zip <-  read_csv(unzip("/Users/Kevin/Documents/TweetSentimentAnalysis/data/Sentiment-Analysis-Dataset.zip"))
 # Stratified Sample of Twitter file for publishing to Github
 set.seed(42)

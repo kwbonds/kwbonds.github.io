@@ -290,9 +290,6 @@ train_tokens[[29]]
 ```
 
 ```{r}
-# Stem tokens
-train_tokens <- tokens_wordstem(train_tokens, 
-                                language = "english")
 train_tokens[[30]]
 ```
 
