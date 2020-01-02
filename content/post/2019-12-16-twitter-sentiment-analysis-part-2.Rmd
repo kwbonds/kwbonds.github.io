@@ -1,5 +1,5 @@
 ---
-title: Twitter sentiment analysis part:2
+title: Twitter Sentiment Analysis Part:2
 author: Kevin Bonds
 date: '2019-12-16'
 slug: twitter-sentiment-analysis-part-2
@@ -12,7 +12,7 @@ tags:
   - Sentiment Analysis
 ---
 
-## Under Constuction
+This is the second part of the Twitter Sentiment Analysis. I will create a TFIDF and perform some dimensionality reduction to allow me to use the mighty Random Forrest algorithm. 
 <!--more-->
 
 ### Libraries Used
@@ -28,7 +28,7 @@ library(gridExtra)
 
 ```
 
-In the first part we trained a single decision tree with our document-frequency matrix using just the tokenized text. i.e. simple Bag-of-words approach. Now let's see if I can use some n-grams to add some word order element to our approach to see if we get better results. The one caveat is that creating n-grams explodes our feature space quite significantly. Even a modest approach leads to tens-of-thousands of features and a very sparse feature matrix. Also, since I are doing this on a small laptop this quickly grows into something unweildy. Therefore I will not go through the interim step of building a similar single decision tree model with this larger feature matrix. Instead I will use a technique to reduce this feature space down to a manageble level. I'll use Singular Value Decomposition to acheive this. 
+In the first part we trained a single decision tree with our document-frequency matrix using just the tokenized text. i.e. simple Bag-of-words approach. Now let's see if I can use some n-grams to add some word order element to our approach to see if we get better results. The one caveat is that creating n-grams explodes our feature space quite significantly. Even a modest approach leads to tens-of-thousands of features and a very sparse feature matrix. Also, since I are doing this on a small laptop this quickly grows into something unwieldy. Therefore I will not go through the interim step of building a similar single decision tree model with this larger feature matrix. Instead I will use a technique to reduce this feature space down to a manageable level. I'll use Singular Value Decomposition to achieve this. 
 
 ```{r part_1_load, echo=FALSE}
 load("../../Tweet_image_part_1.RData")
@@ -38,23 +38,43 @@ load("../../Tweet_image_part_1.RData")
 raw_tweets <- readRDS("../../raw_tweets.rds")
 ```
 
+
+```{r train_tokens_init, echo=FALSE, cache=TRUE}
+# Convert SentimentText column to tokens
+train_tokens <- tokens(train$SentimentText, 
+                       what = "word", 
+                       remove_numbers = TRUE, 
+                       remove_punct = TRUE, 
+                       remove_twitter = TRUE,
+                       remove_symbols = TRUE, 
+                       remove_hyphens = TRUE)
+train_tokens <- tokens_tolower(train_tokens)
+train_tokens <- tokens_select(train_tokens, 
+                              stopwords(), 
+                              selection = "remove")
+train_tokens <- tokens_wordstem(train_tokens, 
+                                language = "english")
+train_dfm <- dfm(train_tokens, 
+                 tolower = FALSE)
+```
+
+
 ### TF-IDF
 
 So let's create a term-frequency inverse frequency matrix to train on.
 ```{r}
-train_dfm <- dfm(train_tokens, 
-                 tolower = FALSE)
 train_tfidf <- dfm_tfidf(train_dfm, scheme_tf = 'prop')
 ```
 ```{r}
 which(!complete.cases(as.matrix(train_tfidf)))
 ```
+
 ```{r make_names, warning=FALSE, message=FALSE}
 train_tfidf_df <- cbind(Sentiment = train$Sentiment, data.frame(train_tfidf))
 names(train_tfidf_df) <- make.names(names(train_tfidf_df))
 ```
 
-```{r}
+```{r include=FALSE, echo=FALSE, eval=FALSE}
 start.time <- Sys.time()
 
 # Create a cluster to work on 10 logical cores.
@@ -78,31 +98,6 @@ total.time
 
 ### N-Grams
 
-```{r}
-# Convert SentimentText column to tokens
-train_tokens <- tokens(train$SentimentText, 
-                       what = "word", 
-                       remove_numbers = TRUE, 
-                       remove_punct = TRUE, 
-                       remove_twitter = TRUE,
-                       remove_symbols = TRUE, 
-                       remove_hyphens = TRUE)
-```
-
-```{r}
-train_tokens <- tokens_tolower(train_tokens)
-train_tokens <- tokens_select(train_tokens, 
-                              stopwords(), 
-                              selection = "remove")
-train_tokens <- tokens_wordstem(train_tokens, 
-                                language = "english")
-#train_tokens <- tokens_skipgrams(train_tokens, n = 2, skip = 1)
-```
-
-```{r}
-train_tokens[[2]]
-```
-
 
 ```{r}
 train_tokens <- tokens_ngrams(train_tokens, n = c(1,2))
@@ -115,7 +110,6 @@ train_tokens[[4]]
 
 
 ```{r}
-train_dfm = dfm(train_tokens, tolower = FALSE )
 train_matrix <- as.matrix(train_dfm)
 train_dfm
 ```
@@ -142,6 +136,8 @@ train_df <- cbind("Sentiment" = as.factor(train$Sentiment),
 names(train_df) <- make.names(names(train_df), 
                               unique = TRUE)
 ```
+
+Garbage collection.
 
 ```{r}
 gc()
@@ -193,13 +189,13 @@ train_tfidf
 ```
 
 
-```{r}
+```{r cache=TRUE}
 # Time the code execution
 start.time <- Sys.time()
 
 # Perform SVD. Specifically, reduce dimensionality down to 300 columns
 # for our latent semantic analysis (LSA).
-train.irlba <- irlba(t(as.matrix(train_tfidf)), nv = 200, maxit = 400)
+train.irlba <- irlba(t(as.matrix(train_tfidf)), nv = 300, maxit = 600)
 
 # Total time of execution on workstation was 
 total.time <- Sys.time() - start.time
@@ -210,7 +206,7 @@ total.time
 train.svd <- data.frame(Sentiment = train$Sentiment, train.irlba$v)
 ```
 
-```{r}
+```{r eval=FALSE, include=FALSE, echo=FALSE}
 # Create a cluster to work on 10 logical cores.
 cl <- makeCluster(10, type = "SOCK")
 registerDoSNOW(cl)
@@ -231,11 +227,11 @@ total.time <- Sys.time() - start.time
 total.time
 ```
 
-```{r eval=FALSE, echo=FALSE}
+```{r eval=FALSE, echo=FALSE, include=FALSE}
 save(rpart.cv.4, file = "../../rpart4.rds")
 ```
 
-```{r random_forrest}
+```{r random_forrest, eval=FALSE}
 # Create a cluster to work on 10 logical cores.
 cl <- makeCluster(4, type = "SOCK")
  registerDoSNOW(cl)
@@ -259,4 +255,56 @@ stopCluster(cl)
 total.time <- Sys.time() - start.time
 total.time
 ```
+
+```{r eval=FALSE, echo=FALSE, include=FALSE}
+save(rf.cv.1, file = "../../rf1.rds")
+```
+
+```{r rf_1}
+load(file = "../../rf1.rds")
+rf.cv.1
+```
+
+Outputting the model results we see that we have an accuracy of `r paste(format(max(rf.cv.1$results$Accuracy) * 100, digits = 3), "%", sep = "")` accuracy.
+
+### Combine Skipgrams with N-grams
+
+```{r}
+train_tokens2 <- tokens_skipgrams(train_tokens, n = 2, skip = 1)
+train_tokens2[[2]]
+```
+
+```{r eval=FALSE, include=FALSE, echo=FALSE}
+train_tokens <- tokens(train$SentimentText, 
+                       what = "word", 
+                       remove_numbers = TRUE, 
+                       remove_punct = TRUE, 
+                       remove_twitter = TRUE,
+                       remove_symbols = TRUE, 
+                       remove_hyphens = TRUE)
+train_tokens[[2]]
+```
+
+```{r eval=FALSE, include=FALSE, echo=FALSE}
+train_tokens <- tokens_tolower(train_tokens)
+train_tokens <- tokens_select(train_tokens, 
+                              stopwords(), 
+                              selection = "remove")
+train_tokens <- tokens_wordstem(train_tokens, 
+                                language = "english")
+train_tokens[[2]]
+```
+
+
+```{r include=FALSE, echo=FALSE, eval=FALSE}
+for(i in train_tokens){
+  c(train_tokens[[i]], train_tokens2[[i]])
+}
+```
+
+
+```{r echo=FALSE, eval=FALSE, include=FALSE}
+train_tokens[[2]]
+```
+
 

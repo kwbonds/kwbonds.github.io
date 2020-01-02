@@ -333,7 +333,8 @@ plot2 &lt;- ggplot(raw_tweets,
                 aes(x = at_ref_count, 
                     fill = Sentiment)) +
         geom_histogram(binwidth = 1, 
-                       position = &quot;stack&quot;) +
+                       position = &quot;identity&quot;, 
+                       alpha = 0.5) +
         xlim(-1,3) +
         labs(y = &quot;Text Count&quot;, x = &quot;Count of @ref&quot;,
              title = &quot;Distribution of @ref&quot;)
@@ -342,13 +343,25 @@ plot3 &lt;- ggplot(raw_tweets,
                 aes(x = hashtag_count, 
                     fill = Sentiment)) +
         geom_histogram(binwidth = 1, 
-                       position = &quot;stack&quot;) +
+                       position = &quot;identity&quot;, 
+                       alpha = 0.5) +
         xlim(-1,3) +
         labs(y = &quot;Text Count&quot;, 
              x = &quot;Count of Hashtags&quot;,
              title = &quot;Distribution of Hashtags&quot;)
 
-grid.arrange(plot1, plot2, plot3, nrow=3, ncol=1)</code></pre>
+plot4 &lt;- ggplot(raw_tweets, 
+                aes(x = web_count, 
+                    fill = Sentiment)) +
+        geom_histogram(binwidth = 1, 
+                       position = &quot;identity&quot;,
+                       alpha = 0.5) +
+        xlim(-1,3) +
+        labs(y = &quot;Text Count&quot;, 
+             x = &quot;Count of Weblinks&quot;,
+             title = &quot;Distribution of Weblinks&quot;)
+
+grid.arrange(plot1, plot2, plot3, plot4, nrow=4, ncol=1)</code></pre>
 <p><img src="/post/2019-12-10-twitter-sentiment-analysis_files/figure-html/grid_plot-1.png" width="576" /></p>
 <p>Doesn’t look like any of the features we engineered suggest much predictive value. We’ll have to rely on tokenizing the text to get our features–unless we can come up with other ideas. We can start with simple tokenozation (i.e. “Bag of Words”) and also try some N-grams. Simple Bag of Words tokenization does not preserve the word order or association, but N-grams will cause our feature space to explode and is typically very sparse. This will require some dimensionality reduction–which will certainly add complexity and is a “black-box”&quot; method. i.e we lose the ability to inspect or explain the model.</p>
 <p>Let’s start creating our test/train set and start modeling.</p>
@@ -362,7 +375,7 @@ set.seed(42)
 partition_1_indexes &lt;- createDataPartition(raw_tweets$Sentiment, 
                                            times = 1, p = 0.10, list = FALSE)
 # Create dataframe
-train_validate &lt;- raw_tweets[partition_1_indexes, c(2,4)]
+train_validate &lt;- raw_tweets[partition_1_indexes, c(2, 4, 7)]
 # Reset seed
 set.seed(42)
 # Retrieve indexes for train and test partition
@@ -451,10 +464,7 @@ train_tokens[[29]]</code></pre>
 <pre><code>##  [1] &quot;quot&quot;    &quot;great&quot;   &quot;smile&quot;   &quot;quot&quot;    &quot;thank&quot;   &quot;got&quot;     &quot;comment&quot;
 ##  [8] &quot;demi&quot;    &quot;quot&quot;    &quot;s&quot;       &quot;singl&quot;   &quot;la&quot;      &quot;la&quot;      &quot;land&quot;   
 ## [15] &quot;music&quot;   &quot;video&quot;   &quot;haha&quot;    &quot;realli&quot;  &quot;good&quot;    &quot;smile&quot;</code></pre>
-<pre class="r"><code># Stem tokens
-train_tokens &lt;- tokens_wordstem(train_tokens, 
-                                language = &quot;english&quot;)
-train_tokens[[30]]</code></pre>
+<pre class="r"><code>train_tokens[[30]]</code></pre>
 <pre><code>##  [1] &quot;allow&quot;   &quot;drum&quot;    &quot;stuck&quot;   &quot;bass&quot;    &quot;instead&quot; &quot;jack&quot;    &quot;bruce&quot;  
 ##  [8] &quot;still&quot;   &quot;blew&quot;    &quot;band&quot;    &quot;member&quot;  &quot;away&quot;    &quot;natch&quot;</code></pre>
 <p>You can see that “allowed” becomes “allow”, and “drums” becomes “drum”, etc.</p>
@@ -470,10 +480,10 @@ train_dfm %&gt;% textplot_wordcloud()</code></pre>
 <p><img src="/post/2019-12-10-twitter-sentiment-analysis_files/figure-html/wordcloud-1.png" width="672" /></p>
 <pre class="r"><code># Convert to matrix
 train_dfm &lt;- as.matrix(train_dfm)</code></pre>
-<p>We now have a matrix–the length of our original data frame–now with 9157 features in the term. That is a lot of features. We are definitely suffering from the “curse of dimensionality”. We’ll need to do some feature reduction at some point.</p>
+<p>We now have a matrix–the length of our original data frame–now with 9189 features in the term. That is a lot of features. We are definitely suffering from the “curse of dimensionality”. We’ll need to do some feature reduction at some point.</p>
 <pre class="r"><code># Check dimensions of the DFM
 dim(train_dfm)</code></pre>
-<pre><code>## [1] 4732 9157</code></pre>
+<pre><code>## [1] 4732 9189</code></pre>
 <p>Let’s look at the first 6 documents (as rows) and the first 20 features of the term (as columns).</p>
 <pre class="r"><code># View part of the matrix
 kable(head(train_dfm[1:6, 1:20]))</code></pre>

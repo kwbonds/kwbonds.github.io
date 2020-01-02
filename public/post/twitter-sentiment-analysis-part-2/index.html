@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en-us"><head>
   <meta charset="utf-8">
-  <title>Twitter sentiment analysis part:2</title>
+  <title>Twitter Sentiment Analysis Part:2</title>
 
   <!-- mobile responsive meta -->
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
@@ -82,7 +82,7 @@
   <div class="container">
     <div class="row">
       <div class="col-lg-8 mx-auto block shadow mb-5">
-        <h2>Twitter sentiment analysis part:2</h2>
+        <h2>Twitter Sentiment Analysis Part:2</h2>
         <div class="mb-3"><span>by <a href="/author/kevin-bonds">Kevin bonds</a></span>,
           <span>at 16 December 2019</span>, category :
           
@@ -93,7 +93,8 @@
         </div>
         
         <div class="content mb-5">
-          <div id="libraries-used" class="section level3">
+          </p>
+<div id="libraries-used" class="section level3">
 <h3>Libraries Used</h3>
 <pre class="r"><code>library(tidyverse)
 library(readr)
@@ -103,37 +104,160 @@ library(knitr)
 library(quanteda)
 library(doSNOW)
 library(gridExtra)</code></pre>
-<p>So let’s look into these tweets using quanteda a little more. We’ll use quanteda’s text</p>
-<pre class="r"><code>corpus_lem &lt;- corpus(train$SentimentText)</code></pre>
-<pre class="r"><code>head(summary(corpus_lem))</code></pre>
-<pre><code>##    Text Types Tokens Sentences
-## 1 text1    29     34         1
-## 2 text2    27     31         2
-## 3 text3     2      3         1
-## 4 text4     3      4         1
-## 5 text5     2      2         1
-## 6 text6    11     15         1</code></pre>
-<pre class="r"><code>docvars(corpus_lem, &quot;Sentiment&quot;) &lt;- train$Sentiment</code></pre>
-<pre class="r"><code>head(summary(corpus_lem))</code></pre>
-<pre><code>##    Text Types Tokens Sentences Sentiment
-## 1 text1    29     34         1  Negative
-## 2 text2    27     31         2  Negative
-## 3 text3     2      3         1  Negative
-## 4 text4     3      4         1  Negative
-## 5 text5     2      2         1  Positive
-## 6 text6    11     15         1  Negative</code></pre>
-<pre class="r"><code>kwic(corpus_lem, &quot;diversity&quot;)</code></pre>
-<pre><code>##                                                              
-##    [text368, 6] @degsy@anti_social i&#39;m not sure | diversity |
-##  [text2935, 10]                        a nap... | Diversity |
-##                           
-##  have shed enough tears to
-##  won! yeah! gonna</code></pre>
-<p>This illustrates an important point about text analysis. I expected to find tweets about inclusion. Instead, it seems there was a dance troop called Diversity that won a “Britain’s Got Talent”.</p>
-<pre class="r"><code>texts(corpus_lem)[2935]</code></pre>
-<pre><code>##                                                                                                                      text2935 
-## &quot;just woke up from a nap... Diversity won! yeah! gonna hunt for vids on yt  on a sadder note, im very congested this morning&quot;</code></pre>
+<p>In the first part we trained a single decision tree with our document-frequency matrix using just the tokenized text. i.e. simple Bag-of-words approach. Now let’s see if I can use some n-grams to add some word order element to our approach to see if we get better results. The one caveat is that creating n-grams explodes our feature space quite significantly. Even a modest approach leads to tens-of-thousands of features and a very sparse feature matrix. Also, since I are doing this on a small laptop this quickly grows into something unwieldy. Therefore I will not go through the interim step of building a similar single decision tree model with this larger feature matrix. Instead I will use a technique to reduce this feature space down to a manageable level. I’ll use Singular Value Decomposition to achieve this.</p>
+<pre class="r"><code>raw_tweets &lt;- readRDS(&quot;../../raw_tweets.rds&quot;)</code></pre>
 </div>
+<div id="tf-idf" class="section level3">
+<h3>TF-IDF</h3>
+<p>So let’s create a term-frequency inverse frequency matrix to train on.</p>
+<pre class="r"><code>train_tfidf &lt;- dfm_tfidf(train_dfm, scheme_tf = &#39;prop&#39;)</code></pre>
+<pre class="r"><code>which(!complete.cases(as.matrix(train_tfidf)))</code></pre>
+<pre><code>## integer(0)</code></pre>
+<pre class="r"><code>train_tfidf_df &lt;- cbind(Sentiment = train$Sentiment, data.frame(train_tfidf))
+names(train_tfidf_df) &lt;- make.names(names(train_tfidf_df))</code></pre>
+</div>
+<div id="n-grams" class="section level3">
+<h3>N-Grams</h3>
+<pre class="r"><code>train_tokens &lt;- tokens_ngrams(train_tokens, n = c(1,2))
+train_tokens[[2]]</code></pre>
+<pre><code>##  [1] &quot;think&quot;          &quot;felt&quot;           &quot;realli&quot;         &quot;sick&quot;          
+##  [5] &quot;depress&quot;        &quot;school&quot;         &quot;today&quot;          &quot;cuz&quot;           
+##  [9] &quot;stress&quot;         &quot;glad&quot;           &quot;got&quot;            &quot;chest&quot;         
+## [13] &quot;think_felt&quot;     &quot;felt_realli&quot;    &quot;realli_sick&quot;    &quot;sick_depress&quot;  
+## [17] &quot;depress_school&quot; &quot;school_today&quot;   &quot;today_cuz&quot;      &quot;cuz_stress&quot;    
+## [21] &quot;stress_glad&quot;    &quot;glad_got&quot;       &quot;got_chest&quot;</code></pre>
+<pre class="r"><code>train_tokens[[4]]</code></pre>
+<pre><code>## [1] &quot;hug&quot;               &quot;ignorantsheep&quot;     &quot;hug_ignorantsheep&quot;</code></pre>
+<pre class="r"><code>train_matrix &lt;- as.matrix(train_dfm)
+train_dfm</code></pre>
+<pre><code>## Document-feature matrix of: 4,732 documents, 9,189 features (99.9% sparse).</code></pre>
+<pre class="r"><code># Create wordcloud
+train_dfm %&gt;% textplot_wordcloud()</code></pre>
+<p><img src="/post/2019-12-16-twitter-sentiment-analysis-part-2_files/figure-html/wordcloud2-1.png" width="672" /></p>
+<pre class="r"><code># Convert to matrix
+train_dfm &lt;- as.matrix(train_dfm)</code></pre>
+<pre class="r"><code># Bind the DFM, Sentiment together as a dataframe
+train_df &lt;- cbind(&quot;Sentiment&quot; = as.factor(train$Sentiment), 
+                  as.data.frame(train_dfm))</code></pre>
+<pre class="r"><code># Alter any names that don&#39;t work as columns
+names(train_df) &lt;- make.names(names(train_df), 
+                              unique = TRUE)</code></pre>
+<p>Garbage collection.</p>
+<pre class="r"><code>gc()</code></pre>
+<pre><code>##             used   (Mb) gc trigger   (Mb) limit (Mb)  max used   (Mb)
+## Ncells   2558488  136.7    4198858  224.3         NA   4198858  224.3
+## Vcells 179738733 1371.3  286484772 2185.8      65536 198823562 1517.0</code></pre>
+<pre class="r"><code># Set seed
+set.seed(42)
+# Define indexes for the training control 
+cv_folds &lt;- createMultiFolds(train$Sentiment, 
+                             k = 10, times = 3)
+# Build training control object
+cv_cntrl &lt;- trainControl(method = &quot;repeatedcv&quot;, 
+                         number = 10,
+                         repeats = 3, 
+                         index = cv_folds)</code></pre>
+<pre class="r"><code># Train a decision tree model using 
+# the training control we setup
+#start.time &lt;- Sys.time()
+
+# Create a cluster to work on 10 logical cores.
+#cl &lt;- makeCluster(3, type = &quot;SOCK&quot;)
+#registerDoSNOW(cl)
+
+# rpart2 &lt;- train(Sentiment ~ ., 
+#                 data = train_df, 
+#                 method = &quot;rpart&quot;, 
+#                 trControl = cv_cntrl, 
+#                 tuneLength = 7)
+ 
+ # Processing is done, stop cluster.
+#stopCluster(cl)
+
+# Total time of execution on workstation was 
+#total.time &lt;- Sys.time() - start.time
+#total.time</code></pre>
+<pre class="r"><code>library(irlba)</code></pre>
+<pre><code>## Loading required package: Matrix</code></pre>
+<pre><code>## 
+## Attaching package: &#39;Matrix&#39;</code></pre>
+<pre><code>## The following objects are masked from &#39;package:tidyr&#39;:
+## 
+##     expand, pack, unpack</code></pre>
+<pre class="r"><code>train_tfidf</code></pre>
+<pre><code>## Document-feature matrix of: 4,732 documents, 9,189 features (99.9% sparse).</code></pre>
+<pre class="r"><code># Time the code execution
+start.time &lt;- Sys.time()
+
+# Perform SVD. Specifically, reduce dimensionality down to 300 columns
+# for our latent semantic analysis (LSA).
+train.irlba &lt;- irlba(t(as.matrix(train_tfidf)), nv = 300, maxit = 600)
+
+# Total time of execution on workstation was 
+total.time &lt;- Sys.time() - start.time
+total.time</code></pre>
+<pre><code>## Time difference of 6.074358 mins</code></pre>
+<pre class="r"><code>train.svd &lt;- data.frame(Sentiment = train$Sentiment, train.irlba$v)</code></pre>
+<pre class="r"><code># Create a cluster to work on 10 logical cores.
+cl &lt;- makeCluster(4, type = &quot;SOCK&quot;)
+ registerDoSNOW(cl)
+
+# Time the code execution
+start.time &lt;- Sys.time()
+
+# We have reduced the dimensionality of our data using SVD. Also, the 
+# application of SVD allows us to use LSA to simultaneously increase the
+# information density of each feature. To prove this out, leverage a 
+# mighty Random Forest with the default of 500 trees. We&#39;ll also ask
+# caret to try 7 different values of mtry to find the mtry value that 
+# gives the best result!
+rf.cv.4 &lt;- train(Sentiment ~ ., data = train.svd, method = &quot;rf&quot;, 
+                 trControl = cv_cntrl, tuneLength = 4)
+
+# Processing is done, stop cluster.
+stopCluster(cl)
+
+# Total time of execution on workstation was 
+total.time &lt;- Sys.time() - start.time
+total.time</code></pre>
+<pre class="r"><code>load(file = &quot;../../rf1.rds&quot;)
+rf.cv.1</code></pre>
+<pre><code>## Random Forest 
+## 
+## 4732 samples
+##  500 predictor
+##    2 classes: &#39;Negative&#39;, &#39;Positive&#39; 
+## 
+## No pre-processing
+## Resampling: Cross-Validated (10 fold, repeated 3 times) 
+## Summary of sample sizes: 4258, 4258, 4259, 4259, 4259, 4260, ... 
+## Resampling results across tuning parameters:
+## 
+##   mtry  Accuracy   Kappa    
+##     2   0.6647551  0.3295559
+##    12   0.6767312  0.3535059
+##    79   0.6799018  0.3598693
+##   500   0.6732108  0.3465657
+## 
+## Accuracy was used to select the optimal model using the largest value.
+## The final value used for the model was mtry = 79.</code></pre>
+<p>Outputting the model results we see that we have an accuracy of 68% accuracy.</p>
+</div>
+<div id="combine-skipgrams-with-n-grams" class="section level3">
+<h3>Combine Skipgrams with N-grams</h3>
+<pre class="r"><code>train_tokens2 &lt;- tokens_skipgrams(train_tokens, n = 2, skip = 1)
+train_tokens2[[2]]</code></pre>
+<pre><code>##  [1] &quot;think_realli&quot;               &quot;felt_sick&quot;                 
+##  [3] &quot;realli_depress&quot;             &quot;sick_school&quot;               
+##  [5] &quot;depress_today&quot;              &quot;school_cuz&quot;                
+##  [7] &quot;today_stress&quot;               &quot;cuz_glad&quot;                  
+##  [9] &quot;stress_got&quot;                 &quot;glad_chest&quot;                
+## [11] &quot;got_think_felt&quot;             &quot;chest_felt_realli&quot;         
+## [13] &quot;think_felt_realli_sick&quot;     &quot;felt_realli_sick_depress&quot;  
+## [15] &quot;realli_sick_depress_school&quot; &quot;sick_depress_school_today&quot; 
+## [17] &quot;depress_school_today_cuz&quot;   &quot;school_today_cuz_stress&quot;   
+## [19] &quot;today_cuz_stress_glad&quot;      &quot;cuz_stress_glad_got&quot;       
+## [21] &quot;stress_glad_got_chest&quot;</code></pre>
 </div>
 
         </div>

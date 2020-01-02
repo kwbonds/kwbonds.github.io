@@ -12,7 +12,7 @@
     
     
     <item>
-      <title>Twitter sentiment analysis part:2</title>
+      <title>Twitter Sentiment Analysis Part:2</title>
       <link>/post/twitter-sentiment-analysis-part-2/</link>
       <pubDate>Mon, 16 Dec 2019 00:00:00 +0000</pubDate>
       
@@ -20,8 +20,7 @@
       <description>
 
 
-&lt;div id=&#34;under-constuction&#34; class=&#34;section level2&#34;&gt;
-&lt;h2&gt;Under Constuction&lt;/h2&gt;
+&lt;p&gt;This is the second part of the Twitter Sentiment Analysis. I will create a TFIDF and perform some dimensionality reduction to allow me to use the mighty Random Forrest algorithm.
 </description>
     </item>
     

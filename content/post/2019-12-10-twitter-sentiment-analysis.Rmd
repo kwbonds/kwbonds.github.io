@@ -161,7 +161,8 @@ plot2 <- ggplot(raw_tweets,
                 aes(x = at_ref_count, 
                     fill = Sentiment)) +
         geom_histogram(binwidth = 1, 
-                       position = "stack") +
+                       position = "identity", 
+                       alpha = 0.5) +
         xlim(-1,3) +
         labs(y = "Text Count", x = "Count of @ref",
              title = "Distribution of @ref")
@@ -170,13 +171,25 @@ plot3 <- ggplot(raw_tweets,
                 aes(x = hashtag_count, 
                     fill = Sentiment)) +
         geom_histogram(binwidth = 1, 
-                       position = "stack") +
+                       position = "identity", 
+                       alpha = 0.5) +
         xlim(-1,3) +
         labs(y = "Text Count", 
              x = "Count of Hashtags",
              title = "Distribution of Hashtags")
 
-grid.arrange(plot1, plot2, plot3, nrow=3, ncol=1)
+plot4 <- ggplot(raw_tweets, 
+                aes(x = web_count, 
+                    fill = Sentiment)) +
+        geom_histogram(binwidth = 1, 
+                       position = "identity",
+                       alpha = 0.5) +
+        xlim(-1,3) +
+        labs(y = "Text Count", 
+             x = "Count of Weblinks",
+             title = "Distribution of Weblinks")
+
+grid.arrange(plot1, plot2, plot3, plot4, nrow=4, ncol=1)
 ```
 
 Doesn't look like any of the features we engineered suggest much predictive value. We'll have to rely on tokenizing the text to get our features--unless we can come up with other ideas. We can start with simple tokenozation (i.e. "Bag of Words") and also try some N-grams. Simple Bag of Words tokenization does not preserve the word order or association, but N-grams will cause our feature space to explode and is typically very sparse. This will require some dimensionality reduction--which will certainly add complexity and is a "black-box"" method. i.e we lose the ability to inspect or explain the model. 
@@ -195,7 +208,7 @@ set.seed(42)
 partition_1_indexes <- createDataPartition(raw_tweets$Sentiment, 
                                            times = 1, p = 0.10, list = FALSE)
 # Create dataframe
-train_validate <- raw_tweets[partition_1_indexes, c(2,4)]
+train_validate <- raw_tweets[partition_1_indexes, c(2, 4, 7)]
 # Reset seed
 set.seed(42)
 # Retrieve indexes for train and test partition
