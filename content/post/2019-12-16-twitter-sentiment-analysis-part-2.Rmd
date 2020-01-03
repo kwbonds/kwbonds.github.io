@@ -1,7 +1,7 @@
 ---
 title: Twitter Sentiment Analysis Part:2
 author: Kevin Bonds
-date: '2019-12-16'
+date: '2020-01-03'
 slug: twitter-sentiment-analysis-part-2
 hidden: TRUE
 categories:
@@ -34,7 +34,7 @@ In the first part we trained a single decision tree with our document-frequency 
 load("../../Tweet_image_part_1.RData")
 ```
 
-```{r load_raw_tweets}
+```{r load_raw_tweets, echo=FALSE}
 raw_tweets <- readRDS("../../raw_tweets.rds")
 ```
 
@@ -61,18 +61,25 @@ train_dfm <- dfm(train_tokens,
 
 ### TF-IDF
 
-So let's create a term-frequency inverse frequency matrix to train on.
+So let's create a term-frequency inverse frequency matrix to train on. This adds some weight to the words that make up the term in a document. Instead of a count of the number of times a word appears in a document we get a proportion. 
+
 ```{r}
 train_tfidf <- dfm_tfidf(train_dfm, scheme_tf = 'prop')
 ```
+
+Check if we have any incomplete cases.
 ```{r}
 which(!complete.cases(as.matrix(train_tfidf)))
 ```
+
+Good we have none. Now create a dataframe and clean up any problematic token names we might have as a precaution.
 
 ```{r make_names, warning=FALSE, message=FALSE}
 train_tfidf_df <- cbind(Sentiment = train$Sentiment, data.frame(train_tfidf))
 names(train_tfidf_df) <- make.names(names(train_tfidf_df))
 ```
+
+
 
 ```{r include=FALSE, echo=FALSE, eval=FALSE}
 start.time <- Sys.time()
@@ -98,27 +105,34 @@ total.time
 
 ### N-Grams
 
+We can use the below method to create any number of N-grams or combinations of works. Let's create some bigrams and see if this will improve our score. This will make our feature space very wide and be quite computationally expensive. In order to run this on a small laptop we will need to do some dimensionality reduction before trying to run any models with these bigrams. Later we may try some skip-grams as well.
 
 ```{r}
 train_tokens <- tokens_ngrams(train_tokens, n = c(1,2))
 train_tokens[[2]]
 ```
 
+Taking a look at a few terms we have created.
+
 ```{r}
 train_tokens[[4]]
 ```
 
+Now coverting to a matrix.
 
 ```{r}
 train_matrix <- as.matrix(train_dfm)
 train_dfm
 ```
 
+A quick peak at the wordcloud.
 
 ```{r wordcloud2, cache=TRUE}
 # Create wordcloud
 train_dfm %>% textplot_wordcloud()
 ```
+
+Converting the `train_dfm` to a matrix so that we can column-bind it to the Sentiment scores as a dataframe.
 
 ```{r}
 # Convert to matrix
@@ -131,6 +145,8 @@ train_df <- cbind("Sentiment" = as.factor(train$Sentiment),
                   as.data.frame(train_dfm))
 ```
 
+Again make sure names are clean.
+
 ```{r}
 # Alter any names that don't work as columns
 names(train_df) <- make.names(names(train_df), 
@@ -142,6 +158,8 @@ Garbage collection.
 ```{r}
 gc()
 ```
+
+Set up our Multifolds and train control for 30 partitions.
 
 ```{r}
 # Set seed
@@ -180,6 +198,8 @@ cv_cntrl <- trainControl(method = "repeatedcv",
 #total.time
 ```
 
+Use the irlba package for Sigular Value Decomposition
+
 ```{r}
 library(irlba)
 ```
@@ -188,6 +208,7 @@ library(irlba)
 train_tfidf
 ```
 
+Create our reduced feature space.
 
 ```{r cache=TRUE}
 # Time the code execution
@@ -202,27 +223,27 @@ total.time <- Sys.time() - start.time
 total.time
 ```
 
+Create a new dataframe with the reduced feature space.
+
 ```{r}
 train.svd <- data.frame(Sentiment = train$Sentiment, train.irlba$v)
 ```
 
+
 ```{r eval=FALSE, include=FALSE, echo=FALSE}
-# Create a cluster to work on 10 logical cores.
+# Create a cluster
 cl <- makeCluster(10, type = "SOCK")
 registerDoSNOW(cl)
 
 start.time <- Sys.time()
 
-# This will be the last run using single decision trees. With a much smaller
-# feature matrix we can now use more powerful methods like the mighty Random
-# Forest from now on!
 rpart.cv.4 <- train(Sentiment ~ ., data = train.svd, method = "rpart", 
                     trControl = cv_cntrl, tuneLength = 7)
 
-# Processing is done, stop cluster.
+# stop cluster.
 stopCluster(cl)
 
-# Total time of execution on workstation was 
+# Total time
 total.time <- Sys.time() - start.time
 total.time
 ```
@@ -231,27 +252,23 @@ total.time
 save(rpart.cv.4, file = "../../rpart4.rds")
 ```
 
+Train a random forrest model and see if our results improve.
+
 ```{r random_forrest, eval=FALSE}
-# Create a cluster to work on 10 logical cores.
+# Create a cluster
 cl <- makeCluster(4, type = "SOCK")
  registerDoSNOW(cl)
 
 # Time the code execution
 start.time <- Sys.time()
 
-# We have reduced the dimensionality of our data using SVD. Also, the 
-# application of SVD allows us to use LSA to simultaneously increase the
-# information density of each feature. To prove this out, leverage a 
-# mighty Random Forest with the default of 500 trees. We'll also ask
-# caret to try 7 different values of mtry to find the mtry value that 
-# gives the best result!
 rf.cv.4 <- train(Sentiment ~ ., data = train.svd, method = "rf", 
                  trControl = cv_cntrl, tuneLength = 4)
 
-# Processing is done, stop cluster.
+# Stop cluster.
 stopCluster(cl)
 
-# Total time of execution on workstation was 
+# Total time 
 total.time <- Sys.time() - start.time
 total.time
 ```
@@ -269,10 +286,15 @@ Outputting the model results we see that we have an accuracy of `r paste(format(
 
 ### Combine Skipgrams with N-grams
 
+The next thing we can try is using skipgrams or mabey a combination of skip-grams and n-grams. Here is an example of skip grams.
+
 ```{r}
 train_tokens2 <- tokens_skipgrams(train_tokens, n = 2, skip = 1)
 train_tokens2[[2]]
 ```
+
+
+#### To be continued...
 
 ```{r eval=FALSE, include=FALSE, echo=FALSE}
 train_tokens <- tokens(train$SentimentText, 
