@@ -6,10 +6,19 @@
     <description>Recent content on Kevin Bonds | Portfolio</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Fri, 03 Jan 2020 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Mon, 20 Mar 2023 00:00:00 +0000</lastBuildDate>
     
 	<atom:link href="/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>Time for a New Chapter</title>
+      <link>/post/time-for-a-new-chapter/</link>
+      <pubDate>Mon, 20 Mar 2023 00:00:00 +0000</pubDate>
+      
+      <guid>/post/time-for-a-new-chapter/</guid>
+      <description>Having spent the last three years as a Data Scientist at Location Labs by Avast and later at Smith Micro Software Inc (following the division’s acquisition from Avast), I am now seeking my next opportunity.</description>
+    </item>
     
     <item>
       <title>Twitter Sentiment Analysis Part:2</title>
