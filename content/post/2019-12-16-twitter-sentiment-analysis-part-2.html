@@ -18,14 +18,6 @@ tags:
 <!--more--></p>
 <div id="libraries-used" class="section level3">
 <h3>Libraries Used</h3>
-<pre class="r"><code>library(tidyverse)
-library(readr)
-library(ggplot2)
-library(caret)
-library(knitr)
-library(quanteda)
-library(doSNOW)
-library(gridExtra)</code></pre>
 <p>In the first part we trained a single decision tree with our document-frequency matrix using just the tokenized text. i.e. simple Bag-of-words approach. Now let’s see if I can use some n-grams to add some word order element to our approach to see if we get better results. The one caveat is that creating n-grams explodes our feature space quite significantly. Even a modest approach leads to tens-of-thousands of features and a very sparse feature matrix. Also, since I are doing this on a small laptop this quickly grows into something unwieldy. Therefore I will not go through the interim step of building a similar single decision tree model with this larger feature matrix. Instead I will use a technique to reduce this feature space down to a manageable level. I’ll use Singular Value Decomposition to achieve this.</p>
 </div>
 <div id="tf-idf" class="section level3">
@@ -74,8 +66,8 @@ names(train_df) &lt;- make.names(names(train_df),
 <p>Garbage collection.</p>
 <pre class="r"><code>gc()</code></pre>
 <pre><code>##             used   (Mb) gc trigger   (Mb) limit (Mb)  max used   (Mb)
-## Ncells   2558526  136.7    4198732  224.3         NA   4198732  224.3
-## Vcells 179739112 1371.4  286485558 2185.8      65536 198823941 1517.0</code></pre>
+## Ncells   2560475  136.8    4193111  224.0         NA   4060039  216.9
+## Vcells 179739491 1371.4  286486344 2185.8      65536 198824320 1517.0</code></pre>
 <p>Set up our Multifolds and train control for 30 partitions.</p>
 <pre class="r"><code># Set seed
 set.seed(42)
@@ -169,11 +161,11 @@ rf.cv.1</code></pre>
 ## 
 ## Accuracy was used to select the optimal model using the largest value.
 ## The final value used for the model was mtry = 79.</code></pre>
-<p>Outputting the model results we see that we have an accuracy of 68% accuracy.</p>
+<p>Outputting the model results we see that we have an accuracy of 68% accuracy. This is still not great. We can’t expect to get very high accuracy with this data. Tweets is especially ripe with scarcasm and other problems that makes sentiment analysis difficult. I was hoping for 80%-90% accuracy, but this may not be possible with decision trees. We can try some other feature engineering techniques, but it is unlikely we will improve much more without some sort of breakthrough.</p>
 </div>
 <div id="combine-skipgrams-with-n-grams" class="section level3">
 <h3>Combine Skipgrams with N-grams</h3>
-<p>The next thing we can try is using skipgrams or mabey a combination of skip-grams and n-grams. Here is an example of skip grams.</p>
+<p>The next thing we can try is using skipgrams or maybe a combination of skip-grams and n-grams. Here is an example of skip grams.</p>
 <pre class="r"><code>train_tokens2 &lt;- tokens_skipgrams(train_tokens, n = 2, skip = 1)
 train_tokens2[[2]]</code></pre>
 <pre><code>##  [1] &quot;think_realli&quot;               &quot;felt_sick&quot;                 

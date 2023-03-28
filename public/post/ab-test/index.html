@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en-us"><head>
+  <meta charset="utf-8">
+  <title>A/B Testing (EDA)</title>
+
+  <!-- mobile responsive meta -->
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="Data Science Portfilio">
+  
+  <meta name="author" content="Themefisher">
+  <meta name="generator" content="Hugo 0.61.0" />
+
+  <!-- plugins -->
+  
+  <link rel="stylesheet" href="https://nervous-wright-ea05a8.netlify.com/plugins/bootstrap/bootstrap.min.css ">
+  
+  <link rel="stylesheet" href="https://nervous-wright-ea05a8.netlify.com/plugins/themify-icons/themify-icons.css ">
+  
+
+  <!-- Main Stylesheet -->
+  
+  <link rel="stylesheet" href="https://nervous-wright-ea05a8.netlify.com/scss/style.min.css" media="screen">
+
+  <!--Favicon-->
+  <link rel="shortcut icon" href="https://nervous-wright-ea05a8.netlify.com/images/favicon.png " type="image/x-icon">
+  <link rel="icon" href="https://nervous-wright-ea05a8.netlify.com/images/favicon.png " type="image/x-icon">
+
+</head><body>
+<!-- preloader start -->
+<div class="preloader">
+  
+</div>
+<!-- preloader end -->
+<!-- navigation -->
+<header class="fixed-top navigation">
+  <div class="container">
+    
+    <nav class="navbar navbar-expand-lg navbar-light bg-transparent">
+      <a class="navbar-brand"href="https://nervous-wright-ea05a8.netlify.com/"><img class="img-fluid" src="/images/resume.png" alt="Kevin Bonds | Portfolio"></a>
+      <button class="navbar-toggler border-0" type="button" data-toggle="collapse" data-target="#navigation">
+        <i class="ti-menu h3"></i>
+      </button>
+
+      <div class="collapse navbar-collapse text-center" id="navigation">
+        <ul class="navbar-nav ml-auto">
+          <li class="nav-item">
+            <a class="nav-link" href="https://nervous-wright-ea05a8.netlify.com/"> Home </a>
+          </li>
+          
+            
+            <li class="nav-item">
+              <a class="nav-link" href="https://github.com/kwbonds">Project Repos</a>
+            </li>
+            
+          
+            
+            <li class="nav-item">
+              <a class="nav-link" href="https://nervous-wright-ea05a8.netlify.com/contact">Contact</a>
+            </li>
+            
+          
+        </ul>
+        
+        <!-- search -->
+        <div class="search">
+          <button id="searchOpen" class="search-btn"><i class="ti-search"></i></button>
+          <div class="search-wrapper">
+            <form action="https://nervous-wright-ea05a8.netlify.com//search" class="h-100">
+              <input class="search-box px-4" id="search-query" name="s" type="search" placeholder="Type & Hit Enter...">
+            </form>
+            <button id="searchClose" class="search-close"><i class="ti-close text-dark"></i></button>
+          </div>
+        </div>
+        
+      </div>
+    </nav>
+  </div>
+</header>
+<!-- /navigation --> <div class="py-5 d-none d-lg-block"></div> 
+
+<section class="section">
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-8 mx-auto block shadow mb-5">
+        <h2>A/B Testing (EDA)</h2>
+        <div class="mb-3"><span>by <a href="/author/kevin-bonds">Kevin bonds</a></span>,
+          <span>at 23 March 2023</span>, category :
+          
+          <a href="/categories/a/b-testing">A/ b testing</a>
+          
+          <a href="/categories/eda">E d a</a>
+          
+        </div>
+        
+        <div class="content mb-5">
+          
+<link href="/rmarkdown-libs/pagedtable/css/pagedtable.css" rel="stylesheet" />
+<script src="/rmarkdown-libs/pagedtable/js/pagedtable.js"></script>
+
+
+<div id="introduction" class="section level4">
+<h4>Introduction</h4>
+<p>A stakeholder may ask if a change to an application will make a user more likely to make a purchase or a larger purchase. These are excellent questions that can be addressed through a controlled experiment. To answer this appropriately, a data scientist must apply rigor and a good testing method to the problem and ask the question differently. After performing randomized testing, it is reasonable to say whether the variant performed better or worse with a degree of certainty. To do this, a hypothesis is created, and any measured difference is assumed to be due to chance unless proven otherwise. A level of confidence is decided upon to hold ourselves accountable.</p>
+<p>When designing an experiment, we often want to limit the exposure of our network to the testing. To achieve this,it is important to calculate a minimum number of users to expose to the test (know as sample size) to obtain a significant result. There are lots of other considerations too but, for this exercise, we will use publicly available data from an already performed test and focus solely on the data analysis portion of the testing. It’s important to note that we are skipping some important aspects of A/B testing for the sake of this blog post. The design of the experiment plays a crucial role in its overall success and should not be overlooked in an A/B test in the real world. I plan to write more blog posts about this topic in the future.</p>
+</div>
+<div id="lets-take-a-look-at-a-test-already-performed" class="section level4">
+<h4>Let’s take a look at a test already performed!</h4>
+<p>We can use publicly available data to demonstrate the approach and calculations needed. The data used can be downloaded using this link: <a href="https://www.kaggle.com/datasets/sergylog/ab-test-data/download?datasetVersionNumber=3">A/B Data on Kaggle</a></p>
+<p>First import some libraries.</p>
+<pre class="r"><code>library(tidyverse)
+library(kableExtra)
+library(rmarkdown)
+library(ggplot2)</code></pre>
+<p>Now we read in data and check the head to see how it looks.</p>
+<pre class="r"><code>ab_df = read_csv(&quot;../../public/post/ab-test/AB_Test_Results.csv&quot;, col_types = &quot;nfn&quot;)
+ab_df %&gt;% head()</code></pre>
+<pre><code>## # A tibble: 6 x 3
+##   USER_ID VARIANT_NAME REVENUE
+##     &lt;dbl&gt; &lt;fct&gt;          &lt;dbl&gt;
+## 1     737 variant            0
+## 2    2423 control            0
+## 3    9411 control            0
+## 4    7311 control            0
+## 5    6174 variant            0
+## 6    2380 variant            0</code></pre>
+<p>Let’s summarize it.</p>
+<pre class="r"><code>summary(ab_df)</code></pre>
+<pre><code>##     USER_ID       VARIANT_NAME     REVENUE         
+##  Min.   :    2   variant:5016   Min.   :  0.00000  
+##  1st Qu.: 2469   control:4984   1st Qu.:  0.00000  
+##  Median : 4962                  Median :  0.00000  
+##  Mean   : 4981                  Mean   :  0.09945  
+##  3rd Qu.: 7512                  3rd Qu.:  0.00000  
+##  Max.   :10000                  Max.   :196.01000</code></pre>
+<p>Ok. Looking at the quartiles we see more than 2/3rds are zeros and the mean is tiny, so there iare lots of zeros and small values. And from the looks of it a large outlier of 196.01.</p>
+<pre class="r"><code>ggplot(ab_df, aes(x = USER_ID, y = REVENUE, color = VARIANT_NAME)) + geom_line() + labs(title = &quot;Revenue by user&quot;)</code></pre>
+<p><img src="/post/2023-03-23-ab-test_files/figure-html/unnamed-chunk-4-1.png" width="672" /></p>
+<p>We have identified a large outlier in our data, but there is something else interesting that we should investigate. As a rule, we should always check for duplicate values, and in this visualization, we can already see evidence of it. Unfortunately, we have the same user appearing in both the variant and control groups, which is apparent by the blue and red lines overlapping at USER_ID ~ 7498. This suggests another problem that needs to be addressed.</p>
+</div>
+<div id="checking-duplicates" class="section level4">
+<h4>Checking Duplicates</h4>
+<p>How many Duplicated values?</p>
+<pre class="r"><code># number of records minus distinct USER_ID&#39;s
+nrow(ab_df) - ab_df$USER_ID %&gt;% n_distinct() </code></pre>
+<pre><code>## [1] 3676</code></pre>
+<p>There are definitely duplicate values (i.e. multiple records) for many of the user_id’s. We have a total of 10K records so we know we have 6324 distinct user ids.</p>
+<pre class="r"><code>ab_df$USER_ID %&gt;% n_distinct() </code></pre>
+<pre><code>## [1] 6324</code></pre>
+<p>Quickly do any USER_ID’s fall into multiple classes (i.e. VARIANT).</p>
+<pre class="r"><code>ab_df %&gt;% 
+        n_distinct()  - ab_df %&gt;% 
+        select(-REVENUE) %&gt;% 
+        group_by(USER_ID, VARIANT_NAME) %&gt;% 
+        summarise(n()) %&gt;% 
+        group_by(USER_ID) %&gt;% 
+        summarise(&quot;Variants&quot; = n()) %&gt;% 
+        n_distinct()</code></pre>
+<pre><code>## [1] 1609</code></pre>
+<p>Oh wow! So a bunch of the user saw more than one variant (not just the one we noticed in the visualization).</p>
+<pre class="r"><code># Pull out some the User_ID&#39;s that are in both groups
+paged_table(ab_df  %&gt;% 
+                    group_by(USER_ID, VARIANT_NAME) %&gt;% 
+                    arrange(USER_ID) %&gt;%  
+                    summarise(n()) %&gt;% 
+                    group_by(USER_ID) %&gt;% 
+                    summarise(&quot;Variants&quot; = n()) %&gt;% filter(Variants == 2) %&gt;% 
+                    head(50))</code></pre>
+<div data-pagedtable="false">
+<script data-pagedtable-source type="application/json">
+{"columns":[{"label":["USER_ID"],"name":[1],"type":["dbl"],"align":["right"]},{"label":["Variants"],"name":[2],"type":["int"],"align":["right"]}],"data":[{"1":"3","2":"2"},{"1":"10","2":"2"},{"1":"18","2":"2"},{"1":"25","2":"2"},{"1":"40","2":"2"},{"1":"57","2":"2"},{"1":"60","2":"2"},{"1":"64","2":"2"},{"1":"67","2":"2"},{"1":"86","2":"2"},{"1":"98","2":"2"},{"1":"104","2":"2"},{"1":"110","2":"2"},{"1":"114","2":"2"},{"1":"140","2":"2"},{"1":"144","2":"2"},{"1":"151","2":"2"},{"1":"152","2":"2"},{"1":"155","2":"2"},{"1":"158","2":"2"},{"1":"162","2":"2"},{"1":"171","2":"2"},{"1":"186","2":"2"},{"1":"187","2":"2"},{"1":"194","2":"2"},{"1":"203","2":"2"},{"1":"206","2":"2"},{"1":"208","2":"2"},{"1":"212","2":"2"},{"1":"218","2":"2"},{"1":"225","2":"2"},{"1":"239","2":"2"},{"1":"245","2":"2"},{"1":"250","2":"2"},{"1":"256","2":"2"},{"1":"263","2":"2"},{"1":"268","2":"2"},{"1":"284","2":"2"},{"1":"287","2":"2"},{"1":"292","2":"2"},{"1":"298","2":"2"},{"1":"303","2":"2"},{"1":"306","2":"2"},{"1":"307","2":"2"},{"1":"311","2":"2"},{"1":"333","2":"2"},{"1":"334","2":"2"},{"1":"335","2":"2"},{"1":"342","2":"2"},{"1":"345","2":"2"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+  </script>
+</div>
+<pre class="r"><code>ab_df %&gt;% filter(USER_ID %in% c(3,10,18, 25)) %&gt;% arrange(USER_ID)</code></pre>
+<pre><code>## # A tibble: 9 x 3
+##   USER_ID VARIANT_NAME REVENUE
+##     &lt;dbl&gt; &lt;fct&gt;          &lt;dbl&gt;
+## 1       3 variant            0
+## 2       3 control            0
+## 3       3 variant            0
+## 4      10 variant            0
+## 5      10 control            0
+## 6      18 variant            0
+## 7      18 control            0
+## 8      25 variant            0
+## 9      25 control            0</code></pre>
+</div>
+<div id="what-to-consider" class="section level4">
+<h4>What to Consider</h4>
+<p>This is very simple data, but there are some interesting quirks. We’ll need to make some decisions. The data was generated by simulation and comes with no context around what the control and variants are. It’s always good to have some context, but not crucial in this instance. We can focus on the task of just providing some impartial analysis of the resutls of the testing.</p>
+</div>
+<div id="what-to-do-about-the-duplicates" class="section level4">
+<h4>What to do about the Duplicates</h4>
+<p><strong>IN_PROGRESS. STAY TUNED</strong></p>
+</div>
+
+        </div>
+      </div>
+      <div class="col-lg-8 mx-auto block shadow">
+        
+        
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<footer class="py-4 bg-light border-top">
+  <div class="container">
+    <div class="row justify-content-between align-items-center">
+      <div class="col-lg-4 text-center text-lg-left mb-4 mb-lg-0">
+        <a href="https://nervous-wright-ea05a8.netlify.com/"><img src="/images/resume.png" class="img-fluid"
+            alt="Kevin Bonds | Portfolio"></a>
+      </div>
+      <div class="col-lg-4 text-center mb-4 mb-lg-0">
+        <ul class="list-inline mb-0">
+          
+          <li class="list-inline-item"><a class="text-dark d-block p-2" href="https://github.com/kwbonds">Project Repos</a>
+          </li>
+          
+          <li class="list-inline-item"><a class="text-dark d-block p-2" href="https://nervous-wright-ea05a8.netlify.com/contact">Contact</a>
+          </li>
+          
+        </ul>
+      </div>
+      <div class="col-lg-4 text-lg-right text-center mb-4 mb-lg-0">
+        <ul class="list-inline social-icon mb-0">
+          
+          <li class="list-inline-item"><a href="https://join.skype.com/invite/u45PzQhKsLp5"><i class="ti-skype"></i></a></li>
+          
+          <li class="list-inline-item"><a href="https://twitter.com/KevinWBonds"><i class="ti-twitter-alt"></i></a></li>
+          
+          <li class="list-inline-item"><a href="https://github.com/kwbonds"><i class="ti-github"></i></a></li>
+          
+          <li class="list-inline-item"><a href="https://www.linkedin.com/in/kevin-bonds/"><i class="ti-linkedin"></i></a></li>
+          
+        </ul>
+      </div>
+      <div class="col-12 text-center mt-4">
+        <span></span>
+      </div>
+    </div>
+  </div>
+</footer>
+
+
+
+
+<script>
+  var indexURL = "https://nervous-wright-ea05a8.netlify.com/index.json"
+</script>
+
+
+<!-- JS Plugins -->
+
+<script src="https://nervous-wright-ea05a8.netlify.com/plugins/jQuery/jquery.min.js"></script>
+
+<script src="https://nervous-wright-ea05a8.netlify.com/plugins/bootstrap/bootstrap.min.js"></script>
+
+<script src="https://nervous-wright-ea05a8.netlify.com/plugins/search/fuse.min.js"></script>
+
+<script src="https://nervous-wright-ea05a8.netlify.com/plugins/search/mark.js"></script>
+
+<script src="https://nervous-wright-ea05a8.netlify.com/plugins/search/search.js"></script>
+
+<!-- Main Script -->
+
+<script src="https://nervous-wright-ea05a8.netlify.com/js/script.min.js"></script>
+<!-- google analitycs -->
+<script>
+  (function (i, s, o, g, r, a, m) {
+    i['GoogleAnalyticsObject'] = r;
+    i[r] = i[r] || function () {
+      (i[r].q = i[r].q || []).push(arguments)
+    }, i[r].l = 1 * new Date();
+    a = s.createElement(o),
+      m = s.getElementsByTagName(o)[0];
+    a.async = 1;
+    a.src = g;
+    m.parentNode.insertBefore(a, m)
+  })(window, document, 'script', '//www.google-analytics.com/analytics.js', 'ga');
+  ga('create', 'UA-113458466-2', 'auto');
+  ga('send', 'pageview');
+</script></body>
+</html>

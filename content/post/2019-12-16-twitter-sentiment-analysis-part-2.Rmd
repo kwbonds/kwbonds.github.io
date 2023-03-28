@@ -16,7 +16,7 @@ This is the second part of the Twitter Sentiment Analysis. I will create a TFIDF
 <!--more-->
 
 ### Libraries Used
-```{r setup, message=FALSE, warning=FALSE}
+```{r setup, message=FALSE, warning=FALSE, echo=FALSE}
 library(tidyverse)
 library(readr)
 library(ggplot2)
@@ -282,11 +282,11 @@ load(file = "../../rf1.rds")
 rf.cv.1
 ```
 
-Outputting the model results we see that we have an accuracy of `r paste(format(max(rf.cv.1$results$Accuracy) * 100, digits = 3), "%", sep = "")` accuracy.
+Outputting the model results we see that we have an accuracy of `r paste(format(max(rf.cv.1$results$Accuracy) * 100, digits = 3), "%", sep = "")` accuracy. This is still not great. We can't expect to get very high accuracy with this data. Tweets is especially ripe with scarcasm and other problems that makes sentiment analysis difficult. I was hoping for 80%-90% accuracy, but this may not be possible with decision trees. We can try some other feature engineering techniques, but it is unlikely we will improve much more without some sort of breakthrough. 
 
 ### Combine Skipgrams with N-grams
 
-The next thing we can try is using skipgrams or mabey a combination of skip-grams and n-grams. Here is an example of skip grams.
+The next thing we can try is using skipgrams or maybe a combination of skip-grams and n-grams. Here is an example of skip grams.
 
 ```{r}
 train_tokens2 <- tokens_skipgrams(train_tokens, n = 2, skip = 1)
@@ -307,21 +307,23 @@ train_tokens <- tokens(train$SentimentText,
 train_tokens[[2]]
 ```
 
-```{r eval=FALSE, include=FALSE, echo=FALSE}
-train_tokens <- tokens_tolower(train_tokens)
-train_tokens <- tokens_select(train_tokens, 
-                              stopwords(), 
-                              selection = "remove")
-train_tokens <- tokens_wordstem(train_tokens, 
-                                language = "english")
-train_tokens[[2]]
+```{r, include=FALSE, echo=FALSE}
+train_dfm_2 <-  dfm(train_tokens2, 
+                 tolower = FALSE)
 ```
 
 
+```{r n_skip_grams, include=FALSE}
+train_df <- cbind("Sentiment" = as.factor(train$Sentiment), 
+                  as.data.frame(train_dfm), as.data.frame(as.matrix(train_dfm_2)))
+```
+
+```{r, include=FALSE, eval=FALSE}
+train_tfidf <- dfm_tfidf(train_dfm, scheme_tf = 'prop')
+```
+
 ```{r include=FALSE, echo=FALSE, eval=FALSE}
-for(i in train_tokens){
-  c(train_tokens[[i]], train_tokens2[[i]])
-}
+
 ```
 
 
