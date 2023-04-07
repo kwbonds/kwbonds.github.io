@@ -8,22 +8,22 @@
   <meta name="description" content="Data Science Portfilio">
   
   <meta name="author" content="Themefisher">
-  <meta name="generator" content="Hugo 0.61.0" />
+  <meta name="generator" content="Hugo 0.60.1" />
 
   <!-- plugins -->
   
-  <link rel="stylesheet" href="/plugins/bootstrap/bootstrap.min.css ">
+  <link rel="stylesheet" href="https://nervous-wright-ea05a8.netlify.com/plugins/bootstrap/bootstrap.min.css ">
   
-  <link rel="stylesheet" href="/plugins/themify-icons/themify-icons.css ">
+  <link rel="stylesheet" href="https://nervous-wright-ea05a8.netlify.com/plugins/themify-icons/themify-icons.css ">
   
 
   <!-- Main Stylesheet -->
   
-  <link rel="stylesheet" href="/scss/style.min.css" media="screen">
+  <link rel="stylesheet" href="https://nervous-wright-ea05a8.netlify.com/scss/style.min.css" media="screen">
 
   <!--Favicon-->
-  <link rel="shortcut icon" href="/images/favicon.png " type="image/x-icon">
-  <link rel="icon" href="/images/favicon.png " type="image/x-icon">
+  <link rel="shortcut icon" href="https://nervous-wright-ea05a8.netlify.com/images/favicon.png " type="image/x-icon">
+  <link rel="icon" href="https://nervous-wright-ea05a8.netlify.com/images/favicon.png " type="image/x-icon">
 
 </head><body>
 <!-- preloader start -->
@@ -36,7 +36,7 @@
   <div class="container">
     
     <nav class="navbar navbar-expand-lg navbar-light bg-transparent">
-      <a class="navbar-brand"href="/"><img class="img-fluid" src="/images/resume.png" alt="Kevin Bonds | Portfolio"></a>
+      <a class="navbar-brand"href="https://nervous-wright-ea05a8.netlify.com/"><img class="img-fluid" src="/images/resume.png" alt="Kevin Bonds | Portfolio"></a>
       <button class="navbar-toggler border-0" type="button" data-toggle="collapse" data-target="#navigation">
         <i class="ti-menu h3"></i>
       </button>
@@ -44,7 +44,7 @@
       <div class="collapse navbar-collapse text-center" id="navigation">
         <ul class="navbar-nav ml-auto">
           <li class="nav-item">
-            <a class="nav-link" href="/"> Home </a>
+            <a class="nav-link" href="https://nervous-wright-ea05a8.netlify.com/"> Home </a>
           </li>
           
             
@@ -55,7 +55,7 @@
           
             
             <li class="nav-item">
-              <a class="nav-link" href="/contact">Contact</a>
+              <a class="nav-link" href="https://nervous-wright-ea05a8.netlify.com/contact">Contact</a>
             </li>
             
           
@@ -65,7 +65,7 @@
         <div class="search">
           <button id="searchOpen" class="search-btn"><i class="ti-search"></i></button>
           <div class="search-wrapper">
-            <form action="//search" class="h-100">
+            <form action="https://nervous-wright-ea05a8.netlify.com//search" class="h-100">
               <input class="search-box px-4" id="search-query" name="s" type="search" placeholder="Type & Hit Enter...">
             </form>
             <button id="searchClose" class="search-close"><i class="ti-close text-dark"></i></button>
@@ -110,11 +110,12 @@
 <pre class="r"><code>library(tidyverse)
 library(kableExtra)
 library(rmarkdown)
-library(ggplot2)</code></pre>
+library(ggplot2)
+library(plotly)</code></pre>
 <p>Now we read in data and check the head to see how it looks.</p>
 <pre class="r"><code>ab_df = read_csv(&quot;../../public/post/ab-test/AB_Test_Results.csv&quot;, col_types = &quot;nfn&quot;)
 ab_df %&gt;% head()</code></pre>
-<pre><code>## # A tibble: 6 x 3
+<pre><code>## # A tibble: 6 × 3
 ##   USER_ID VARIANT_NAME REVENUE
 ##     &lt;dbl&gt; &lt;fct&gt;          &lt;dbl&gt;
 ## 1     737 variant            0
@@ -132,7 +133,7 @@ ab_df %&gt;% head()</code></pre>
 ##  Mean   : 4981                  Mean   :  0.09945  
 ##  3rd Qu.: 7512                  3rd Qu.:  0.00000  
 ##  Max.   :10000                  Max.   :196.01000</code></pre>
-<p>Ok. Looking at the quartiles we see more than 2/3rds are zeros and the mean is tiny, so there iare lots of zeros and small values. And from the looks of it a large outlier of 196.01.</p>
+<p>Ok. Looking at the quartiles we see more than 2/3<sup>rds</sup> are zeros and the mean is tiny, so there are lots of zeros and small values. And from the looks of it a large outlier of 196.01.</p>
 <pre class="r"><code>ggplot(ab_df, aes(x = USER_ID, y = REVENUE, color = VARIANT_NAME)) + geom_line() + labs(title = &quot;Revenue by user&quot;)</code></pre>
 <p><img src="/post/2023-03-23-ab-test_files/figure-html/unnamed-chunk-4-1.png" width="672" /></p>
 <p>We have identified a large outlier in our data, but there is something else interesting that we should investigate. As a rule, we should always check for duplicate values, and in this visualization, we can already see evidence of it. Unfortunately, we have the same user appearing in both the variant and control groups, which is apparent by the blue and red lines overlapping at USER_ID ~ 7498. This suggests another problem that needs to be addressed.</p>
@@ -155,6 +156,8 @@ nrow(ab_df) - ab_df$USER_ID %&gt;% n_distinct() </code></pre>
         group_by(USER_ID) %&gt;% 
         summarise(&quot;Variants&quot; = n()) %&gt;% 
         n_distinct()</code></pre>
+<pre><code>## `summarise()` has grouped output by &#39;USER_ID&#39;. You can override using the
+## `.groups` argument.</code></pre>
 <pre><code>## [1] 1609</code></pre>
 <p>Oh wow! So a bunch of the user saw more than one variant (not just the one we noticed in the visualization).</p>
 <pre class="r"><code># Pull out some the User_ID&#39;s that are in both groups
@@ -165,13 +168,15 @@ paged_table(ab_df  %&gt;%
                     group_by(USER_ID) %&gt;% 
                     summarise(&quot;Variants&quot; = n()) %&gt;% filter(Variants == 2) %&gt;% 
                     head(50))</code></pre>
+<pre><code>## `summarise()` has grouped output by &#39;USER_ID&#39;. You can override using the
+## `.groups` argument.</code></pre>
 <div data-pagedtable="false">
 <script data-pagedtable-source type="application/json">
 {"columns":[{"label":["USER_ID"],"name":[1],"type":["dbl"],"align":["right"]},{"label":["Variants"],"name":[2],"type":["int"],"align":["right"]}],"data":[{"1":"3","2":"2"},{"1":"10","2":"2"},{"1":"18","2":"2"},{"1":"25","2":"2"},{"1":"40","2":"2"},{"1":"57","2":"2"},{"1":"60","2":"2"},{"1":"64","2":"2"},{"1":"67","2":"2"},{"1":"86","2":"2"},{"1":"98","2":"2"},{"1":"104","2":"2"},{"1":"110","2":"2"},{"1":"114","2":"2"},{"1":"140","2":"2"},{"1":"144","2":"2"},{"1":"151","2":"2"},{"1":"152","2":"2"},{"1":"155","2":"2"},{"1":"158","2":"2"},{"1":"162","2":"2"},{"1":"171","2":"2"},{"1":"186","2":"2"},{"1":"187","2":"2"},{"1":"194","2":"2"},{"1":"203","2":"2"},{"1":"206","2":"2"},{"1":"208","2":"2"},{"1":"212","2":"2"},{"1":"218","2":"2"},{"1":"225","2":"2"},{"1":"239","2":"2"},{"1":"245","2":"2"},{"1":"250","2":"2"},{"1":"256","2":"2"},{"1":"263","2":"2"},{"1":"268","2":"2"},{"1":"284","2":"2"},{"1":"287","2":"2"},{"1":"292","2":"2"},{"1":"298","2":"2"},{"1":"303","2":"2"},{"1":"306","2":"2"},{"1":"307","2":"2"},{"1":"311","2":"2"},{"1":"333","2":"2"},{"1":"334","2":"2"},{"1":"335","2":"2"},{"1":"342","2":"2"},{"1":"345","2":"2"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
   </script>
 </div>
 <pre class="r"><code>ab_df %&gt;% filter(USER_ID %in% c(3,10,18, 25)) %&gt;% arrange(USER_ID)</code></pre>
-<pre><code>## # A tibble: 9 x 3
+<pre><code>## # A tibble: 9 × 3
 ##   USER_ID VARIANT_NAME REVENUE
 ##     &lt;dbl&gt; &lt;fct&gt;          &lt;dbl&gt;
 ## 1       3 variant            0
@@ -190,6 +195,23 @@ paged_table(ab_df  %&gt;%
 </div>
 <div id="what-to-do-about-the-duplicates" class="section level4">
 <h4>What to do about the Duplicates</h4>
+<p>WE have a few choices to make. We should remove the Duplicate users that saw more than one variant. Showing both variants to a single user violates the premise of A/B testing. But should we also remove any duplicate records? What does it mean to have duplicates? After controlling for multiple variants do we have any duplicates that show a difference in Revenue? Let’s do the first part and see what we have.</p>
+<pre class="r"><code>ab_df = ab_df %&gt;% anti_join(ab_df  %&gt;% 
+                    group_by(USER_ID, VARIANT_NAME) %&gt;% 
+                    arrange(USER_ID) %&gt;%  
+                    summarise(n()) %&gt;% 
+                    group_by(USER_ID) %&gt;% 
+                    summarise(&quot;Variants&quot; = n()) %&gt;% filter(Variants == 2), by = &quot;USER_ID&quot;)</code></pre>
+<pre><code>## `summarise()` has grouped output by &#39;USER_ID&#39;. You can override using the
+## `.groups` argument.</code></pre>
+<pre class="r"><code>nrow(ab_df)</code></pre>
+<pre><code>## [1] 6070</code></pre>
+<p>Ok now that we have removed any user that has seen multiple variants, what do we have now? Let’s test to see if we have any difference in revenue for a user.</p>
+<pre class="r"><code>ab_df$USER_ID %&gt;% n_distinct() != ab_df %&gt;% select(USER_ID, REVENUE) %&gt;% n_distinct()</code></pre>
+<pre><code>## [1] TRUE</code></pre>
+<p>Ah, so there is a difference in revenue for some user(s) still. Let’s visualize this now.</p>
+<pre class="r"><code>ggplot(ab_df, aes(x = USER_ID, y = REVENUE, color = VARIANT_NAME)) + geom_line(position = &quot;stack&quot;) + labs(title = &quot;Revenue by user&quot;)</code></pre>
+<p><img src="/post/2023-03-23-ab-test_files/figure-html/unnamed-chunk-12-1.png" width="672" /></p>
 <p><strong>IN_PROGRESS. STAY TUNED</strong></p>
 </div>
 
@@ -208,7 +230,7 @@ paged_table(ab_df  %&gt;%
   <div class="container">
     <div class="row justify-content-between align-items-center">
       <div class="col-lg-4 text-center text-lg-left mb-4 mb-lg-0">
-        <a href="/"><img src="/images/resume.png" class="img-fluid"
+        <a href="https://nervous-wright-ea05a8.netlify.com/"><img src="/images/resume.png" class="img-fluid"
             alt="Kevin Bonds | Portfolio"></a>
       </div>
       <div class="col-lg-4 text-center mb-4 mb-lg-0">
@@ -217,7 +239,7 @@ paged_table(ab_df  %&gt;%
           <li class="list-inline-item"><a class="text-dark d-block p-2" href="https://github.com/kwbonds">Project Repos</a>
           </li>
           
-          <li class="list-inline-item"><a class="text-dark d-block p-2" href="/contact">Contact</a>
+          <li class="list-inline-item"><a class="text-dark d-block p-2" href="https://nervous-wright-ea05a8.netlify.com/contact">Contact</a>
           </li>
           
         </ul>
@@ -246,25 +268,25 @@ paged_table(ab_df  %&gt;%
 
 
 <script>
-  var indexURL = "/index.json"
+  var indexURL = "https://nervous-wright-ea05a8.netlify.com/index.json"
 </script>
 
 
 <!-- JS Plugins -->
 
-<script src="/plugins/jQuery/jquery.min.js"></script>
+<script src="https://nervous-wright-ea05a8.netlify.com/plugins/jQuery/jquery.min.js"></script>
 
-<script src="/plugins/bootstrap/bootstrap.min.js"></script>
+<script src="https://nervous-wright-ea05a8.netlify.com/plugins/bootstrap/bootstrap.min.js"></script>
 
-<script src="/plugins/search/fuse.min.js"></script>
+<script src="https://nervous-wright-ea05a8.netlify.com/plugins/search/fuse.min.js"></script>
 
-<script src="/plugins/search/mark.js"></script>
+<script src="https://nervous-wright-ea05a8.netlify.com/plugins/search/mark.js"></script>
 
-<script src="/plugins/search/search.js"></script>
+<script src="https://nervous-wright-ea05a8.netlify.com/plugins/search/search.js"></script>
 
 <!-- Main Script -->
 
-<script src="/js/script.min.js"></script>
+<script src="https://nervous-wright-ea05a8.netlify.com/js/script.min.js"></script>
 <!-- google analitycs -->
 <script>
   (function (i, s, o, g, r, a, m) {

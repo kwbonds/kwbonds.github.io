@@ -2,39 +2,39 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Kevin Bonds | Portfolio</title>
-    <link>/</link>
+    <link>https://nervous-wright-ea05a8.netlify.com/</link>
     <description>Recent content on Kevin Bonds | Portfolio</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <lastBuildDate>Thu, 23 Mar 2023 00:00:00 +0000</lastBuildDate>
     
-	<atom:link href="/index.xml" rel="self" type="application/rss+xml" />
+	<atom:link href="https://nervous-wright-ea05a8.netlify.com/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
       <title>A/B Testing (EDA)</title>
-      <link>/post/ab-test/</link>
+      <link>https://nervous-wright-ea05a8.netlify.com/post/ab-test/</link>
       <pubDate>Thu, 23 Mar 2023 00:00:00 +0000</pubDate>
       
-      <guid>/post/ab-test/</guid>
+      <guid>https://nervous-wright-ea05a8.netlify.com/post/ab-test/</guid>
       <description>Introduction A stakeholder may ask if a change to an application will make a user more likely to make a purchase or a larger purchase.</description>
     </item>
     
     <item>
       <title>Time for a New Chapter</title>
-      <link>/post/time-for-a-new-chapter/</link>
+      <link>https://nervous-wright-ea05a8.netlify.com/post/time-for-a-new-chapter/</link>
       <pubDate>Mon, 20 Mar 2023 00:00:00 +0000</pubDate>
       
-      <guid>/post/time-for-a-new-chapter/</guid>
+      <guid>https://nervous-wright-ea05a8.netlify.com/post/time-for-a-new-chapter/</guid>
       <description>Having spent the last three years as a Data Scientist at Location Labs by Avast and later at Smith Micro Software Inc (following the division’s acquisition from Avast), I am now seeking my next opportunity.</description>
     </item>
     
     <item>
       <title>Twitter Sentiment Analysis Part:2</title>
-      <link>/post/twitter-sentiment-analysis-part-2/</link>
+      <link>https://nervous-wright-ea05a8.netlify.com/post/twitter-sentiment-analysis-part-2/</link>
       <pubDate>Fri, 03 Jan 2020 00:00:00 +0000</pubDate>
       
-      <guid>/post/twitter-sentiment-analysis-part-2/</guid>
+      <guid>https://nervous-wright-ea05a8.netlify.com/post/twitter-sentiment-analysis-part-2/</guid>
       <description>
 
 
@@ -44,10 +44,10 @@
     
     <item>
       <title>Twitter Sentiment Analysis</title>
-      <link>/post/twitter-sentiment-analysis/</link>
+      <link>https://nervous-wright-ea05a8.netlify.com/post/twitter-sentiment-analysis/</link>
       <pubDate>Tue, 10 Dec 2019 00:00:00 +0000</pubDate>
       
-      <guid>/post/twitter-sentiment-analysis/</guid>
+      <guid>https://nervous-wright-ea05a8.netlify.com/post/twitter-sentiment-analysis/</guid>
       <description>
 
 
@@ -56,37 +56,37 @@
     
     <item>
       <title>Time Series Analysis of crude oil</title>
-      <link>/post/time-series-analysis-of-crude-oil/</link>
+      <link>https://nervous-wright-ea05a8.netlify.com/post/time-series-analysis-of-crude-oil/</link>
       <pubDate>Sat, 30 Nov 2019 00:00:00 +0000</pubDate>
       
-      <guid>/post/time-series-analysis-of-crude-oil/</guid>
+      <guid>https://nervous-wright-ea05a8.netlify.com/post/time-series-analysis-of-crude-oil/</guid>
       <description>In order to illustrate data modeling techniques, and also experiment and learn, the following data analysis will be carried out and discussed.</description>
     </item>
     
     <item>
       <title>John Doe</title>
-      <link>/author/john-doe/</link>
+      <link>https://nervous-wright-ea05a8.netlify.com/author/john-doe/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
-      <guid>/author/john-doe/</guid>
+      <guid>https://nervous-wright-ea05a8.netlify.com/author/john-doe/</guid>
       <description>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</description>
     </item>
     
     <item>
       <title>Kevin Bonds</title>
-      <link>/author/kevin-bonds/</link>
+      <link>https://nervous-wright-ea05a8.netlify.com/author/kevin-bonds/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
-      <guid>/author/kevin-bonds/</guid>
+      <guid>https://nervous-wright-ea05a8.netlify.com/author/kevin-bonds/</guid>
       <description>Strong analytics generalist with depth in many technical areas.</description>
     </item>
     
     <item>
       <title>Mark Dinn</title>
-      <link>/author/mark-dinn/</link>
+      <link>https://nervous-wright-ea05a8.netlify.com/author/mark-dinn/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
-      <guid>/author/mark-dinn/</guid>
+      <guid>https://nervous-wright-ea05a8.netlify.com/author/mark-dinn/</guid>
       <description>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</description>
     </item>
     

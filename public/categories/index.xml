@@ -2,84 +2,84 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Categories on Kevin Bonds | Portfolio</title>
-    <link>/categories/</link>
+    <link>https://nervous-wright-ea05a8.netlify.com/categories/</link>
     <description>Recent content in Categories on Kevin Bonds | Portfolio</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <lastBuildDate>Thu, 23 Mar 2023 00:00:00 +0000</lastBuildDate>
     
-	<atom:link href="/categories/index.xml" rel="self" type="application/rss+xml" />
+	<atom:link href="https://nervous-wright-ea05a8.netlify.com/categories/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
       <title>A/B Testing</title>
-      <link>/categories/a/b-testing/</link>
+      <link>https://nervous-wright-ea05a8.netlify.com/categories/a/b-testing/</link>
       <pubDate>Thu, 23 Mar 2023 00:00:00 +0000</pubDate>
       
-      <guid>/categories/a/b-testing/</guid>
+      <guid>https://nervous-wright-ea05a8.netlify.com/categories/a/b-testing/</guid>
       <description></description>
     </item>
     
     <item>
       <title>EDA</title>
-      <link>/categories/eda/</link>
+      <link>https://nervous-wright-ea05a8.netlify.com/categories/eda/</link>
       <pubDate>Thu, 23 Mar 2023 00:00:00 +0000</pubDate>
       
-      <guid>/categories/eda/</guid>
+      <guid>https://nervous-wright-ea05a8.netlify.com/categories/eda/</guid>
       <description></description>
     </item>
     
     <item>
       <title>Job Hunting</title>
-      <link>/categories/job-hunting/</link>
+      <link>https://nervous-wright-ea05a8.netlify.com/categories/job-hunting/</link>
       <pubDate>Mon, 20 Mar 2023 00:00:00 +0000</pubDate>
       
-      <guid>/categories/job-hunting/</guid>
+      <guid>https://nervous-wright-ea05a8.netlify.com/categories/job-hunting/</guid>
       <description></description>
     </item>
     
     <item>
       <title>Sentiment Analysis</title>
-      <link>/categories/sentiment-analysis/</link>
+      <link>https://nervous-wright-ea05a8.netlify.com/categories/sentiment-analysis/</link>
       <pubDate>Fri, 03 Jan 2020 00:00:00 +0000</pubDate>
       
-      <guid>/categories/sentiment-analysis/</guid>
+      <guid>https://nervous-wright-ea05a8.netlify.com/categories/sentiment-analysis/</guid>
       <description></description>
     </item>
     
     <item>
       <title>Text Analysis</title>
-      <link>/categories/text-analysis/</link>
+      <link>https://nervous-wright-ea05a8.netlify.com/categories/text-analysis/</link>
       <pubDate>Fri, 03 Jan 2020 00:00:00 +0000</pubDate>
       
-      <guid>/categories/text-analysis/</guid>
+      <guid>https://nervous-wright-ea05a8.netlify.com/categories/text-analysis/</guid>
       <description></description>
     </item>
     
     <item>
       <title>Feature Engineering</title>
-      <link>/categories/feature-engineering/</link>
+      <link>https://nervous-wright-ea05a8.netlify.com/categories/feature-engineering/</link>
       <pubDate>Tue, 10 Dec 2019 00:00:00 +0000</pubDate>
       
-      <guid>/categories/feature-engineering/</guid>
+      <guid>https://nervous-wright-ea05a8.netlify.com/categories/feature-engineering/</guid>
       <description></description>
     </item>
     
     <item>
       <title>ARIMA</title>
-      <link>/categories/arima/</link>
+      <link>https://nervous-wright-ea05a8.netlify.com/categories/arima/</link>
       <pubDate>Sat, 30 Nov 2019 00:00:00 +0000</pubDate>
       
-      <guid>/categories/arima/</guid>
+      <guid>https://nervous-wright-ea05a8.netlify.com/categories/arima/</guid>
       <description></description>
     </item>
     
     <item>
       <title>Time Series</title>
-      <link>/categories/time-series/</link>
+      <link>https://nervous-wright-ea05a8.netlify.com/categories/time-series/</link>
       <pubDate>Sat, 30 Nov 2019 00:00:00 +0000</pubDate>
       
-      <guid>/categories/time-series/</guid>
+      <guid>https://nervous-wright-ea05a8.netlify.com/categories/time-series/</guid>
       <description></description>
     </item>
     
