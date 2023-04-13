@@ -2,38 +2,34 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Authors on Kevin Bonds | Portfolio</title>
-    <link>/author/</link>
+    <link>https://nervous-wright-ea05a8.netlify.com/author/</link>
     <description>Recent content in Authors on Kevin Bonds | Portfolio</description>
     <generator>Hugo -- gohugo.io</generator>
-    <language>en-us</language>
-    
-	<atom:link href="/author/index.xml" rel="self" type="application/rss+xml" />
-    
-    
+    <language>en-us</language><atom:link href="https://nervous-wright-ea05a8.netlify.com/author/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>John Doe</title>
-      <link>/author/john-doe/</link>
+      <link>https://nervous-wright-ea05a8.netlify.com/author/john-doe/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
-      <guid>/author/john-doe/</guid>
+      <guid>https://nervous-wright-ea05a8.netlify.com/author/john-doe/</guid>
       <description>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</description>
     </item>
     
     <item>
       <title>Kevin Bonds</title>
-      <link>/author/kevin-bonds/</link>
+      <link>https://nervous-wright-ea05a8.netlify.com/author/kevin-bonds/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
-      <guid>/author/kevin-bonds/</guid>
+      <guid>https://nervous-wright-ea05a8.netlify.com/author/kevin-bonds/</guid>
       <description>Strong analytics generalist with depth in many technical areas.</description>
     </item>
     
     <item>
       <title>Mark Dinn</title>
-      <link>/author/mark-dinn/</link>
+      <link>https://nervous-wright-ea05a8.netlify.com/author/mark-dinn/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
-      <guid>/author/mark-dinn/</guid>
+      <guid>https://nervous-wright-ea05a8.netlify.com/author/mark-dinn/</guid>
       <description>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</description>
     </item>
     
