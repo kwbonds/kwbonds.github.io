@@ -58,7 +58,7 @@ weight = 3
 
 [[menu.main]]
 URL = "resume"
-name = "Resume"
+name = "Resumé"
 #icon = 'ti-resume'
 weight = 1
 
@@ -81,7 +81,7 @@ weight = 3
 
 [[menu.footer]]
 URL = "resume"
-name = "Resume"
+name = "Resumé"
 #icon = 'ti-resume'
 weight = 1
 

@@ -5,7 +5,7 @@ date: "`r Sys.Date()`"
 output:
   pagedown::html_resume:
     # set it to true for a self-contained HTML page but it'll take longer to render
-    self_contained: false
+    self_contained: true
 # uncomment this line to produce HTML and PDF in RStudio:
 knit: pagedown::chrome_print
 ---
@@ -75,7 +75,7 @@ Avast/Smith Micro Software Inc.
 
 Berkeley, CA
 
-2020-2023
+2023 - 2020
 
 Data Scientist and Data Science Platform Lead
 
@@ -94,7 +94,7 @@ Macy's Inc
 
 San Francisco, CA
 
-2018 - 2019
+2019 - 2018
 
 Lead Business Analyst/SME for marketing data migration project (IBM
 Coremetrics to Adobe Analytics)
@@ -111,7 +111,7 @@ Gap Inc
 
 San Francisco, CA
 
-2014-2018
+2018 - 2014
 
 Confidently interacted with senior leadership and provided subject mater
 expertise to the decision making process
@@ -129,7 +129,7 @@ Gap Tech
 
 San Francisco, CA
 
-2012-2014
+2014 - 2012
 
 Part of an Agile team working to develop and refine PO functionality
 
@@ -147,7 +147,7 @@ NASA Marshall Space Flight Center
 
 Huntsville, AL
 
-2009-2011
+2011 - 2009
 
 Publishing member of an inductance study to investigate pulsed-inductive
 plasma accelerators for In-space propulsion applications
