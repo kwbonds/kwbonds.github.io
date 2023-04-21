@@ -34,6 +34,8 @@ Skills {#skills}
 
 - Data applications and data pipelining, production workflows 
 
+- R package development (including unit testing and code coverage)
+
 - Product analytics (Churn, Retention, Segmentation, A/B Testing)
 
 
@@ -54,15 +56,7 @@ Kevin Bonds {#title}
 
 ### Data Science Professional
 
-Experienced Data Scientist with a strong
-technical background and a passion for
-leveraging industry-leading technologies to
-drive insightful and actionable business
-decisions. With extensive experience in data
-analysis, modeling, and data science
-platform engineering, I have a proven track
-record of delivering high-quality solutions to
-complex business challenges.
+As an experienced Data Scientist, I am dedicated to utilizing my strong technical background and passion for leveraging industry-leading technologies to uncover actionable insights that drive informed business decisions. My extensive expertise in data analysis, modeling, R package development, and data science platform engineering has equipped me with the ability to deliver high-quality solutions to complex business challenges. I am confident that my proven track record of success will enable me to make valuable contributions to any organization.
 
 
 
@@ -80,6 +74,7 @@ Berkeley, CA
 Data Scientist and Data Science Platform Lead
 
 - Design, plan, and construct a Data Science Platform
+- R package development - including unit testing and code coverage
 - Owner of workbench for experimentation and job
 automation using Python/R, AWS Kubes, cronjobs,
 Docker, and Kubernetes
