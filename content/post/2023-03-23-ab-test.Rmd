@@ -73,7 +73,7 @@ ab_df$USER_ID %>% n_distinct()
 
 Quickly do any USER_ID's fall into multiple classes (i.e. VARIANT).
 
-```{r}
+```{r warning=FALSE, message=FALSE}
 ab_df %>% 
         n_distinct()  - ab_df %>% 
         select(-REVENUE) %>% 
@@ -86,7 +86,7 @@ ab_df %>%
 
 Oh wow! So a bunch of the user saw more than one variant (not just the one we noticed in the visualization). 
 
-```{r}
+```{r warning=FALSE, message=FALSE}
 # Pull out some the User_ID's that are in both groups
 paged_table(ab_df  %>% 
                     group_by(USER_ID, VARIANT_NAME) %>% 
@@ -168,14 +168,61 @@ results_df <- ab_df %>%
   group_by(VARIANT_NAME) %>%  
   summarise("purchased_count" = sum(purchased),
             "distinct_users" = n_distinct(USER_ID),
-            "distinct_purchase_rate" = purchased_count/distinct_users,
+            "user_purchase_rate" = purchased_count/distinct_users,
             "purchase_rate" = purchased_count/n())
 results_df
 ```
 
-Using Hypothesis testing
+Ok we see that the purchase rate is higher for the control group for both the purchase_rate (non-user based) and user_purchase_rate (tracking at the user level). This illustrates that you can track a the user level or simply the visit level (ie. purchase per page load or per user). 
+
 
 ```{r}
+results_df <- ab_df %>% 
+  mutate("purchased" = ifelse(REVENUE > 0, 1, 0)) %>% 
+  summarise("purchased_count" = sum(purchased),
+            "distinct_users" = n_distinct(USER_ID),
+            "user_purchase_rate" = purchased_count/distinct_users,
+            "purchase_rate" = purchased_count/n())
+results_df
+```
+
+Let's pretend for 1 second that we haven't yet run the experiment and that we are trying to decide how long or how many tests to run. We know that the typical user purchase rate is ~20%. Let's assume we want to insure we can detect a 5% change as significant or not. We need to do a two-sample power calculation-because we have two separate populations to compare (not a sample from one population)-with a two-sided test (to detect a change in either direction). So we us the `pwr.2p.test()` function with the `alternative = "two.sided"` argument. 
+
+```{r}
+library(pwr)
+
+p2_test <- pwr.2p.test(h = ES.h(p1 = 0.20, p2 = 0.25),
+           sig.level = 0.05,
+           power = 0.80,
+           alternative = "two.sided")
+p2_test
+```
+This shows that we need ~`r ceiling(p2_test$n)` users in each class for our test. So we need `r ceiling(p2_test$n) * 2` total users to test. So we see we have just enough users in our data to satisfy this. 
+
+```{r}
+power.prop.test(p1 = 0.20, p2 = 0.25, sig.level = 0.05, power = .80)
+```
+
+Another way to do this is by Logistic regression (which gives similar results.)
+
+```{r}
+# Load package to run power analysis
+library(powerMediation)
+
+# Run power analysis for logistic regression
+total_sample_size <- SSizeLogisticBin(p1 = .20,
+                                      p2 = .25,
+                                      B = 0.5,
+                                      alpha = 0.05,
+                                       power = 0.80)
+total_sample_size
+```
+
+
+Also, after running our test we see an apparent decrease in the purchase rate. But is is significant?
+
+```{r include=FALSE, eval=FALSE}
+# Hypothesis testing
 x_con = results_df$purchased_count[results_df$VARIANT_NAME=="control"]
 n_con =  results_df$distinct_users[results_df$VARIANT_NAME=="control"]
 x_var =  results_df$purchased_count[results_df$VARIANT_NAME=="variant"]
