@@ -6,11 +6,15 @@
     <description>Recent content in EDA on Kevin Bonds | Portfolio</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
+<<<<<<< HEAD
     <lastBuildDate>Thu, 23 Mar 2023 00:00:00 +0000</lastBuildDate>
     
 	<atom:link href="https://nervous-wright-ea05a8.netlify.com/categories/eda/index.xml" rel="self" type="application/rss+xml" />
     
     
+=======
+    <lastBuildDate>Thu, 23 Mar 2023 00:00:00 +0000</lastBuildDate><atom:link href="https://nervous-wright-ea05a8.netlify.com/categories/eda/index.xml" rel="self" type="application/rss+xml" />
+>>>>>>> master
     <item>
       <title>A/B Testing (EDA)</title>
       <link>https://nervous-wright-ea05a8.netlify.com/post/ab-test/</link>

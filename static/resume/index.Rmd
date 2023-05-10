@@ -1,0 +1,183 @@
+---
+title: "Kevin Bonds' resume"
+author: Kevin Bonds
+date: "`r Sys.Date()`"
+output:
+  pagedown::html_resume:
+    # set it to true for a self-contained HTML page but it'll take longer to render
+    self_contained: true
+# uncomment this line to produce HTML and PDF in RStudio:
+knit: pagedown::chrome_print
+---
+
+Aside
+================================================================================
+
+![Kevin Bonds](line_art.jpeg){width=45%}
+
+
+Contact Info {#contact}
+--------------------------------------------------------------------------------
+
+- <i class="fa fa-envelope"></i> kevin.w.bonds@gmail.com
+- <i class="fa fa-github"></i> [github.com/kwbonds](https://github.com/kwbonds?tab=repositories)
+- <i class="fa fa-phone"></i> +1 615-519-8432
+- For more information, please contact me via email.
+
+
+Skills {#skills}
+--------------------------------------------------------------------------------
+
+- Highly skilled in R, SQL, Docker, Python, Shiny, Plumber/OpenAPI
+
+- Experience in Kubenetes, AWS, Google Cloud, Spinnaker
+
+- Data applications and data pipelining, production workflows 
+
+- Product analytics (Churn, Retention, Segmentation, A/B Testing)
+
+
+Disclaimer {#disclaimer}
+--------------------------------------------------------------------------------
+
+This resume was made with the R package [**pagedown**](https://github.com/rstudio/pagedown).
+
+Last updated on `r Sys.Date()`.
+
+
+
+Main
+================================================================================
+
+Kevin Bonds {#title}
+--------------------------------------------------------------------------------
+
+### Data Science Professional
+
+Experienced Data Scientist with a strong
+technical background and a passion for
+leveraging industry-leading technologies to
+drive insightful and actionable business
+decisions. With extensive experience in data
+analysis, modeling, and data science
+platform engineering, I have a proven track
+record of delivering high-quality solutions to
+complex business challenges.
+
+
+
+Professional Experience {data-icon=suitcase}
+--------------------------------------------------------------------------------
+
+### Data Scientist
+
+Avast/Smith Micro Software Inc.
+
+Berkeley, CA
+
+2023 - 2020
+
+Data Scientist and Data Science Platform Lead
+
+- Design, plan, and construct a Data Science Platform
+- Owner of workbench for experimentation and job
+automation using Python/R, AWS Kubes, cronjobs,
+Docker, and Kubernetes
+- Lead designer of customer segmentation project
+- A/B Testing 
+
+
+
+### Sr. Business/Data Analyst
+
+Macy's Inc
+
+San Francisco, CA
+
+2019 - 2018
+
+Lead Business Analyst/SME for marketing data migration project (IBM
+Coremetrics to Adobe Analytics)
+
+- Perform data validation in support of data engineering efforts 
+- Design and POC methods for leveraging new capabilities (data
+connections, API's)
+- Acted as engineer to develop an API clients (JWT, OAuth 2.0, Curl, etc)
+using both R and Python
+
+### Sr. Data Analyst (Global Supply Chain Strategy)
+
+Gap Inc
+
+San Francisco, CA
+
+2018 - 2014
+
+Confidently interacted with senior leadership and provided subject mater
+expertise to the decision making process
+
+- Responsible for reporting on multiple KPI's as well as adhoc analysis
+- Codified business logic into data attributes to support key business
+initiatives
+- SME for data access and data availability for other Analysts, data
+scientists and visualization experts
+
+
+### Business Analyst (Agile)
+
+Gap Tech
+
+San Francisco, CA
+
+2014 - 2012
+
+Part of an Agile team working to develop and refine PO functionality
+
+- Colab with BA's and supply chain strategists 
+- Defined business context, story narrative, and acceptance criteria
+
+
+
+Research Experience {data-icon=laptop}
+--------------------------------------------------------------------------------
+
+### Research Intern
+
+NASA Marshall Space Flight Center
+
+Huntsville, AL
+
+2011 - 2009
+
+Publishing member of an inductance study to investigate pulsed-inductive
+plasma accelerators for In-space propulsion applications
+
+-Fabricated test articles and design robust methods for capturing
+inductance measurements of various conical coil designs using Excel, NI
+LabView, and Igor Pro
+-Designed and constructed methodology for study of a mass flow sensor
+for a liquid bismuth-fed hall thruster
+-Created a fiber-optic based, IR temperature sensing system. Analyzed and
+reported on data and control mechanisms
+
+
+Education {data-icon=graduation-cap data-concise=true}
+--------------------------------------------------------------------------------
+
+### Middle Tennessee State University
+
+B.S Liberal Studies (Aerospace)
+
+Murfreesboro, TN
+
+2011
+
+
+### General Assembly
+
+Machine Learning/Data Science Certification
+
+San Francisco, CA
+
+2017
+

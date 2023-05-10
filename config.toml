@@ -51,9 +51,15 @@ weight = 2
 # weight = 2
 
 [[menu.main]]
-URL = "https://github.com/kwbonds"
+URL = "https://github.com/kwbonds?tab=repositories"
 name = "Project Repos"
 icon = "ti-github"
+weight = 3
+
+[[menu.main]]
+URL = "resume"
+name = "Resumé"
+#icon = 'ti-resume'
 weight = 1
 
 # footer menu
@@ -68,9 +74,15 @@ weight = 2
 # weight = 2
 
 [[menu.footer]]
-URL = "https://github.com/kwbonds"
+URL = "https://github.com/kwbonds?tab=repositories"
 name = "Project Repos"
 # icon = "ti-github"
+weight = 3
+
+[[menu.footer]]
+URL = "resume"
+name = "Resumé"
+#icon = 'ti-resume'
 weight = 1
 
 ######################### Default Parameters ###########################

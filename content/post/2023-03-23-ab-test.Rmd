@@ -240,7 +240,7 @@ paste("The confidence interval is ", round(m, 4),  "\302\261", round(d_h, 4))
 
 
 
-### **IN_PROGRESS. STAY TUNED**
+### **IN PROGRESS STAY TUNED**
 
 ```{r include=FALSE, eval=FALSE}
 ab_df %>% select(VARIANT_NAME, REVENUE) %>% group_by(VARIANT_NAME) %>% summarise("Rev" = sum(REVENUE))
