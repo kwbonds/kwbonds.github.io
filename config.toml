@@ -114,7 +114,8 @@ enable = true
 ####################### banner #######################################
 [params.banner]
 bgImage = "images/banner/banner-bg.svg"
-title = "Hi, I'm Kevin Bonds. I help companies make data-driven decisions"
+title = "Hello, I'm Kevin Bonds. I help companies make data-driven decisions"
+summary = "about/index.html"
 image = "images/banner/Desk_back.png"
 copyright = "&copy; Icons made by [freepik](https://www.flaticon.com/authors/freepik)"
 
