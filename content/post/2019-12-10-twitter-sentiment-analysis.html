@@ -3,6 +3,9 @@ title: Twitter Sentiment Analysis
 author: Kevin Bonds
 date: '2019-12-10'
 slug: twitter-sentiment-analysis
+output:
+  blogdown::html_page:
+    toc: true
 categories:
   - Text Analysis
   - Sentiment Analysis
@@ -13,6 +16,21 @@ tags:
 ---
 
 
+<div id="TOC">
+<ul>
+<li><a href="#libraries-used" id="toc-libraries-used">Libraries Used</a></li>
+<li><a href="#count-features" id="toc-count-features">Count Features</a></li>
+<li><a href="#some-manual-work" id="toc-some-manual-work">Some Manual Work</a></li>
+<li><a href="#visualize-distributions-of-engineered-features" id="toc-visualize-distributions-of-engineered-features">Visualize Distributions of Engineered Features</a></li>
+<li><a href="#stratified-sampling" id="toc-stratified-sampling">Stratified Sampling</a></li>
+<li><a href="#tokenization" id="toc-tokenization">Tokenization</a></li>
+<li><a href="#remove-stopwords" id="toc-remove-stopwords">Remove Stopwords</a></li>
+<li><a href="#stemming" id="toc-stemming">Stemming</a></li>
+<li><a href="#create-a-document-feature-matrix" id="toc-create-a-document-feature-matrix">Create a Document-Feature Matrix</a></li>
+<li><a href="#setting-up-for-k-fold-cross-validation" id="toc-setting-up-for-k-fold-cross-validation">Setting up for K-fold Cross Validation</a></li>
+<li><a href="#train-the-first-model" id="toc-train-the-first-model">Train the First Model</a></li>
+</ul>
+</div>
 
 <p>The following is an analysis of the <em>Twitter Sentiment Analysis Dataset</em> available at: <a href="http://thinknook.com/twitter-sentiment-analysis-training-corpus-dataset-2012-09-22/" class="uri">http://thinknook.com/twitter-sentiment-analysis-training-corpus-dataset-2012-09-22/</a>. I will attempt to use this data to train a model to label unseen tweets into <strong>“Positive”</strong> or <strong>“Negative”</strong> sentiment. I will walk through my methodology and include code. <!--more--></p>
 <p>The following is an analysis of the <em>Twitter Sentiment Analysis Dataset</em> available at: <a href="http://thinknook.com/twitter-sentiment-analysis-training-corpus-dataset-2012-09-22/" class="uri">http://thinknook.com/twitter-sentiment-analysis-training-corpus-dataset-2012-09-22/</a>. I will attempt to use this data to train a model to label unseen tweets into <strong>“Positive”</strong> or <strong>“Negative”</strong> sentiment. I will walk through my methodology and include code. The github repo for my work can be found here: <a href="https://github.com/kwbonds/TwitterSentimentAnalysis" class="uri">https://github.com/kwbonds/TwitterSentimentAnalysis</a>. <a href="#fn1" class="footnote-ref" id="fnref1"><sup>1</sup></a></p>
@@ -25,7 +43,8 @@ library(caret)
 library(knitr)
 library(quanteda)
 library(doSNOW)
-library(gridExtra)</code></pre>
+library(gridExtra)
+library(quanteda.textplots)</code></pre>
 <div id="load-data-from-.zip-file" class="section level4">
 <h4>Load Data from .zip file</h4>
 <pre class="r"><code>raw_tweets &lt;- readRDS(&quot;../../raw_tweets.rds&quot;)</code></pre>
@@ -35,18 +54,24 @@ library(gridExtra)</code></pre>
 <p>Take a quick look at what we have.</p>
 <pre class="r"><code># Examine the structure of the raw_tweets dataframe
 str(raw_tweets)</code></pre>
-<pre><code>## Classes &#39;tbl_df&#39;, &#39;tbl&#39; and &#39;data.frame&#39;:    78931 obs. of  4 variables:
-##  $ ItemID         : num  8 9 18 26 35 89 129 141 161 204 ...
-##  $ Sentiment      : num  0 1 1 0 0 0 1 0 0 1 ...
-##  $ SentimentSource: chr  &quot;Sentiment140&quot; &quot;Sentiment140&quot; &quot;Sentiment140&quot; &quot;Sentiment140&quot; ...
-##  $ SentimentText  : chr  &quot;Sunny Again        Work Tomorrow  :-|       TV Tonight&quot; &quot;handed in my uniform today . i miss you already&quot; &quot;Feeling strangely fine. Now I&#39;m gonna go listen to some Semisonic to celebrate&quot; &quot;BoRinG   ): whats wrong with him??     Please tell me........   :-/&quot; ...
-##  - attr(*, &quot;problems&quot;)=Classes &#39;tbl_df&#39;, &#39;tbl&#39; and &#39;data.frame&#39;: 27 obs. of  5 variables:
-##   ..$ row     : int  4285 4285 4286 4286 4287 4287 4287 4287 4287 4287 ...
-##   ..$ col     : chr  &quot;SentimentText&quot; &quot;SentimentText&quot; &quot;SentimentText&quot; &quot;SentimentText&quot; ...
-##   ..$ expected: chr  &quot;delimiter or quote&quot; &quot;delimiter or quote&quot; &quot;delimiter or quote&quot; &quot;delimiter or quote&quot; ...
-##   ..$ actual  : chr  &quot; &quot; &quot; &quot; &quot; &quot; &quot; &quot; ...
-##   ..$ file    : chr  &quot;&#39;./Sentiment Analysis Dataset.csv&#39;&quot; &quot;&#39;./Sentiment Analysis Dataset.csv&#39;&quot; &quot;&#39;./Sentiment Analysis Dataset.csv&#39;&quot; &quot;&#39;./Sentiment Analysis Dataset.csv&#39;&quot; ...</code></pre>
+<pre><code>## tibble [78,931 × 4] (S3: tbl_df/tbl/data.frame)
+##  $ ItemID         : num [1:78931] 8 9 18 26 35 89 129 141 161 204 ...
+##  $ Sentiment      : num [1:78931] 0 1 1 0 0 0 1 0 0 1 ...
+##  $ SentimentSource: chr [1:78931] &quot;Sentiment140&quot; &quot;Sentiment140&quot; &quot;Sentiment140&quot; &quot;Sentiment140&quot; ...
+##  $ SentimentText  : chr [1:78931] &quot;Sunny Again        Work Tomorrow  :-|       TV Tonight&quot; &quot;handed in my uniform today . i miss you already&quot; &quot;Feeling strangely fine. Now I&#39;m gonna go listen to some Semisonic to celebrate&quot; &quot;BoRinG   ): whats wrong with him??     Please tell me........   :-/&quot; ...
+##  - attr(*, &quot;problems&quot;)= tibble [27 × 5] (S3: tbl_df/tbl/data.frame)
+##   ..$ row     : int [1:27] 4285 4285 4286 4286 4287 4287 4287 4287 4287 4287 ...
+##   ..$ col     : chr [1:27] &quot;SentimentText&quot; &quot;SentimentText&quot; &quot;SentimentText&quot; &quot;SentimentText&quot; ...
+##   ..$ expected: chr [1:27] &quot;delimiter or quote&quot; &quot;delimiter or quote&quot; &quot;delimiter or quote&quot; &quot;delimiter or quote&quot; ...
+##   ..$ actual  : chr [1:27] &quot; &quot; &quot; &quot; &quot; &quot; &quot; &quot; ...
+##   ..$ file    : chr [1:27] &quot;&#39;./Sentiment Analysis Dataset.csv&#39;&quot; &quot;&#39;./Sentiment Analysis Dataset.csv&#39;&quot; &quot;&#39;./Sentiment Analysis Dataset.csv&#39;&quot; &quot;&#39;./Sentiment Analysis Dataset.csv&#39;&quot; ...</code></pre>
 <table>
+<colgroup>
+<col width="4%" />
+<col width="6%" />
+<col width="9%" />
+<col width="80%" />
+</colgroup>
 <thead>
 <tr class="header">
 <th align="right">ItemID</th>
@@ -102,13 +127,13 @@ raw_tweets$SentimentSource &lt;- as.factor(raw_tweets$SentimentSource)</code></p
 <p>What proportion of “Sentiment” do we have in our corpus?</p>
 <pre class="r"><code># Get the proportion of Sentiment in the corpus
 prop.table(table(raw_tweets[, &quot;Sentiment&quot;]))</code></pre>
-<pre><code>## 
+<pre><code>## Sentiment
 ##  Negative  Positive 
 ## 0.4977005 0.5022995</code></pre>
 <p>Looks like almost 50/50. Nice. In this case a random sample would probably give us very similar proportions, we will use techniques to hard maintain this proportion i.e. just as if we had an unbalanced data set.</p>
 <pre class="r"><code># Get the proportion of the SentimentSource
 prop.table(table(raw_tweets[, &quot;SentimentSource&quot;]))</code></pre>
-<pre><code>## 
+<pre><code>## SentimentSource
 ##       Kaggle Sentiment140 
 ##  0.001026213  0.998973787</code></pre>
 <p>I’m not sure what this <em>SentimentSource</em> column is, but it looks like the vast majority is “Sentiment140”. We’ll ignore it for now.</p>
@@ -130,7 +155,17 @@ raw_tweets$at_ref_count &lt;- str_count(raw_tweets$SentimentText,
 raw_tweets$text_length &lt;- nchar(raw_tweets$SentimentText)</code></pre>
 <pre class="r"><code># View the first few rows 
 kable(head(raw_tweets))</code></pre>
-<table>
+<table style="width:100%;">
+<colgroup>
+<col width="3%" />
+<col width="4%" />
+<col width="7%" />
+<col width="61%" />
+<col width="4%" />
+<col width="6%" />
+<col width="6%" />
+<col width="5%" />
+</colgroup>
 <thead>
 <tr class="header">
 <th align="right">ItemID</th>
@@ -282,7 +317,7 @@ plot4 &lt;- ggplot(raw_tweets,
 
 grid.arrange(plot1, plot2, plot3, plot4, nrow=4, ncol=1)</code></pre>
 <p><img src="/post/2019-12-10-twitter-sentiment-analysis_files/figure-html/grid_plot-1.png" width="576" /></p>
-<p>Doesn’t look like any of the features we engineered suggest much predictive value. We’ll have to rely on tokenizing the text to get our features–unless we can come up with other ideas. We can start with simple tokenozation (i.e. “Bag of Words”) and also try some N-grams. Simple Bag of Words tokenization does not preserve the word order or association, but N-grams will cause our feature space to explode and is typically very sparse. This will require some dimensionality reduction–which will certainly add complexity and is a “black-box”&quot; method. i.e we lose the ability to inspect or explain the model.</p>
+<p>Doesn’t look like any of the features we engineered suggest much predictive value. We’ll have to rely on tokenizing the text to get our features–unless we can come up with other ideas. We can start with simple tokenozation (i.e. “Bag of Words”) and also try some N-grams. Simple Bag of Words tokenization does not preserve the word order or association, but N-grams will cause our feature space to explode and is typically very sparse. This will require some dimensionality reduction–which will certainly add complexity and is a “black-box”” method. i.e we lose the ability to inspect or explain the model.</p>
 <p>Let’s start creating our test/train set and start modeling.</p>
 </div>
 <div id="stratified-sampling" class="section level3">
@@ -326,6 +361,7 @@ train_tokens &lt;- tokens(train$SentimentText,
                        remove_twitter = TRUE,
                        remove_symbols = TRUE, 
                        remove_hyphens = TRUE)</code></pre>
+<pre><code>## Warning: remove_twitter, remove_hyphens arguments are not used.</code></pre>
 <p>Let’s look at a few to illustrate what we did.</p>
 <pre class="r"><code># Inspect tweets tokens
 train_tokens[[29]]</code></pre>
@@ -336,7 +372,7 @@ train_tokens[[29]]</code></pre>
 ## [29] &quot;good&quot;    &quot;SMILE&quot;</code></pre>
 <p>These are the tokens, from the 29th record, of the training data set. i.e. the tweet below.</p>
 <pre class="r"><code>train[29,2]</code></pre>
-<pre><code>## # A tibble: 1 x 1
+<pre><code>## # A tibble: 1 × 1
 ##   SentimentText                                                                 
 ##   &lt;chr&gt;                                                                         
 ## 1 &amp;quot; she has a great smile   &amp;quot; Thank you! I GOT that comment from DEMI…</code></pre>
@@ -399,17 +435,40 @@ train_dfm %&gt;% textplot_wordcloud()</code></pre>
 <p><img src="/post/2019-12-10-twitter-sentiment-analysis_files/figure-html/wordcloud-1.png" width="672" /></p>
 <pre class="r"><code># Convert to matrix
 train_dfm &lt;- as.matrix(train_dfm)</code></pre>
-<p>We now have a matrix–the length of our original data frame–now with 9189 features in the term. That is a lot of features. We are definitely suffering from the “curse of dimensionality”. We’ll need to do some feature reduction at some point.</p>
+<p>We now have a matrix–the length of our original data frame–now with 9581 features in the term. That is a lot of features. We are definitely suffering from the “curse of dimensionality”. We’ll need to do some feature reduction at some point.</p>
 <pre class="r"><code># Check dimensions of the DFM
 dim(train_dfm)</code></pre>
-<pre><code>## [1] 4732 9189</code></pre>
+<pre><code>## [1] 4732 9581</code></pre>
 <p>Let’s look at the first 6 documents (as rows) and the first 20 features of the term (as columns).</p>
 <pre class="r"><code># View part of the matrix
 kable(head(train_dfm[1:6, 1:20]))</code></pre>
-<table>
+<table style="width:100%;">
+<colgroup>
+<col width="5%" />
+<col width="4%" />
+<col width="4%" />
+<col width="3%" />
+<col width="4%" />
+<col width="3%" />
+<col width="3%" />
+<col width="3%" />
+<col width="5%" />
+<col width="5%" />
+<col width="5%" />
+<col width="5%" />
+<col width="5%" />
+<col width="6%" />
+<col width="4%" />
+<col width="5%" />
+<col width="4%" />
+<col width="5%" />
+<col width="4%" />
+<col width="6%" />
+<col width="4%" />
+</colgroup>
 <thead>
 <tr class="header">
-<th></th>
+<th align="left"></th>
 <th align="right">case</th>
 <th align="right">feel</th>
 <th align="right">emo</th>
@@ -434,7 +493,7 @@ kable(head(train_dfm[1:6, 1:20]))</code></pre>
 </thead>
 <tbody>
 <tr class="odd">
-<td>text1</td>
+<td align="left">text1</td>
 <td align="right">1</td>
 <td align="right">2</td>
 <td align="right">1</td>
@@ -457,7 +516,7 @@ kable(head(train_dfm[1:6, 1:20]))</code></pre>
 <td align="right">0</td>
 </tr>
 <tr class="even">
-<td>text2</td>
+<td align="left">text2</td>
 <td align="right">0</td>
 <td align="right">0</td>
 <td align="right">0</td>
@@ -480,7 +539,7 @@ kable(head(train_dfm[1:6, 1:20]))</code></pre>
 <td align="right">1</td>
 </tr>
 <tr class="odd">
-<td>text3</td>
+<td align="left">text3</td>
 <td align="right">0</td>
 <td align="right">0</td>
 <td align="right">0</td>
@@ -503,7 +562,7 @@ kable(head(train_dfm[1:6, 1:20]))</code></pre>
 <td align="right">0</td>
 </tr>
 <tr class="even">
-<td>text4</td>
+<td align="left">text4</td>
 <td align="right">0</td>
 <td align="right">0</td>
 <td align="right">0</td>
@@ -526,7 +585,7 @@ kable(head(train_dfm[1:6, 1:20]))</code></pre>
 <td align="right">0</td>
 </tr>
 <tr class="odd">
-<td>text5</td>
+<td align="left">text5</td>
 <td align="right">0</td>
 <td align="right">0</td>
 <td align="right">0</td>
@@ -549,7 +608,7 @@ kable(head(train_dfm[1:6, 1:20]))</code></pre>
 <td align="right">0</td>
 </tr>
 <tr class="even">
-<td>text6</td>
+<td align="left">text6</td>
 <td align="right">0</td>
 <td align="right">0</td>
 <td align="right">0</td>
@@ -579,9 +638,28 @@ train_df &lt;- cbind(&quot;Sentiment&quot; = as.factor(train$Sentiment),
                   as.data.frame(train_dfm))
 kable(train_df[5:15, 35:50])</code></pre>
 <table>
+<colgroup>
+<col width="6%" />
+<col width="5%" />
+<col width="5%" />
+<col width="4%" />
+<col width="4%" />
+<col width="4%" />
+<col width="5%" />
+<col width="4%" />
+<col width="5%" />
+<col width="5%" />
+<col width="4%" />
+<col width="4%" />
+<col width="5%" />
+<col width="18%" />
+<col width="3%" />
+<col width="5%" />
+<col width="3%" />
+</colgroup>
 <thead>
 <tr class="header">
-<th></th>
+<th align="left"></th>
 <th align="right">eurgh</th>
 <th align="right">silli</th>
 <th align="right">cold</th>
@@ -594,15 +672,15 @@ kable(train_df[5:15, 35:50])</code></pre>
 <th align="right">just</th>
 <th align="right">peed</th>
 <th align="right">littl</th>
-<th align="right">http</th>
-<th align="right">bit.li</th>
-<th align="right">aldxf</th>
+<th align="right"><a href="http://bit.ly/aldxf" class="uri">http://bit.ly/aldxf</a></th>
 <th align="right">via</th>
+<th align="right"><span class="citation">@ttac</span></th>
+<th align="right">amp</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td>text5</td>
+<td align="left">text5</td>
 <td align="right">0</td>
 <td align="right">0</td>
 <td align="right">0</td>
@@ -621,7 +699,7 @@ kable(train_df[5:15, 35:50])</code></pre>
 <td align="right">0</td>
 </tr>
 <tr class="even">
-<td>text6</td>
+<td align="left">text6</td>
 <td align="right">1</td>
 <td align="right">3</td>
 <td align="right">1</td>
@@ -640,7 +718,7 @@ kable(train_df[5:15, 35:50])</code></pre>
 <td align="right">0</td>
 </tr>
 <tr class="odd">
-<td>text7</td>
+<td align="left">text7</td>
 <td align="right">0</td>
 <td align="right">0</td>
 <td align="right">0</td>
@@ -653,13 +731,13 @@ kable(train_df[5:15, 35:50])</code></pre>
 <td align="right">1</td>
 <td align="right">1</td>
 <td align="right">1</td>
-<td align="right">2</td>
-<td align="right">2</td>
+<td align="right">1</td>
+<td align="right">1</td>
 <td align="right">1</td>
 <td align="right">1</td>
 </tr>
 <tr class="even">
-<td>text8</td>
+<td align="left">text8</td>
 <td align="right">0</td>
 <td align="right">0</td>
 <td align="right">0</td>
@@ -678,7 +756,7 @@ kable(train_df[5:15, 35:50])</code></pre>
 <td align="right">0</td>
 </tr>
 <tr class="odd">
-<td>text9</td>
+<td align="left">text9</td>
 <td align="right">0</td>
 <td align="right">0</td>
 <td align="right">0</td>
@@ -697,7 +775,7 @@ kable(train_df[5:15, 35:50])</code></pre>
 <td align="right">0</td>
 </tr>
 <tr class="even">
-<td>text10</td>
+<td align="left">text10</td>
 <td align="right">0</td>
 <td align="right">0</td>
 <td align="right">0</td>
@@ -716,7 +794,7 @@ kable(train_df[5:15, 35:50])</code></pre>
 <td align="right">0</td>
 </tr>
 <tr class="odd">
-<td>text11</td>
+<td align="left">text11</td>
 <td align="right">0</td>
 <td align="right">0</td>
 <td align="right">0</td>
@@ -735,7 +813,7 @@ kable(train_df[5:15, 35:50])</code></pre>
 <td align="right">0</td>
 </tr>
 <tr class="even">
-<td>text12</td>
+<td align="left">text12</td>
 <td align="right">0</td>
 <td align="right">0</td>
 <td align="right">0</td>
@@ -754,7 +832,7 @@ kable(train_df[5:15, 35:50])</code></pre>
 <td align="right">0</td>
 </tr>
 <tr class="odd">
-<td>text13</td>
+<td align="left">text13</td>
 <td align="right">0</td>
 <td align="right">0</td>
 <td align="right">0</td>
@@ -773,7 +851,7 @@ kable(train_df[5:15, 35:50])</code></pre>
 <td align="right">0</td>
 </tr>
 <tr class="even">
-<td>text14</td>
+<td align="left">text14</td>
 <td align="right">0</td>
 <td align="right">0</td>
 <td align="right">0</td>
@@ -792,7 +870,7 @@ kable(train_df[5:15, 35:50])</code></pre>
 <td align="right">0</td>
 </tr>
 <tr class="odd">
-<td>text15</td>
+<td align="left">text15</td>
 <td align="right">0</td>
 <td align="right">0</td>
 <td align="right">0</td>
@@ -870,10 +948,10 @@ rpart1</code></pre>
 <h4>To be continued…</h4>
 </div>
 </div>
-<div class="footnotes">
+<div class="footnotes footnotes-end-of-document">
 <hr />
 <ol>
-<li id="fn1"><p>The file is &gt; 50 MB, so I have taken a stratified sample and loaded it for this example (mainly so that this website will load). If you want to begin with the original, you will need to download it from the source above and read it into your working directory as an object named <em>raw_tweets</em>.<a href="#fnref1" class="footnote-back">↩</a></p></li>
-<li id="fn2"><p>Note: I am loading a pre-processed model. Training the model takes a long time. If you wishd to run the model yourself, you will have to modify the code below. You’ll need to remove the <code>eval=FALSE</code> on the next to sections and add <code>eval=FALSE</code> to the <code>load(&quot;../../rpart1.rds&quot;)</code> section.<a href="#fnref2" class="footnote-back">↩</a></p></li>
+<li id="fn1"><p>The file is &gt; 50 MB, so I have taken a stratified sample and loaded it for this example (mainly so that this website will load). If you want to begin with the original, you will need to download it from the source above and read it into your working directory as an object named <em>raw_tweets</em>.<a href="#fnref1" class="footnote-back">↩︎</a></p></li>
+<li id="fn2"><p>Note: I am loading a pre-processed model. Training the model takes a long time. If you wishd to run the model yourself, you will have to modify the code below. You’ll need to remove the <code>eval=FALSE</code> on the next to sections and add <code>eval=FALSE</code> to the <code>load("../../rpart1.rds")</code> section.<a href="#fnref2" class="footnote-back">↩︎</a></p></li>
 </ol>
 </div>

@@ -115,8 +115,8 @@ enable = true
 [params.banner]
 bgImage = "images/banner/banner-bg.svg"
 title = "Hello there, I'm Kevin Bonds, a data scientist who specializes in helping companies make data driven decisions."
-summary = "about/index.html"
-image = "images/banner/Desk_back.png"
+#summary = "about/index.html"
+image = "images/banner/Desk_back.png" 
 copyright = "&copy; Icons made by [freepik](https://www.flaticon.com/authors/freepik)"
 
 
@@ -136,12 +136,19 @@ copyright = "&copy; Icons made by [freepik](https://www.flaticon.com/authors/fre
 [[params.social]]
 icon = "ti-skype" # themify icon pack https://themify.me/themify-icons
 link = "https://join.skype.com/invite/u45PzQhKsLp5"
-[[params.social]]
-icon = "ti-twitter-alt" # themify icon pack https://themify.me/themify-icons
-link = "https://twitter.com/KevinWBonds"
+#[[params.social]]
+#icon = "ti-twitter-alt" # themify icon pack https://themify.me/themify-icons
+#link = "https://twitter.com/KevinWBonds"
 [[params.social]]
 icon = "ti-github" # themify icon pack https://themify.me/themify-icons
 link = "https://github.com/kwbonds"
 [[params.social]]
 icon = "ti-linkedin" # themify icon pack https://themify.me/themify-icons
 link = "https://www.linkedin.com/in/kevin-bonds/"
+#[[params.social]]
+#icon = "ti-home" # themify icon pack https://themify.me/themify-icons
+
+[markup]
+  [markup.goldmark]
+    [markup.goldmark.renderer]
+      unsafe = true
