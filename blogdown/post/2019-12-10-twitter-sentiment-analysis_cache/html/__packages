@@ -1,4 +1,3 @@
-base
 tidyverse
 ggplot2
 tibble
@@ -17,3 +16,5 @@ iterators
 snow
 doSNOW
 gridExtra
+lubridate
+quanteda.textplots

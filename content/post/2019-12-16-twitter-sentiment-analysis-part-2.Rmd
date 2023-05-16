@@ -3,6 +3,9 @@ title: Twitter Sentiment Analysis Part:2
 author: Kevin Bonds
 date: '2020-01-03'
 slug: twitter-sentiment-analysis-part-2
+output:
+  blogdown::html_page:
+    toc: true
 hidden: TRUE
 categories:
   - Sentiment Analysis
@@ -16,7 +19,7 @@ This is the second part of the Twitter Sentiment Analysis. I will create a TFIDF
 <!--more-->
 
 ### Libraries Used
-```{r setup, message=FALSE, warning=FALSE, echo=FALSE}
+```{r setup, message=FALSE, warning=FALSE}
 library(tidyverse)
 library(readr)
 library(ggplot2)
@@ -25,21 +28,22 @@ library(knitr)
 library(quanteda)
 library(doSNOW)
 library(gridExtra)
+library(quanteda.textplots)
 
 ```
 
 In the first part we trained a single decision tree with our document-frequency matrix using just the tokenized text. i.e. simple Bag-of-words approach. Now let's see if I can use some n-grams to add some word order element to our approach to see if we get better results. The one caveat is that creating n-grams explodes our feature space quite significantly. Even a modest approach leads to tens-of-thousands of features and a very sparse feature matrix. Also, since I are doing this on a small laptop this quickly grows into something unwieldy. Therefore I will not go through the interim step of building a similar single decision tree model with this larger feature matrix. Instead I will use a technique to reduce this feature space down to a manageable level. I'll use Singular Value Decomposition to achieve this. 
 
-```{r part_1_load, echo=FALSE}
+```{r part_1_load, echo=FALSE, warning=FALSE, message=FALSE}
 load("../../Tweet_image_part_1.RData")
 ```
 
-```{r load_raw_tweets, echo=FALSE}
+```{r load_raw_tweets, echo=FALSE, warning=FALSE, message=FALSE}
 raw_tweets <- readRDS("../../raw_tweets.rds")
 ```
 
 
-```{r train_tokens_init, echo=FALSE, cache=TRUE}
+```{r train_tokens_init, echo=FALSE, cache=TRUE, , warning=FALSE, message=FALSE}
 # Convert SentimentText column to tokens
 train_tokens <- tokens(train$SentimentText, 
                        what = "word", 
@@ -295,6 +299,10 @@ train_tokens2[[2]]
 
 
 #### To be continued...
+
+All of this started to get really heavy for my small, old macbook. So I stoped here for now. 
+
+Update: I started a new job, so I've been focused on that and haven't worked on this. 
 
 ```{r eval=FALSE, include=FALSE, echo=FALSE}
 train_tokens <- tokens(train$SentimentText, 

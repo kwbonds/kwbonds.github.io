@@ -113,7 +113,8 @@ library(knitr)
 library(ggplot2)
 library(yardstick)
 library(Metrics)
-library(astsa)</code></pre>
+library(astsa)
+library(tidyr)</code></pre>
 <div id="collecting-data" class="section level1">
 <h1>Collecting data</h1>
 <p>I’ll start with some time series analysis using crude oil products. This data can be found as an xls file that can be downloaded from: <a href="https://www.eia.gov/dnav/pet/PET_PRI_SPT_S1_M.htm" class="uri">https://www.eia.gov/dnav/pet/PET_PRI_SPT_S1_M.htm</a>.</p>
@@ -152,10 +153,22 @@ year_stats &lt;- crude_oil %&gt;%
         summarize( &quot;yr_mean_crude&quot; = mean(`Cushing, OK WTI Spot Price FOB (Dollars per Barrel)`),
                    &quot;yr_median_crude&quot; = median(`Cushing, OK WTI Spot Price FOB (Dollars per Barrel)`))
 # Join to larger dataframe
-crude_oil &lt;- left_join(crude_oil, year_stats, on = c(&quot;Year&quot; = &quot;Year&quot;))
+crude_oil &lt;- left_join(crude_oil, year_stats, by = c(&quot;Year&quot; = &quot;Year&quot;))
 kable(crude_oil[12:17,], caption= &quot;Table with Yearly Stats&quot;)</code></pre>
-<table>
+<table style="width:100%;">
 <caption>(#tab:yearly_stats)Table with Yearly Stats</caption>
+<colgroup>
+<col width="5%" />
+<col width="27%" />
+<col width="25%" />
+<col width="5%" />
+<col width="3%" />
+<col width="2%" />
+<col width="7%" />
+<col width="7%" />
+<col width="7%" />
+<col width="8%" />
+</colgroup>
 <thead>
 <tr class="header">
 <th align="left">Date</th>
@@ -267,15 +280,35 @@ propane &lt;- readRDS(&quot;../../propane.rds&quot;)</code></pre>
 <p>Since prices are taken at the end of the month, dates are converted to month end just for clarity.</p>
 <pre class="r"><code># Join conv_gasoline and heating_oil
 energy_df &lt;- 
-        left_join(crude_oil, conv_gasoline[,2:5], on = c(&quot;Year&quot; = &quot;Year&quot;, &quot;Month&quot; = &quot;Month&quot;)) %&gt;% 
-        left_join(heating_oil[,2:4], on = c(&quot;Year&quot; = &quot;Year&quot;, &quot;Month&quot; = &quot;Month&quot;)) %&gt;%
-        left_join(uls_diesel[-1], on = c(&quot;Year&quot; = &quot;Year&quot;, &quot;Month&quot; = &quot;Month&quot;)) %&gt;% 
-        left_join(RBOB_gasoline[-1], on = c(&quot;Year&quot; = &quot;Year&quot;, &quot;Month&quot; = &quot;Month&quot;)) %&gt;% 
-        left_join(jet[-1], on = c(&quot;Year&quot; = &quot;Year&quot;, &quot;Month&quot; = &quot;Month&quot;)) %&gt;% 
-        left_join(propane[-1], on = c(&quot;Year&quot; = &quot;Year&quot;, &quot;Month&quot; = &quot;Month&quot;))
+        left_join(crude_oil, conv_gasoline[,2:5], by = c(&quot;Year&quot; = &quot;Year&quot;, &quot;Month&quot; = &quot;Month&quot;)) %&gt;% 
+        left_join(heating_oil[,2:4], by = c(&quot;Year&quot; = &quot;Year&quot;, &quot;Month&quot; = &quot;Month&quot;)) %&gt;%
+        left_join(uls_diesel[-1], by = c(&quot;Year&quot; = &quot;Year&quot;, &quot;Month&quot; = &quot;Month&quot;)) %&gt;% 
+        left_join(RBOB_gasoline[-1], by = c(&quot;Year&quot; = &quot;Year&quot;, &quot;Month&quot; = &quot;Month&quot;)) %&gt;% 
+        left_join(jet[-1], by = c(&quot;Year&quot; = &quot;Year&quot;, &quot;Month&quot; = &quot;Month&quot;)) %&gt;% 
+        left_join(propane[-1], by = c(&quot;Year&quot; = &quot;Year&quot;, &quot;Month&quot; = &quot;Month&quot;))
 energy_df &lt;- energy_df %&gt;% select(&quot;Date&quot;= `Date2`, c(5:6, 2:3, 7:length(energy_df)))
 kable(head(energy_df))</code></pre>
-<table>
+<table style="width:100%;">
+<colgroup>
+<col width="1%" />
+<col width="0%" />
+<col width="0%" />
+<col width="6%" />
+<col width="5%" />
+<col width="1%" />
+<col width="1%" />
+<col width="1%" />
+<col width="1%" />
+<col width="9%" />
+<col width="9%" />
+<col width="8%" />
+<col width="8%" />
+<col width="8%" />
+<col width="8%" />
+<col width="9%" />
+<col width="8%" />
+<col width="7%" />
+</colgroup>
 <thead>
 <tr class="header">
 <th align="left">Date</th>
@@ -427,6 +460,11 @@ kable(head(energy_df))</code></pre>
 <h1>Modeling crude oil</h1>
 <p>Let’s go ahead and try some ARIMA modeling. To create a time series model for crude oil price we should determine what sort of model may best fit. Looking at the plot of the data:</p>
 <pre class="r"><code>ggplot(energy_df, aes(x = energy_df$Date, y = energy_df$`Cushing, OK WTI Spot Price FOB (Dollars per Barrel)`)) + geom_line() + ylab(&quot;WTI Spot Price (Dollars per Barrel)&quot;) + xlab(&quot;Date&quot;) + ggtitle(&quot;Monthly average for West Texas Crude Oil&quot;)</code></pre>
+<pre><code>## Warning: Use of `energy_df$Date` is discouraged.
+## ℹ Use `Date` instead.</code></pre>
+<pre><code>## Warning: Use of `` energy_df$`Cushing, OK WTI Spot Price FOB (Dollars per Barrel)` `` is
+## discouraged.
+## ℹ Use `Cushing, OK WTI Spot Price FOB (Dollars per Barrel)` instead.</code></pre>
 <p><img src="/post/2019-12-10-time-series-analysis-of-crude-oil_files/figure-html/unnamed-chunk-4-1.png" width="672" /></p>
 <p>It appears the data is not stabilized. There is a general trend and possibly some exponential behavior. Let’s try standardizing the data by log-differencing to remove trend and growth.</p>
 <pre class="r"><code>cop &lt;-  ts(energy_df$`Cushing, OK WTI Spot Price FOB (Dollars per Barrel)`, start= c(1986,1), end = c(2019,8), frequency = 12)</code></pre>
@@ -445,9 +483,9 @@ plot(crude_oil_returns, type = &quot;l&quot;)</code></pre>
 <pre><code>## $fit
 ## 
 ## Call:
-## stats::arima(x = xdata, order = c(p, d, q), seasonal = list(order = c(P, D, 
-##     Q), period = S), xreg = constant, transform.pars = trans, fixed = fixed, 
-##     optim.control = list(trace = trc, REPORT = 1, reltol = tol))
+## arima(x = xdata, order = c(p, d, q), seasonal = list(order = c(P, D, Q), period = S), 
+##     xreg = constant, transform.pars = trans, fixed = fixed, optim.control = list(trace = trc, 
+##         REPORT = 1, reltol = tol))
 ## 
 ## Coefficients:
 ##          ar1  constant
@@ -480,9 +518,9 @@ plot(crude_oil_returns, type = &quot;l&quot;)</code></pre>
 <pre><code>## $fit
 ## 
 ## Call:
-## stats::arima(x = xdata, order = c(p, d, q), seasonal = list(order = c(P, D, 
-##     Q), period = S), xreg = constant, transform.pars = trans, fixed = fixed, 
-##     optim.control = list(trace = trc, REPORT = 1, reltol = tol))
+## arima(x = xdata, order = c(p, d, q), seasonal = list(order = c(P, D, Q), period = S), 
+##     xreg = constant, transform.pars = trans, fixed = fixed, optim.control = list(trace = trc, 
+##         REPORT = 1, reltol = tol))
 ## 
 ## Coefficients:
 ##          ar1      ar2  constant
@@ -519,9 +557,9 @@ plot(crude_oil_returns, type = &quot;l&quot;)</code></pre>
 <pre><code>## $fit
 ## 
 ## Call:
-## stats::arima(x = xdata, order = c(p, d, q), seasonal = list(order = c(P, D, 
-##     Q), period = S), xreg = constant, transform.pars = trans, fixed = fixed, 
-##     optim.control = list(trace = trc, REPORT = 1, reltol = tol))
+## arima(x = xdata, order = c(p, d, q), seasonal = list(order = c(P, D, Q), period = S), 
+##     xreg = constant, transform.pars = trans, fixed = fixed, optim.control = list(trace = trc, 
+##         REPORT = 1, reltol = tol))
 ## 
 ## Coefficients:
 ##          ar1    sar1  constant
@@ -571,12 +609,10 @@ plot(gas_returns, type = &quot;l&quot;)</code></pre>
 <p><img src="/post/2019-12-10-time-series-analysis-of-crude-oil_files/figure-html/unnamed-chunk-16-1.png" width="672" /></p>
 <pre class="r"><code>acf2(gas_returns)</code></pre>
 <p><img src="/post/2019-12-10-time-series-analysis-of-crude-oil_files/figure-html/acf2_gas_prices-1.png" width="672" /></p>
-<pre class="r"><code>gas_mdl &lt;- sarima(gas_returns, p = 2, d = 1, q = 0)</code></pre>
-<p><img src="/post/2019-12-10-time-series-analysis-of-crude-oil_files/figure-html/gas_mdl_1-1.png" width="672" /></p>
-<pre class="r"><code>gas_mdl</code></pre>
-<pre class="r"><code>gas_mdl &lt;- sarima(gas_returns, p = 1, d = 1, q = 2)</code></pre>
-<p><img src="/post/2019-12-10-time-series-analysis-of-crude-oil_files/figure-html/gas_mdl_2-1.png" width="672" /></p>
-<pre class="r"><code>gas_mdl</code></pre>
+<pre class="r"><code>gas_mdl &lt;- sarima(gas_returns, p = 2, d = 1, q = 0)
+gas_mdl</code></pre>
+<pre class="r"><code>gas_mdl &lt;- sarima(gas_returns, p = 1, d = 1, q = 2)
+gas_mdl</code></pre>
 <pre class="r"><code>sarima.for(gas_price, 1,1,2, n.ahead = 6)</code></pre>
 <p><img src="/post/2019-12-10-time-series-analysis-of-crude-oil_files/figure-html/unnamed-chunk-17-1.png" width="672" /></p>
 <pre><code>## $pred
@@ -589,7 +625,7 @@ plot(gas_returns, type = &quot;l&quot;)</code></pre>
 ## 
 ## $se
 ##            Jan       Feb Mar Apr May Jun Jul Aug       Sep       Oct       Nov
-## 2019                                             0.1279105 0.2074903 0.2557773
+## 2019                                             0.1279105 0.2074902 0.2557773
 ## 2020 0.3180102 0.3403182                                                      
 ##            Dec
 ## 2019 0.2907294
@@ -632,8 +668,6 @@ plot(gas_returns, type = &quot;l&quot;)</code></pre>
         <ul class="list-inline social-icon mb-0">
           
           <li class="list-inline-item"><a href="https://join.skype.com/invite/u45PzQhKsLp5"><i class="ti-skype"></i></a></li>
-          
-          <li class="list-inline-item"><a href="https://twitter.com/KevinWBonds"><i class="ti-twitter-alt"></i></a></li>
           
           <li class="list-inline-item"><a href="https://github.com/kwbonds"><i class="ti-github"></i></a></li>
           
