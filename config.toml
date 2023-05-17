@@ -144,3 +144,8 @@ link = "https://github.com/kwbonds"
 [[params.social]]
 icon = "ti-linkedin" # themify icon pack https://themify.me/themify-icons
 link = "https://www.linkedin.com/in/kevin-bonds/"
+
+[markup]
+  [markup.goldmark]
+    [markup.goldmark.renderer]
+      unsafe = true

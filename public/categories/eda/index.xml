@@ -6,22 +6,14 @@
     <description>Recent content in EDA on Kevin Bonds | Portfolio</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-<<<<<<< HEAD
-    <lastBuildDate>Thu, 23 Mar 2023 00:00:00 +0000</lastBuildDate>
-    
-	<atom:link href="https://nervous-wright-ea05a8.netlify.com/categories/eda/index.xml" rel="self" type="application/rss+xml" />
-    
-    
-=======
-    <lastBuildDate>Thu, 23 Mar 2023 00:00:00 +0000</lastBuildDate><atom:link href="https://nervous-wright-ea05a8.netlify.com/categories/eda/index.xml" rel="self" type="application/rss+xml" />
->>>>>>> master
+    <lastBuildDate>Sat, 13 May 2023 00:00:00 +0000</lastBuildDate><atom:link href="https://nervous-wright-ea05a8.netlify.com/categories/eda/index.xml" rel="self" type="application/rss+xml" />
     <item>
-      <title>A/B Testing (EDA)</title>
-      <link>https://nervous-wright-ea05a8.netlify.com/post/ab-test/</link>
-      <pubDate>Thu, 23 Mar 2023 00:00:00 +0000</pubDate>
+      <title>A/B Testing: Part 1</title>
+      <link>https://nervous-wright-ea05a8.netlify.com/post/ab-test-p1/</link>
+      <pubDate>Sat, 13 May 2023 00:00:00 +0000</pubDate>
       
-      <guid>https://nervous-wright-ea05a8.netlify.com/post/ab-test/</guid>
-      <description>Introduction A stakeholder may ask if a change to an application will make a user more likely to make a purchase or a larger purchase.</description>
+      <guid>https://nervous-wright-ea05a8.netlify.com/post/ab-test-p1/</guid>
+      <description>Method Prepping A/B Test Data Cleaning Data Considerations What about the Duplicates Adding Purchased Column and Calculating some rates Power Calulations (2 methods) IN PROGRESS STAY TUNED A stakeholder may ask if a change, to an application, will make a user more likely to make a purchase (or more likely to make a larger purchase).</description>
     </item>
     
   </channel>
