@@ -73,14 +73,12 @@ Berkeley, CA
 
 Data Scientist and Data Science Platform Lead
 
+- Lead collaborative effort to model customer behavior
+- A/B Testing, API deployment, custom visualization tool deployment, reporting
 - Design, plan, and construct a Data Science Platform
-- R package development - including unit testing and code coverage
-- Owner of workbench for experimentation and job
+- Owner of Legacy workbench for experimentation and job
 automation using Python/R, AWS Kubes, cronjobs,
 Docker, and Kubernetes
-- Lead designer of customer segmentation project
-- A/B Testing 
-
 
 
 ### Sr. Business/Data Analyst
