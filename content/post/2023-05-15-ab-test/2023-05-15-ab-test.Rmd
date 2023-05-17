@@ -15,6 +15,8 @@ tags:
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
+### Short Intro
+
 A stakeholder may ask if a change, to an application, will make a user more likely to make a purchase (or more likely to make a larger purchase). These are excellent questions that can be addressed through a controlled experiment. To answer this appropriately, a data scientist must apply rigor and a good testing method to the problem and ask the question differently. 
 
 ### Method
