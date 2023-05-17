@@ -43,7 +43,7 @@ library(plotly)
 Now we read in data and check the head to see how it looks.
 
 ```{r read_csv}
-ab_df = read_csv("../../../public/post/ab-test-p1/AB_Test_Results.csv", col_types = "nfn")
+ab_df = read_csv("../../static/post/2023-05-15-ab-test/AB_Test_Results.csv", col_types = "nfn")
 ab_df %>% head()
 ```
 
