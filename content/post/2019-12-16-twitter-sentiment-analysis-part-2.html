@@ -3,6 +3,9 @@ title: Twitter Sentiment Analysis Part:2
 author: Kevin Bonds
 date: '2020-01-03'
 slug: twitter-sentiment-analysis-part-2
+output:
+  blogdown::html_page:
+    toc: true
 hidden: TRUE
 categories:
   - Sentiment Analysis
@@ -13,12 +16,21 @@ tags:
 ---
 
 
+<div id="TOC">
+<ul>
+<li><a href="#libraries-used" id="toc-libraries-used">Libraries Used</a></li>
+<li><a href="#tf-idf" id="toc-tf-idf">TF-IDF</a></li>
+<li><a href="#n-grams" id="toc-n-grams">N-Grams</a></li>
+<li><a href="#combine-skipgrams-with-n-grams" id="toc-combine-skipgrams-with-n-grams">Combine Skipgrams with N-grams</a></li>
+</ul>
+</div>
 
 <p>This is the second part of the Twitter Sentiment Analysis. I will create a TFIDF and perform some dimensionality reduction to allow me to use the mighty Random Forrest algorithm.
 <!--more--></p>
 <div id="libraries-used" class="section level3">
 <h3>Libraries Used</h3>
 <p>In the first part we trained a single decision tree with our document-frequency matrix using just the tokenized text. i.e. simple Bag-of-words approach. Now let’s see if I can use some n-grams to add some word order element to our approach to see if we get better results. The one caveat is that creating n-grams explodes our feature space quite significantly. Even a modest approach leads to tens-of-thousands of features and a very sparse feature matrix. Also, since I are doing this on a small laptop this quickly grows into something unwieldy. Therefore I will not go through the interim step of building a similar single decision tree model with this larger feature matrix. Instead I will use a technique to reduce this feature space down to a manageable level. I’ll use Singular Value Decomposition to achieve this.</p>
+<pre><code>## Warning: remove_twitter, remove_hyphens arguments are not used.</code></pre>
 </div>
 <div id="tf-idf" class="section level3">
 <h3>TF-IDF</h3>
@@ -44,11 +56,20 @@ train_tokens[[2]]</code></pre>
 ## [21] &quot;stress_glad&quot;    &quot;glad_got&quot;       &quot;got_chest&quot;</code></pre>
 <p>Taking a look at a few terms we have created.</p>
 <pre class="r"><code>train_tokens[[4]]</code></pre>
-<pre><code>## [1] &quot;hug&quot;               &quot;ignorantsheep&quot;     &quot;hug_ignorantsheep&quot;</code></pre>
+<pre><code>## [1] &quot;hug&quot;                &quot;@ignorantsheep&quot;     &quot;hug_@ignorantsheep&quot;</code></pre>
 <p>Now coverting to a matrix.</p>
 <pre class="r"><code>train_matrix &lt;- as.matrix(train_dfm)
 train_dfm</code></pre>
-<pre><code>## Document-feature matrix of: 4,732 documents, 9,189 features (99.9% sparse).</code></pre>
+<pre><code>## Document-feature matrix of: 4,732 documents, 9,581 features (99.92% sparse) and 0 docvars.
+##        features
+## docs    case feel emo camp wee bit alr bring human right
+##   text1    1    2   1    1   1   1   1     1     1     1
+##   text2    0    0   0    0   0   0   0     0     0     0
+##   text3    0    0   0    0   0   0   0     0     0     0
+##   text4    0    0   0    0   0   0   0     0     0     0
+##   text5    0    0   0    0   0   0   0     0     0     0
+##   text6    0    0   0    0   0   0   0     0     0     0
+## [ reached max_ndoc ... 4,726 more documents, reached max_nfeat ... 9,571 more features ]</code></pre>
 <p>A quick peak at the wordcloud.</p>
 <pre class="r"><code># Create wordcloud
 train_dfm %&gt;% textplot_wordcloud()</code></pre>
@@ -66,8 +87,8 @@ names(train_df) &lt;- make.names(names(train_df),
 <p>Garbage collection.</p>
 <pre class="r"><code>gc()</code></pre>
 <pre><code>##             used   (Mb) gc trigger   (Mb) limit (Mb)  max used   (Mb)
-## Ncells   2560475  136.8    4193111  224.0         NA   4060039  216.9
-## Vcells 179739491 1371.4  286486344 2185.8      65536 198824320 1517.0</code></pre>
+## Ncells   2814476  150.4    4348504  232.3         NA   4348504  232.3
+## Vcells 187569098 1431.1  298873445 2280.3      32768 207428653 1582.6</code></pre>
 <p>Set up our Multifolds and train control for 30 partitions.</p>
 <pre class="r"><code># Set seed
 set.seed(42)
@@ -108,7 +129,24 @@ cv_cntrl &lt;- trainControl(method = &quot;repeatedcv&quot;,
 ## 
 ##     expand, pack, unpack</code></pre>
 <pre class="r"><code>train_tfidf</code></pre>
-<pre><code>## Document-feature matrix of: 4,732 documents, 9,189 features (99.9% sparse).</code></pre>
+<pre><code>## Document-feature matrix of: 4,732 documents, 9,581 features (99.92% sparse) and 0 docvars.
+##        features
+## docs         case      feel       emo      camp       wee       bit       alr
+##   text1 0.1750632 0.1821106 0.1881131 0.1526979 0.1984715 0.1301557 0.2161791
+##   text2 0         0         0         0         0         0         0        
+##   text3 0         0         0         0         0         0         0        
+##   text4 0         0         0         0         0         0         0        
+##   text5 0         0         0         0         0         0         0        
+##   text6 0         0         0         0         0         0         0        
+##        features
+## docs        bring     human     right
+##   text1 0.1437998 0.1984715 0.1015091
+##   text2 0         0         0        
+##   text3 0         0         0        
+##   text4 0         0         0        
+##   text5 0         0         0        
+##   text6 0         0         0        
+## [ reached max_ndoc ... 4,726 more documents, reached max_nfeat ... 9,571 more features ]</code></pre>
 <p>Create our reduced feature space.</p>
 <pre class="r"><code># Time the code execution
 start.time &lt;- Sys.time()
@@ -120,7 +158,7 @@ train.irlba &lt;- irlba(t(as.matrix(train_tfidf)), nv = 300, maxit = 600)
 # Total time of execution on workstation was 
 total.time &lt;- Sys.time() - start.time
 total.time</code></pre>
-<pre><code>## Time difference of 6.074358 mins</code></pre>
+<pre><code>## Time difference of 2.755332 mins</code></pre>
 <p>Create a new dataframe with the reduced feature space.</p>
 <pre class="r"><code>train.svd &lt;- data.frame(Sentiment = train$Sentiment, train.irlba$v)</code></pre>
 <p>Train a random forrest model and see if our results improve.</p>
