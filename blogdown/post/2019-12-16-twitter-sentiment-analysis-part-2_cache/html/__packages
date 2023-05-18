@@ -1,4 +1,3 @@
-base
 tidyverse
 ggplot2
 tibble
@@ -19,3 +18,5 @@ doSNOW
 gridExtra
 Matrix
 irlba
+lubridate
+quanteda.textplots
