@@ -1,5 +1,5 @@
 ---
-title: Twitter Sentiment Analysis Part:2
+title: "Twitter Sentiment Analysis: Part 2"
 author: Kevin Bonds
 date: '2020-01-03'
 slug: twitter-sentiment-analysis-part-2
