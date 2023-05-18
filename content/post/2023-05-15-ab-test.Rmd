@@ -297,9 +297,9 @@ m = se_pool*z_val
 paste("The confidence interval is ", round(m, 4),  "\302\261", round(d_h, 4))
 ```
 
-So we can stop here and say the differnce we see is probably due to randonm chance. We cannot say more. We should conduct another experiment with a different variant, or with the proper sample size this time, to see if the difference is significant. 
+So we can stop here and say the difference we see is probably due to random chance. We cannot say more. We should conduct another experiment with a different variant, or with the proper sample size this time, to see if the difference is significant. 
 
-Hope you enjoyed this little excersize! Cheers!
+Hope you enjoyed this little exercize! Cheers!
 
 ```{r include=FALSE, eval=FALSE}
 ab_df %>% select(VARIANT_NAME, REVENUE) %>% group_by(VARIANT_NAME) %>% summarise("Rev" = sum(REVENUE))
