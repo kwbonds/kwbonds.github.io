@@ -189,9 +189,10 @@ results_df %>%
   round(digits = 5)
 ```
 
-#### Non-User based
+
 
 ```{r no-user, include=FALSE}
+#### Non-User based
 non_results_df <- ab_df %>% 
   mutate("purchased" = ifelse(REVENUE > 0, 1, 0)) %>% 
   summarise("purchased_count" = sum(purchased),
@@ -204,9 +205,11 @@ non_results_df
 
 ### Power Calulations (2 methods)
 
+Let's look at 2 different methods for calculating the proper sample size for a given Effect Size. 
+
 #### Power Calculation Test for Proportions Method
 
-Let's pretend for 1 second that we haven't yet run the experiment and that we are trying to decide how long or how many tests to run. We know that the typical user purchase rate is ~2.2%. Let's assume we want to insure we can detect an increase to 3.65% as significant or not. We need to do a two-sample power calculation-because we have two separate populations to compare (not a sample from one population)-with a two-sided test (to detect a change in either direction). So we us the `pwr.2p.test()` function with the `alternative = "two.sided"` argument. 
+Let's pretend for 1 second that we haven't yet run the experiment and that we are trying to decide how long or how many tests to run. We know that the typical user purchase rate is ~2.2%. Let's assume we want to insure we can detect an increase to 3.65% as significant or not. We need to do a two-sample power calculation-because we have two separate populations to compare (not a sample from one population)-with a two-sided test (to detect a change in either direction). So we use the `pwr.2p.test()` function with the `alternative = "two.sided"` argument. 
 
 ```{r}
 library(pwr)
