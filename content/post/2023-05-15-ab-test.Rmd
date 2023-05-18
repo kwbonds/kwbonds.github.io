@@ -168,70 +168,111 @@ summary(ab_df)
 
 ### Adding Purchased Column and Calculating some rates
 
+Let's find the purchase rate for our control group and assume that is the purchase rate we want to improve upon. Let's do this and consider the distinct users and whether or not they made a purchase. 
+
 #### User based
 
 ```{r}
-user_results_df <- ab_df %>% 
+results_df <- ab_df %>% 
   group_by(USER_ID) %>% 
   mutate("purchased" = ifelse(REVENUE > 0, 1, 0)) %>% 
   group_by(VARIANT_NAME) %>%  
   summarise("purchased_count" = sum(purchased),
             "distinct_users" = n_distinct(USER_ID),
             "user_purchase_rate" = purchased_count/distinct_users,
-            "purchase_rate" = purchased_count/n())
-user_results_df
+            "purchase_rate" = purchased_count/n(),
+            "variance" = var(purchased))
+  
+results_df %>% 
+  filter(VARIANT_NAME == "control") %>% 
+  select(user_purchase_rate) %>% 
+  round(digits = 5)
 ```
-
-Ok we see that the purchase rate is higher for the control group for both the purchase_rate (non-user based) and user_purchase_rate (tracking at the user level). This illustrates that you can track a the user level or simply the visit level (ie. purchase per page load or per user). 
 
 #### Non-User based
 
-```{r}
-results_df <- ab_df %>% 
+```{r no-user, include=FALSE}
+non_results_df <- ab_df %>% 
   mutate("purchased" = ifelse(REVENUE > 0, 1, 0)) %>% 
   summarise("purchased_count" = sum(purchased),
             "distinct_users" = n_distinct(USER_ID),
             "user_purchase_rate" = purchased_count/distinct_users,
-            "purchase_rate" = purchased_count/n())
-results_df
+            "purchase_rate" = purchased_count/n(),
+            "variance" = var(purchased))
+non_results_df
 ```
 
 ### Power Calulations (2 methods)
 
-Let's pretend for 1 second that we haven't yet run the experiment and that we are trying to decide how long or how many tests to run. We know that the typical user purchase rate is ~20%. Let's assume we want to insure we can detect a 5% change as significant or not. We need to do a two-sample power calculation-because we have two separate populations to compare (not a sample from one population)-with a two-sided test (to detect a change in either direction). So we us the `pwr.2p.test()` function with the `alternative = "two.sided"` argument. 
+#### Power Calculation Test for Proportions Method
+
+Let's pretend for 1 second that we haven't yet run the experiment and that we are trying to decide how long or how many tests to run. We know that the typical user purchase rate is ~2.2%. Let's assume we want to insure we can detect an increase to 3.65% as significant or not. We need to do a two-sample power calculation-because we have two separate populations to compare (not a sample from one population)-with a two-sided test (to detect a change in either direction). So we us the `pwr.2p.test()` function with the `alternative = "two.sided"` argument. 
 
 ```{r}
 library(pwr)
 
-p2_test <- pwr.2p.test(h = ES.h(p1 = 0.20, p2 = 0.25),
+p2_test <- pwr.2p.test(h = ES.h(p1 = .0225, p2 = 0.0365),
            sig.level = 0.05,
            power = 0.80,
            alternative = "two.sided")
 p2_test
 ```
-This shows that we need ~`r ceiling(p2_test$n)` users in each class for our test. So we need `r ceiling(p2_test$n) * 2` total users to test. So we see we have just enough users in our data to satisfy this. 
+This shows that we need ~`r format(ceiling(p2_test$n),  scientific = FALSE, big.mark = ",")` users in each class for our test. So we need `r format(ceiling(p2_test$n * 2), scientific = FALSE, big.mark = ",")` total users to test. So we need more than K users to detect an increase from ~2.2% to 3.65%. We'll stop the test once we have more than we need. 
+
+But what if our variant shows a worse purchase rate? Since our power calculation is based on the binomial distribution, we basically consider a confidence interval of 95% so there are boundaries on either side of our estimated purchase rate that we will give us significance. 
 
 ```{r}
-power.prop.test(p1 = 0.20, p2 = 0.25, sig.level = 0.05, power = .80)
+d_h_1 = (0.0365-0.0225)
+m_1 = 0.0225 
+
+paste("The confidence interval is", round(m_1, 4),  "\302\261", round(d_h_1, 4), "or between", m_1 + d_h_1, "and",  m_1 - d_h_1)
 ```
 
-Another way to do this is by Logistic regression (which gives similar results.)
+
+```{r}
+power.prop.test(p1 = 0.0225, p2 = 0.0365, sig.level = 0.05, power = .80)
+```
+
+After we run our experiment, we see that the variant performs worse than the control group. And since the variant purchase rate is not outside the range we calculated we cannot claim significance with this sample size. We would have needed a larger sample size for this test to have been significant. 
+
+```{r}
+results_df <- ab_df %>% 
+  group_by(USER_ID) %>% 
+  mutate("purchased" = ifelse(REVENUE > 0, 1, 0)) %>% 
+  group_by(VARIANT_NAME) %>%  
+  summarise("purchased_count" = sum(purchased),
+            "distinct_users" = n_distinct(USER_ID),
+            "user_purchase_rate" = purchased_count/distinct_users,
+            "purchase_rate" = purchased_count/n(),
+            "variance" = var(purchased))
+results_df
+```
+Let's calculate what size sample we would have needed in order to claim significance with these values (just for fun).
+
+```{r}
+power.prop.test(p1 = 0.02259414, p2 = 0.01796908, sig.level = 0.05, power = .80)
+```
+
+Wow! So we would need >14.5K samples per group to detect this small of an Effect Size. 
+
+
+### Using Logistic Regression
+
+Another way to do this is by Logistic regression (which gives similar results but returns the total for both groups)
 
 ```{r}
 # Load package to run power analysis
 library(powerMediation)
 
 # Run power analysis for logistic regression
-total_sample_size <- SSizeLogisticBin(p1 = .20,
-                                      p2 = .25,
+total_sample_size <- SSizeLogisticBin(p1 = 0.02259414,
+                                      p2 = 0.01796908,
                                       B = 0.5,
                                       alpha = 0.05,
                                        power = 0.80)
 total_sample_size
 ```
 
-
-Also, after running our test we see an apparent decrease in the purchase rate. But is is significant?
 
 ```{r include=FALSE, eval=FALSE}
 # Hypothesis testing
@@ -249,12 +290,15 @@ m = se_pool*z_val
 paste("The confidence interval is ", round(m, 4),  "\302\261", round(d_h, 4))
 ```
 
-
-
-
-### IN PROGRESS STAY TUNED
+So we can stop here and say the differnce we see is probably due to randonm chance. We cannot say more. We should conduct another experiment with a different variant, or with the proper sample size this time, to see if the difference is significant. 
 
 ```{r include=FALSE, eval=FALSE}
 ab_df %>% select(VARIANT_NAME, REVENUE) %>% group_by(VARIANT_NAME) %>% summarise("Rev" = sum(REVENUE))
+```
+
+```{r include=FALSE, eval=FALSE}
+# saveRDS(ab_df, file = "../../static/post/2023-05-15-ab-test_files/ab_df.rds")
+# saveRDS(results_df, file = "../../static/post/2023-05-15-ab-test_files/results_df.rds")
+# saveRDS(user_results_df, file = "../../static/post/2023-05-15-ab-test_files/user_results_df.rds")
 ```
 
