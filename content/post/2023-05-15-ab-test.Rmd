@@ -13,6 +13,7 @@ tags:
 
 ```{r setup_options, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
+
 ```
 
 
@@ -189,9 +190,10 @@ results_df %>%
   round(digits = 5)
 ```
 
-#### Non-User based
+
 
 ```{r no-user, include=FALSE}
+#### Non-User based
 non_results_df <- ab_df %>% 
   mutate("purchased" = ifelse(REVENUE > 0, 1, 0)) %>% 
   summarise("purchased_count" = sum(purchased),
@@ -204,9 +206,11 @@ non_results_df
 
 ### Power Calulations (2 methods)
 
+Let's discuss 2 methods for calculating a proper sample size for a given Effect Size. The Effect size is the difference we expect to see or require before we consider implementation.
+
 #### Power Calculation Test for Proportions Method
 
-Let's pretend for 1 second that we haven't yet run the experiment and that we are trying to decide how long or how many tests to run. We know that the typical user purchase rate is ~2.2%. Let's assume we want to insure we can detect an increase to 3.65% as significant or not. We need to do a two-sample power calculation-because we have two separate populations to compare (not a sample from one population)-with a two-sided test (to detect a change in either direction). So we us the `pwr.2p.test()` function with the `alternative = "two.sided"` argument. 
+Let's pretend for 1 second that we haven't yet run the experiment and that we are trying to decide how long or how many tests to run. We know that the typical user purchase rate is ~2.2%. Let's assume we want to insure we can detect an increase to 3.65% as significant or not. We need to do a two-sample power calculation-because we have two separate populations to compare (not a sample from one population)-with a two-sided test (to detect a change in either direction). So we use the `pwr.2p.test()` function with the `alternative = "two.sided"` argument. 
 
 ```{r}
 library(pwr)
@@ -217,6 +221,7 @@ p2_test <- pwr.2p.test(h = ES.h(p1 = .0225, p2 = 0.0365),
            alternative = "two.sided")
 p2_test
 ```
+
 This shows that we need ~`r format(ceiling(p2_test$n),  scientific = FALSE, big.mark = ",")` users in each class for our test. So we need `r format(ceiling(p2_test$n * 2), scientific = FALSE, big.mark = ",")` total users to test. So we need more than K users to detect an increase from ~2.2% to 3.65%. We'll stop the test once we have more than we need. 
 
 But what if our variant shows a worse purchase rate? Since our power calculation is based on the binomial distribution, we basically consider a confidence interval of 95% so there are boundaries on either side of our estimated purchase rate that we will give us significance. 
@@ -247,7 +252,11 @@ results_df <- ab_df %>%
             "variance" = var(purchased))
 results_df
 ```
-Let's calculate what size sample we would have needed in order to claim significance with these values (just for fun).
+
+Let's calculate what size sample we WOULD HAVE NEEDED in order to claim significance with these values (just for fun). 
+
+>**IMPORTANT NOTE:** <br>
+>Be careful not to try to chase significant results when running experiments. In general we should design our experiment for a given Effect Size and evaluate the experiment based on it. If appropriate a new experiment can be run with the appropriate sample size this time.
 
 ```{r}
 power.prop.test(p1 = 0.02259414, p2 = 0.01796908, sig.level = 0.05, power = .80)
