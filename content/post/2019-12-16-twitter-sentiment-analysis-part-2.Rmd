@@ -1,5 +1,5 @@
 ---
-title: Twitter Sentiment Analysis Part:2
+title: "Twitter Sentiment Analysis: Part 2"
 author: Kevin Bonds
 date: '2020-01-03'
 slug: twitter-sentiment-analysis-part-2
@@ -19,7 +19,7 @@ This is the second part of the Twitter Sentiment Analysis. I will create a TFIDF
 <!--more-->
 
 ### Libraries Used
-```{r setup, message=FALSE, warning=FALSE, echo=FALSE}
+```{r setup, message=FALSE, warning=FALSE}
 library(tidyverse)
 library(readr)
 library(ggplot2)
