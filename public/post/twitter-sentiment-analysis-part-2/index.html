@@ -102,6 +102,15 @@
           </p>
 <div id="libraries-used" class="section level3">
 <h3>Libraries Used</h3>
+<pre class="r"><code>library(tidyverse)
+library(readr)
+library(ggplot2)
+library(caret)
+library(knitr)
+library(quanteda)
+library(doSNOW)
+library(gridExtra)
+library(quanteda.textplots)</code></pre>
 <p>In the first part we trained a single decision tree with our document-frequency matrix using just the tokenized text. i.e. simple Bag-of-words approach. Now let’s see if I can use some n-grams to add some word order element to our approach to see if we get better results. The one caveat is that creating n-grams explodes our feature space quite significantly. Even a modest approach leads to tens-of-thousands of features and a very sparse feature matrix. Also, since I are doing this on a small laptop this quickly grows into something unwieldy. Therefore I will not go through the interim step of building a similar single decision tree model with this larger feature matrix. Instead I will use a technique to reduce this feature space down to a manageable level. I’ll use Singular Value Decomposition to achieve this.</p>
 <pre><code>## Warning: remove_twitter, remove_hyphens arguments are not used.</code></pre>
 </div>
@@ -160,12 +169,8 @@ names(train_df) &lt;- make.names(names(train_df),
 <p>Garbage collection.</p>
 <pre class="r"><code>gc()</code></pre>
 <pre><code>##             used   (Mb) gc trigger   (Mb) limit (Mb)  max used   (Mb)
-<<<<<<< HEAD
-## Ncells   2814476  150.4    4348544  232.3         NA   4348544  232.3
-=======
-## Ncells   2814476  150.4    4348504  232.3         NA   4348504  232.3
->>>>>>> master
-## Vcells 187569098 1431.1  298873445 2280.3      32768 207428653 1582.6</code></pre>
+## Ncells   2814476  150.4    4348530  232.3         NA   4348530  232.3
+## Vcells 187569119 1431.1  298873490 2280.3      32768 207428674 1582.6</code></pre>
 <p>Set up our Multifolds and train control for 30 partitions.</p>
 <pre class="r"><code># Set seed
 set.seed(42)

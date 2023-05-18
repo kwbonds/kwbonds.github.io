@@ -19,7 +19,7 @@ This is the second part of the Twitter Sentiment Analysis. I will create a TFIDF
 <!--more-->
 
 ### Libraries Used
-```{r setup, message=FALSE, warning=FALSE, echo=FALSE}
+```{r setup, message=FALSE, warning=FALSE}
 library(tidyverse)
 library(readr)
 library(ggplot2)
