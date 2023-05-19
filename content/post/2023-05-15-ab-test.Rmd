@@ -297,7 +297,7 @@ m = se_pool*z_val
 paste("The confidence interval is ", round(m, 4),  "\302\261", round(d_h, 4))
 ```
 
-Since our Effect size was not reached we can only say the difference may be due to random chance. There may be a true effect (smaller than we estimated), but we lack the power to detect it unless we relax our significance level or power. If we wanted to conduct another experiment, with this same variant, we could adjust our Effect Size and calculate the proper sample size for it and reevaluate. We would need domain knowledge to understand the practical implications of doing this though. But for now we only have these data, so we can stop here with this particular evaluation. 
+Since our Effect Size was not reached, we can only say the difference may be due to random chance. We cannot conclude that the difference we see is a true difference. There may be a true effect (smaller than we estimated), but we lack the power to detect it unless we relax our significance level or power. We could conduct another experiment, with this same variant, by adjusting our Effect Size to calculate a new, proper sample size. We would need domain expertise to understand the practical implications of these decisions properly. But for now we only have these data, so we can stop here with this particular evaluation. 
 
 Hope you enjoyed this little exercise! Cheers!
 
