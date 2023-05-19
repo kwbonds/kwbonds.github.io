@@ -17,11 +17,11 @@ knitr::opts_chunk$set(echo = TRUE)
 ```
 
 
-A stakeholder may ask if a change, to an application, will make a user more likely to make a purchase (or more likely to make a larger purchase). These are excellent questions that can be addressed through a controlled experiment. To answer this appropriately, a data scientist must apply rigor and a good testing method to the problem and ask the question differently. 
+A stakeholder may ask if a particular change,to an application, will make a user more likely to make a purchase (or more likely to make a larger purchase, etc.). These types of questions are excellent candidates for a controlled experiment--known as A/B Testing. To answer these questions, a data scientist must apply a good testing method to the problem; and understand well certain statistical concepts to evaluate the experiment effectively. A/B testing can be tricky to conduct without bias; and difficult to evaluate. And like all hypothesis testing, there is a certain amount of uncertainty inherent. It is this uncertainty that the Data Scientist attempts to quantify and explain.  
 
 ### Method
 
-For this excersize, we'll discuss performing a randomized test for a change to a website to see if it increases the likelyhood that a customer will make a purchase-or subscribe to a service. We'll use publicly available data for this simulation. We'll attempt to say whether the variant performed better, or worse, with a degree of certainty if possible. To do this a hypothesis is created and any measured difference is assumed to be due to chance unless proven otherwise.
+For this excersize, we'll discuss performing a randomized test for a change to a website to see if it increases the likelyhood that a customer will make a purchase-or subscribe to a service. We'll use publicly available data for this simulation. We'll attempt to say whether the variant performed better, or worse, with a degree of certainty if possible. To do this a hypothesis is stated and any measured difference is assumed to be due to chance unless proven otherwise.
 
 Also, when designing an experiment, we often want to limit exposure of our network. To achieve this,it's important to calculate a minimum number of users needed (know as sample size) to obtain a significant result.
 
@@ -56,7 +56,7 @@ Let's summarize it.
 summary(ab_df)
 ```
 
-Ok. Looking at the quartiles we see more than 2/3^rds^ are zeros and the mean of revenue is tiny, so there are lots of zeros and small values. And from the looks of it a large outlier of 196.01. 
+Looking at the quartiles, we see more than 2/3^rds^ are zeros and the mean of revenue is tiny, so there are lots of zeros and small values. And from the looks of it, a large outlier of 196.01. 
 
 ```{r plot1}
 p = ggplot(ab_df, aes(x = USER_ID, y = REVENUE, color = VARIANT_NAME)) + geom_col() + labs(title = "Revenue by user")
