@@ -1,5 +1,5 @@
 ---
-title: "A/B Testing: Part 1"
+title: "A/B Testing"
 author: Kevin Bonds
 date: '2023-05-13'
 slug: ab-test-p1
@@ -189,7 +189,7 @@ results_df %>%
   round(digits = 5)
 ```
 
-So the base purchase rate for our customers is ~2.2%. That is small, so it will probably require a large sample size. 
+So the base purchase rate for our customers is ~2.2%. That is small, so it will probably require a large sample size for a small Effect Size. 
 
 ```{r no-user, include=FALSE}
 #### Non-User based
@@ -297,9 +297,9 @@ m = se_pool*z_val
 paste("The confidence interval is ", round(m, 4),  "\302\261", round(d_h, 4))
 ```
 
-So we can stop here and say the difference we see is probably due to random chance. We cannot say more. We should conduct another experiment with a different variant, or with the proper sample size this time, to see if the difference is significant. 
+Since our Effect size was not reached we can only say the difference may be due to random chance. There may be a true effect (smaller than we estimated), but we lack the power to detect it unless we relax our significance level or power. If we wanted to conduct another experiment, with this same variant, we could adjust our Effect Size and calculate the proper sample size for it and reevaluate. We would need domain knowledge to understand the practical implications of doing this though. But for now we only have these data, so we can stop here with this particular evaluation. 
 
-Hope you enjoyed this little exercize! Cheers!
+Hope you enjoyed this little exercise! Cheers!
 
 ```{r include=FALSE, eval=FALSE}
 ab_df %>% select(VARIANT_NAME, REVENUE) %>% group_by(VARIANT_NAME) %>% summarise("Rev" = sum(REVENUE))
