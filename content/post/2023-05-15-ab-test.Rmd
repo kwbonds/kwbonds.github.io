@@ -16,20 +16,12 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ```
 
-
-<<<<<<< HEAD
 A stakeholder may ask if a particular change, to an application, will make a user more likely to make a purchase (or more likely to make a larger purchase, etc.). These types of questions are excellent candidates for a controlled experiment--known as A/B Testing. To answer these questions, a data scientist must apply good testing methods; and understand well, certain statistical concepts to evaluate the experiment effectively. A/B testing can be tricky to conduct without bias and difficult to evaluate. And like all hypothesis testing, there is a certain amount of uncertainty inherent. It's this uncertainty that the Data Scientist attempts to quantify and explain.  
 
 ### Method
 
 For this exercise, we'll discuss performing a randomized test for a change to a website to see if it increases the likelihood that a customer will make a purchase or subscribe to a service. We'll use publicly available data for this simulation. We'll attempt to say whether the variant performed better, or worse, with a degree of certainty if possible. To do this a hypothesis is stated and any measured difference is assumed to be due to chance unless proven otherwise.
-=======
-A stakeholder may ask if a particular change,to an application, will make a user more likely to make a purchase (or more likely to make a larger purchase, etc.). These types of questions are excellent candidates for a controlled experiment--known as A/B Testing. To answer these questions, a data scientist must apply a good testing method to the problem; and understand well certain statistical concepts to evaluate the experiment effectively. A/B testing can be tricky to conduct without bias; and difficult to evaluate. And like all hypothesis testing, there is a certain amount of uncertainty inherent. It is this uncertainty that the Data Scientist attempts to quantify and explain.  
 
-### Method
-
-For this excersize, we'll discuss performing a randomized test for a change to a website to see if it increases the likelyhood that a customer will make a purchase-or subscribe to a service. We'll use publicly available data for this simulation. We'll attempt to say whether the variant performed better, or worse, with a degree of certainty if possible. To do this a hypothesis is stated and any measured difference is assumed to be due to chance unless proven otherwise.
->>>>>>> master
 
 Also, when designing an experiment, we often want to limit exposure of our network. To achieve this, it's important to calculate a minimum number of users needed (know as sample size) to obtain a significant result.
 
