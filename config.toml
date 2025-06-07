@@ -1,5 +1,5 @@
 ############################ Default configuration #########################
-baseURL = "https://nervous-wright-ea05a8.netlify.com/"
+baseURL = "https://nervous-wright-ea05a8.netlify.app/"
 languageCode = "en-us"
 # site title 
 title = "Kevin Bonds | Portfolio"
