@@ -1,0 +1,22 @@
+---
+title: 'A/B Testing: Part 2'
+author: Kevin Bonds
+date: '2023-05-17'
+slug: ab-test-p2
+categories:
+  - AB-Testing
+tags:
+  - A/B Testing
+---
+
+```{r libraries, warnings=FALSE, message=FALSE, include=FALSE}
+library(tidyverse)
+library(kableExtra)
+library(rmarkdown)
+library(ggplot2)
+library(plotly)
+```
+
+Now that we've calculated the sample-size necessary for our experiment; ran our experiment for the time necessary; and checked/cleaned the data, we're ready to evaluate the results.
+
+### Evaluating The Results

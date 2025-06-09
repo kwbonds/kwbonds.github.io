@@ -1,0 +1,1113 @@
+<!DOCTYPE html>
+<html lang="en-us"><head>
+  <meta charset="utf-8">
+  <title>Twitter Sentiment Analysis: Part 1</title>
+
+  <!-- mobile responsive meta -->
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="Data Science Portfilio">
+  
+  <meta name="author" content="Themefisher">
+  <meta name="generator" content="Hugo 0.111.3">
+
+  <!-- plugins -->
+  
+  <link rel="stylesheet" href="https://nervous-wright-ea05a8.netlify.app/plugins/bootstrap/bootstrap.min.css ">
+  
+  <link rel="stylesheet" href="https://nervous-wright-ea05a8.netlify.app/plugins/themify-icons/themify-icons.css ">
+  
+
+  <!-- Main Stylesheet -->
+  
+  <link rel="stylesheet" href="https://nervous-wright-ea05a8.netlify.app/scss/style.min.css" media="screen">
+
+  <!--Favicon-->
+  <link rel="shortcut icon" href="https://nervous-wright-ea05a8.netlify.app/images/favicon.png " type="image/x-icon">
+  <link rel="icon" href="https://nervous-wright-ea05a8.netlify.app/images/favicon.png " type="image/x-icon">
+
+</head><body>
+<!-- preloader start -->
+<div class="preloader">
+  
+</div>
+<!-- preloader end -->
+<!-- navigation -->
+<header class="fixed-top navigation">
+  <div class="container">
+    
+    <nav class="navbar navbar-expand-lg navbar-light bg-transparent">
+      <a class="navbar-brand"href="https://nervous-wright-ea05a8.netlify.app/"><img class="img-fluid" src="/images/resume.png" alt="Kevin Bonds | Portfolio"></a>
+      <button class="navbar-toggler border-0" type="button" data-toggle="collapse" data-target="#navigation">
+        <i class="ti-menu h3"></i>
+      </button>
+
+      <div class="collapse navbar-collapse text-center" id="navigation">
+        <ul class="navbar-nav ml-auto">
+          <li class="nav-item">
+            <a class="nav-link" href="https://nervous-wright-ea05a8.netlify.app/"> Home </a>
+          </li>
+          
+            
+            <li class="nav-item">
+              <a class="nav-link" href="https://nervous-wright-ea05a8.netlify.app/resume">Resumé</a>
+            </li>
+            
+          
+            
+            <li class="nav-item">
+              <a class="nav-link" href="https://nervous-wright-ea05a8.netlify.app/contact">Contact</a>
+            </li>
+            
+          
+            
+            <li class="nav-item">
+              <a class="nav-link" href="https://github.com/kwbonds?tab=repositories">Project Repos</a>
+            </li>
+            
+          
+        </ul>
+        
+        <!-- search -->
+        <div class="search">
+          <button id="searchOpen" class="search-btn"><i class="ti-search"></i></button>
+          <div class="search-wrapper">
+            <form action="https://nervous-wright-ea05a8.netlify.app//search" class="h-100">
+              <input class="search-box px-4" id="search-query" name="s" type="search" placeholder="Type & Hit Enter...">
+            </form>
+            <button id="searchClose" class="search-close"><i class="ti-close text-dark"></i></button>
+          </div>
+        </div>
+        
+      </div>
+    </nav>
+  </div>
+</header>
+<!-- /navigation --> <div class="py-5 d-none d-lg-block"></div> 
+
+<section class="section">
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-8 mx-auto block shadow mb-5">
+        <h2>Twitter Sentiment Analysis: Part 1</h2>
+        <div class="mb-3"><span>by <a href="/author/kevin-bonds">Kevin bonds</a></span>,
+          <span>at 01 January 0001</span>, category :
+          
+        </div>
+        
+        <div class="content mb-5">
+          </p>
+<p>The following is an analysis of the <em>Twitter Sentiment Analysis Dataset</em> available at: <a href="http://thinknook.com/twitter-sentiment-analysis-training-corpus-dataset-2012-09-22/" class="uri">http://thinknook.com/twitter-sentiment-analysis-training-corpus-dataset-2012-09-22/</a>. I will attempt to use this data to train a model to label unseen tweets into <strong>“Positive”</strong> or <strong>“Negative”</strong> sentiment. I will walk through my methodology and include code. The github repo for my work can be found here: <a href="https://github.com/kwbonds/TwitterSentimentAnalysis" class="uri">https://github.com/kwbonds/TwitterSentimentAnalysis</a>. <a href="#fn1" class="footnote-ref" id="fnref1"><sup>1</sup></a></p>
+<div id="libraries-used" class="section level3">
+<h3>Libraries Used</h3>
+<pre class="r"><code>library(tidyverse)
+library(readr)
+library(ggplot2)
+library(caret)
+library(knitr)
+library(quanteda)
+library(doSNOW)
+library(gridExtra)
+library(quanteda.textplots)</code></pre>
+<div id="load-data-from-.zip-file" class="section level4">
+<h4>Load Data from .zip file</h4>
+<pre class="r"><code>raw_tweets &lt;- readRDS(&quot;../../raw_tweets.rds&quot;)</code></pre>
+</div>
+<div id="the-data" class="section level4">
+<h4>The Data</h4>
+<p>Take a quick look at what we have.</p>
+<pre class="r"><code># Examine the structure of the raw_tweets dataframe
+str(raw_tweets)</code></pre>
+<pre><code>## tibble [78,931 × 4] (S3: tbl_df/tbl/data.frame)
+##  $ ItemID         : num [1:78931] 8 9 18 26 35 89 129 141 161 204 ...
+##  $ Sentiment      : num [1:78931] 0 1 1 0 0 0 1 0 0 1 ...
+##  $ SentimentSource: chr [1:78931] &quot;Sentiment140&quot; &quot;Sentiment140&quot; &quot;Sentiment140&quot; &quot;Sentiment140&quot; ...
+##  $ SentimentText  : chr [1:78931] &quot;Sunny Again        Work Tomorrow  :-|       TV Tonight&quot; &quot;handed in my uniform today . i miss you already&quot; &quot;Feeling strangely fine. Now I&#39;m gonna go listen to some Semisonic to celebrate&quot; &quot;BoRinG   ): whats wrong with him??     Please tell me........   :-/&quot; ...
+##  - attr(*, &quot;problems&quot;)= tibble [27 × 5] (S3: tbl_df/tbl/data.frame)
+##   ..$ row     : int [1:27] 4285 4285 4286 4286 4287 4287 4287 4287 4287 4287 ...
+##   ..$ col     : chr [1:27] &quot;SentimentText&quot; &quot;SentimentText&quot; &quot;SentimentText&quot; &quot;SentimentText&quot; ...
+##   ..$ expected: chr [1:27] &quot;delimiter or quote&quot; &quot;delimiter or quote&quot; &quot;delimiter or quote&quot; &quot;delimiter or quote&quot; ...
+##   ..$ actual  : chr [1:27] &quot; &quot; &quot; &quot; &quot; &quot; &quot; &quot; ...
+##   ..$ file    : chr [1:27] &quot;&#39;./Sentiment Analysis Dataset.csv&#39;&quot; &quot;&#39;./Sentiment Analysis Dataset.csv&#39;&quot; &quot;&#39;./Sentiment Analysis Dataset.csv&#39;&quot; &quot;&#39;./Sentiment Analysis Dataset.csv&#39;&quot; ...</code></pre>
+<table>
+<colgroup>
+<col width="4%" />
+<col width="6%" />
+<col width="9%" />
+<col width="80%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="right">ItemID</th>
+<th align="right">Sentiment</th>
+<th align="left">SentimentSource</th>
+<th align="left">SentimentText</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="right">8</td>
+<td align="right">0</td>
+<td align="left">Sentiment140</td>
+<td align="left">Sunny Again Work Tomorrow :-| TV Tonight</td>
+</tr>
+<tr class="even">
+<td align="right">9</td>
+<td align="right">1</td>
+<td align="left">Sentiment140</td>
+<td align="left">handed in my uniform today . i miss you already</td>
+</tr>
+<tr class="odd">
+<td align="right">18</td>
+<td align="right">1</td>
+<td align="left">Sentiment140</td>
+<td align="left">Feeling strangely fine. Now I’m gonna go listen to some Semisonic to celebrate</td>
+</tr>
+<tr class="even">
+<td align="right">26</td>
+<td align="right">0</td>
+<td align="left">Sentiment140</td>
+<td align="left">BoRinG ): whats wrong with him?? Please tell me…….. :-/</td>
+</tr>
+<tr class="odd">
+<td align="right">35</td>
+<td align="right">0</td>
+<td align="left">Sentiment140</td>
+<td align="left">No Sat off…Need to work 6 days a week</td>
+</tr>
+<tr class="even">
+<td align="right">89</td>
+<td align="right">0</td>
+<td align="left">Sentiment140</td>
+<td align="left">In case I feel emo in camp (feeling a wee bit of it alr)…am bringing in the Human Rights Watch World Report 2009..hope it’ll work</td>
+</tr>
+</tbody>
+</table>
+<pre class="r"><code># Convert Sentiment from num to factor and change levels
+raw_tweets$Sentiment &lt;- as.factor(raw_tweets$Sentiment)
+levels(raw_tweets$Sentiment) &lt;- c(&quot;Negative&quot;, &quot;Positive&quot;)
+raw_tweets$SentimentSource &lt;- as.factor(raw_tweets$SentimentSource)</code></pre>
+<p>So we have 78,931 rows. Even though tweets are somewhat short, this is a lot of data. Tokenization would create too many features, to be handled efficiently, if we were to try to use this much data. Therefore, we should train and train on about 5% of these data–and validate on some of the rest later. We will make sure to maintain the proportionality along the way. Let’s see what that is.</p>
+<p>What proportion of “Sentiment” do we have in our corpus?</p>
+<pre class="r"><code># Get the proportion of Sentiment in the corpus
+prop.table(table(raw_tweets[, &quot;Sentiment&quot;]))</code></pre>
+<pre><code>## Sentiment
+##  Negative  Positive 
+## 0.4977005 0.5022995</code></pre>
+<p>Looks like almost 50/50. Nice. In this case a random sample would probably give us very similar proportions, we will use techniques to hard maintain this proportion i.e. just as if we had an unbalanced data set.</p>
+<pre class="r"><code># Get the proportion of the SentimentSource
+prop.table(table(raw_tweets[, &quot;SentimentSource&quot;]))</code></pre>
+<pre><code>## SentimentSource
+##       Kaggle Sentiment140 
+##  0.001026213  0.998973787</code></pre>
+<p>I’m not sure what this <em>SentimentSource</em> column is, but it looks like the vast majority is “Sentiment140”. We’ll ignore it for now.</p>
+</div>
+</div>
+<div id="count-features" class="section level3">
+<h3>Count Features</h3>
+<p>Let’s add some features based on counts of how many hash-tags, web-links, and <span class="citation">@refs</span> are in each tweet.</p>
+<pre class="r"><code># Count how many http links are in the tweet
+raw_tweets$web_count &lt;- str_count(raw_tweets$SentimentText, 
+                                  &quot;http:/*[A-z+/+.+0-9]*&quot;)
+# Count haw many hashtags are in the tweet
+raw_tweets$hashtag_count &lt;- str_count(raw_tweets$SentimentText, 
+                                      &quot;#[A-z+0-9]*&quot;)
+# Count how many @reply tags are in the tweet
+raw_tweets$at_ref_count &lt;- str_count(raw_tweets$SentimentText, 
+                                     &quot;@[A-z+0-9]*&quot;)
+# Count the number of characters in the tweet
+raw_tweets$text_length &lt;- nchar(raw_tweets$SentimentText)</code></pre>
+<pre class="r"><code># View the first few rows 
+kable(head(raw_tweets))</code></pre>
+<table style="width:100%;">
+<colgroup>
+<col width="3%" />
+<col width="4%" />
+<col width="7%" />
+<col width="61%" />
+<col width="4%" />
+<col width="6%" />
+<col width="6%" />
+<col width="5%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="right">ItemID</th>
+<th align="left">Sentiment</th>
+<th align="left">SentimentSource</th>
+<th align="left">SentimentText</th>
+<th align="right">web_count</th>
+<th align="right">hashtag_count</th>
+<th align="right">at_ref_count</th>
+<th align="right">text_length</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="right">8</td>
+<td align="left">Negative</td>
+<td align="left">Sentiment140</td>
+<td align="left">Sunny Again Work Tomorrow :-| TV Tonight</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">54</td>
+</tr>
+<tr class="even">
+<td align="right">9</td>
+<td align="left">Positive</td>
+<td align="left">Sentiment140</td>
+<td align="left">handed in my uniform today . i miss you already</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">47</td>
+</tr>
+<tr class="odd">
+<td align="right">18</td>
+<td align="left">Positive</td>
+<td align="left">Sentiment140</td>
+<td align="left">Feeling strangely fine. Now I’m gonna go listen to some Semisonic to celebrate</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">78</td>
+</tr>
+<tr class="even">
+<td align="right">26</td>
+<td align="left">Negative</td>
+<td align="left">Sentiment140</td>
+<td align="left">BoRinG ): whats wrong with him?? Please tell me…….. :-/</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">67</td>
+</tr>
+<tr class="odd">
+<td align="right">35</td>
+<td align="left">Negative</td>
+<td align="left">Sentiment140</td>
+<td align="left">No Sat off…Need to work 6 days a week</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">39</td>
+</tr>
+<tr class="even">
+<td align="right">89</td>
+<td align="left">Negative</td>
+<td align="left">Sentiment140</td>
+<td align="left">In case I feel emo in camp (feeling a wee bit of it alr)…am bringing in the Human Rights Watch World Report 2009..hope it’ll work</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">131</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div id="some-manual-work" class="section level3">
+<h3>Some Manual Work</h3>
+<p>One thing to note: looking into the data it appears that there is a problem with the csv. There is a text_length greater than the maximum text length twitter allows.</p>
+<pre class="r"><code># get the max character length in the corpus
+max(raw_tweets$text_length)</code></pre>
+<pre><code>## [1] 1045</code></pre>
+<p>Upon manual inspection we can see that several texts are getting crammed into the column of one–resulting in a very long string not properly parsed.</p>
+<p>How many do we have that are over the 280 character limit?</p>
+<pre class="r"><code># Count of the tweets that are over the character limit
+count(raw_tweets[which(raw_tweets$text_length &gt; 280),])$n</code></pre>
+<pre><code>## [1] 4</code></pre>
+<p>Looking at these we see a few more examples like above, but also see a bunch or garbage text (i.e. special characters). We’ll remove special characters later. This will take care of this by proxy. Also, we’ll remove incomplete cases (after cleaning) in case we are left with only empty strings.</p>
+<p>For now let’s just remove all tweets that are over the limit. We have an abundance of data so it’s ok to remove some noise. And check to make sure they are gone.</p>
+<pre class="r"><code># Remove any tweets that are over 280 character counts
+raw_tweets &lt;- raw_tweets[-which(raw_tweets$text_length &gt; 280),]
+# Check that they have been removed
+count(raw_tweets[which(raw_tweets$text_length &gt; 280),])$n</code></pre>
+<pre><code>## [1] 0</code></pre>
+<p>Also, I did notice that many of the problem tweets above came from the “Kaggle” source. Kaggle is a Data Science competition platform. It is a great resource for competition and learning. My theory is that this data was used and enriched during a Kaggle competition. It seems disproportionate that several of the problem tweets were from this source. Let’s remove them all.</p>
+<pre class="r"><code># Count of &quot;Kaggle&quot; records
+count(raw_tweets[which(raw_tweets$SentimentSource == &quot;Kaggle&quot;),])$n</code></pre>
+<pre><code>## [1] 80</code></pre>
+<pre class="r"><code># Remove the &quot;Kaggle&quot; treets
+raw_tweets &lt;- raw_tweets[-which(raw_tweets$SentimentSource == &quot;Kaggle&quot;),]
+# Check that they have been removed
+count(raw_tweets[which(raw_tweets$SentimentSource == &quot;Kaggle&quot;),])$n</code></pre>
+<pre><code>## [1] 0</code></pre>
+</div>
+<div id="visualize-distributions-of-engineered-features" class="section level3">
+<h3>Visualize Distributions of Engineered Features</h3>
+<pre class="r"><code># Create 3 plots and display side-by-side
+plot1 &lt;- ggplot(raw_tweets,aes(x = text_length, 
+                               fill = Sentiment)) +
+        geom_histogram(binwidth = 5, 
+                       position = &quot;identity&quot;, 
+                       alpha = 0.5) +
+        xlim(-1,140) +
+        labs(y = &quot;Text Count&quot;, 
+             x = &quot;Length of Text&quot;,
+             title = &quot;Distribution of Text Lengths&quot;)
+
+plot2 &lt;- ggplot(raw_tweets,
+                aes(x = at_ref_count, 
+                    fill = Sentiment)) +
+        geom_histogram(binwidth = 1, 
+                       position = &quot;identity&quot;, 
+                       alpha = 0.5) +
+        xlim(-1,3) +
+        labs(y = &quot;Text Count&quot;, x = &quot;Count of @ref&quot;,
+             title = &quot;Distribution of @ref&quot;)
+
+plot3 &lt;- ggplot(raw_tweets, 
+                aes(x = hashtag_count, 
+                    fill = Sentiment)) +
+        geom_histogram(binwidth = 1, 
+                       position = &quot;identity&quot;, 
+                       alpha = 0.5) +
+        xlim(-1,3) +
+        labs(y = &quot;Text Count&quot;, 
+             x = &quot;Count of Hashtags&quot;,
+             title = &quot;Distribution of Hashtags&quot;)
+
+plot4 &lt;- ggplot(raw_tweets, 
+                aes(x = web_count, 
+                    fill = Sentiment)) +
+        geom_histogram(binwidth = 1, 
+                       position = &quot;identity&quot;,
+                       alpha = 0.5) +
+        xlim(-1,3) +
+        labs(y = &quot;Text Count&quot;, 
+             x = &quot;Count of Weblinks&quot;,
+             title = &quot;Distribution of Weblinks&quot;)
+
+grid.arrange(plot1, plot2, plot3, plot4, nrow=4, ncol=1)</code></pre>
+<p><img src="/post/CopyOf2019-12-10-twitter-sentiment-analysis_files/figure-html/grid_plot-1.png" width="576" /></p>
+<p>Doesn’t look like any of the features we engineered suggest much predictive value. We’ll have to rely on tokenizing the text to get our features–unless we can come up with other ideas. We can start with simple tokenozation (i.e. “Bag of Words”) and also try some N-grams. Simple Bag of Words tokenization does not preserve the word order or association, but N-grams will cause our feature space to explode and is typically very sparse. This will require some dimensionality reduction–which will certainly add complexity and is a “black-box”” method. i.e we lose the ability to inspect or explain the model.</p>
+<p>Let’s start creating our test/train set and start modeling.</p>
+</div>
+<div id="stratified-sampling" class="section level3">
+<h3>Stratified Sampling</h3>
+<p>Let’s create a data partition. First we’ll take 10% of the 78,847 tweets to build our model. We’ll further split this into test and train data sets. We’ll preserve the indexes so we can further partition later if necessary.</p>
+<pre class="r"><code># Set seed for randomizer
+set.seed(42)
+# Retrieve indexes for partitioning
+partition_1_indexes &lt;- createDataPartition(raw_tweets$Sentiment, 
+                                           times = 1, p = 0.10, list = FALSE)
+# Create dataframe
+train_validate &lt;- raw_tweets[partition_1_indexes, c(2, 4, 7)]
+# Reset seed
+set.seed(42)
+# Retrieve indexes for train and test partition
+train_indexes &lt;- createDataPartition(train_validate$Sentiment, 
+                                     times = 1, p = 0.60, list = FALSE)
+# Use the indexes to create the train and test dataframes
+train &lt;- train_validate[train_indexes, ]
+test &lt;- train_validate[-train_indexes, ]
+# Return the number of records in the training set
+nrow(train)</code></pre>
+<pre><code>## [1] 4732</code></pre>
+<p>So, now we have 4,732 tweets. Check proportions just to be safe.</p>
+<pre class="r"><code># Check proportion is same as original table
+prop.table(table(train$Sentiment))</code></pre>
+<pre><code>## 
+##  Negative  Positive 
+## 0.4976754 0.5023246</code></pre>
+<p>And we have almost exactly the same proportions as our original, much larger, data set.</p>
+</div>
+<div id="tokenization" class="section level3">
+<h3>Tokenization</h3>
+<p>Let’s now tokenize our text data. This is the first step in turning raw text into features. We want the individual words to become features. We’ll cleanup some things, engineer some features, and maybe create some combinations of words a little later.</p>
+<p>There are lots of decisions to be made when doing this sort of text analysis. Do we want our features to contain punctuation, hyphenated words, etc.? Typically in text analysis, special characters, punctuation, and numbers are removed because they don’t tend to contain much information to retrieve. However, since this is Twitter data, our corpus does contain some emoticons 😂 that are represented as special characters (ex: “:-)”, “:-/” ). If we remove them we will lose the textual representations of emotion. But, in looking closely at the data, these emoticons are surprisingly not very prevalent. So let’s just remove them.</p>
+<pre class="r"><code># Convert SentimentText column to tokens
+train_tokens &lt;- tokens(train$SentimentText, 
+                       what = &quot;word&quot;, 
+                       remove_numbers = TRUE, 
+                       remove_punct = TRUE, 
+                       remove_twitter = TRUE,
+                       remove_symbols = TRUE, 
+                       remove_hyphens = TRUE)</code></pre>
+<pre><code>## Warning: remove_twitter, remove_hyphens arguments are not used.</code></pre>
+<p>Let’s look at a few to illustrate what we did.</p>
+<pre class="r"><code># Inspect tweets tokens
+train_tokens[[29]]</code></pre>
+<pre><code>##  [1] &quot;quot&quot;    &quot;she&quot;     &quot;has&quot;     &quot;a&quot;       &quot;great&quot;   &quot;smile&quot;   &quot;quot&quot;   
+##  [8] &quot;Thank&quot;   &quot;you&quot;     &quot;I&quot;       &quot;GOT&quot;     &quot;that&quot;    &quot;comment&quot; &quot;from&quot;   
+## [15] &quot;DEMI&quot;    &quot;quot&quot;    &quot;S&quot;       &quot;single&quot;  &quot;la&quot;      &quot;la&quot;      &quot;land&quot;   
+## [22] &quot;music&quot;   &quot;video&quot;   &quot;haha&quot;    &quot;she&quot;     &quot;really&quot;  &quot;has&quot;     &quot;a&quot;      
+## [29] &quot;good&quot;    &quot;SMILE&quot;</code></pre>
+<p>These are the tokens, from the 29th record, of the training data set. i.e. the tweet below.</p>
+<pre class="r"><code>train[29,2]</code></pre>
+<pre><code>## # A tibble: 1 × 1
+##   SentimentText                                                                 
+##   &lt;chr&gt;                                                                         
+## 1 &amp;quot; she has a great smile   &amp;quot; Thank you! I GOT that comment from DEMI…</code></pre>
+<p>Also this one has some Uppercase, special characters, and stop words:</p>
+<pre class="r"><code>train_tokens[[30]]</code></pre>
+<pre><code>##  [1] &quot;Wasn&#39;t&quot;  &quot;allowed&quot; &quot;on&quot;      &quot;the&quot;     &quot;drums&quot;   &quot;stuck&quot;   &quot;on&quot;     
+##  [8] &quot;the&quot;     &quot;bass&quot;    &quot;instead&quot; &quot;I&#39;m&quot;     &quot;no&quot;      &quot;Jack&quot;    &quot;Bruce&quot;  
+## [15] &quot;but&quot;     &quot;still&quot;   &quot;blew&quot;    &quot;my&quot;      &quot;other&quot;   &quot;band&quot;    &quot;members&quot;
+## [22] &quot;away&quot;    &quot;Natch&quot;</code></pre>
+<p>Let’s change all Uppercase to lower to reduce the possible combinations.</p>
+<pre class="r"><code># Convert to lower-case
+train_tokens &lt;- tokens_tolower(train_tokens)
+# Check same tokens as before
+train_tokens[[29]]</code></pre>
+<pre><code>##  [1] &quot;quot&quot;    &quot;she&quot;     &quot;has&quot;     &quot;a&quot;       &quot;great&quot;   &quot;smile&quot;   &quot;quot&quot;   
+##  [8] &quot;thank&quot;   &quot;you&quot;     &quot;i&quot;       &quot;got&quot;     &quot;that&quot;    &quot;comment&quot; &quot;from&quot;   
+## [15] &quot;demi&quot;    &quot;quot&quot;    &quot;s&quot;       &quot;single&quot;  &quot;la&quot;      &quot;la&quot;      &quot;land&quot;   
+## [22] &quot;music&quot;   &quot;video&quot;   &quot;haha&quot;    &quot;she&quot;     &quot;really&quot;  &quot;has&quot;     &quot;a&quot;      
+## [29] &quot;good&quot;    &quot;smile&quot;</code></pre>
+</div>
+<div id="remove-stopwords" class="section level3">
+<h3>Remove Stopwords</h3>
+<p>Let’s remove stopwords using the quanteda packages built in <em>stopwords()</em> function and look at record 26 again.</p>
+<pre class="r"><code># Remove stopwords
+train_tokens &lt;- tokens_select(train_tokens, 
+                              stopwords(), 
+                              selection = &quot;remove&quot;)
+train_tokens[[29]]</code></pre>
+<pre><code>##  [1] &quot;quot&quot;    &quot;great&quot;   &quot;smile&quot;   &quot;quot&quot;    &quot;thank&quot;   &quot;got&quot;     &quot;comment&quot;
+##  [8] &quot;demi&quot;    &quot;quot&quot;    &quot;s&quot;       &quot;single&quot;  &quot;la&quot;      &quot;la&quot;      &quot;land&quot;   
+## [15] &quot;music&quot;   &quot;video&quot;   &quot;haha&quot;    &quot;really&quot;  &quot;good&quot;    &quot;smile&quot;</code></pre>
+<p>And record 29 again:</p>
+<pre class="r"><code>train_tokens[[30]]</code></pre>
+<pre><code>##  [1] &quot;allowed&quot; &quot;drums&quot;   &quot;stuck&quot;   &quot;bass&quot;    &quot;instead&quot; &quot;jack&quot;    &quot;bruce&quot;  
+##  [8] &quot;still&quot;   &quot;blew&quot;    &quot;band&quot;    &quot;members&quot; &quot;away&quot;    &quot;natch&quot;</code></pre>
+</div>
+<div id="stemming" class="section level3">
+<h3>Stemming</h3>
+<p>Next, we need to stem the tokens. Stemming is a method of getting to the word root. This way, we won’t have multiple versions of the same root word. We can illustrate below.</p>
+<pre class="r"><code># Stem tokens
+train_tokens &lt;- tokens_wordstem(train_tokens, 
+                                language = &quot;english&quot;)
+train_tokens[[29]]</code></pre>
+<pre><code>##  [1] &quot;quot&quot;    &quot;great&quot;   &quot;smile&quot;   &quot;quot&quot;    &quot;thank&quot;   &quot;got&quot;     &quot;comment&quot;
+##  [8] &quot;demi&quot;    &quot;quot&quot;    &quot;s&quot;       &quot;singl&quot;   &quot;la&quot;      &quot;la&quot;      &quot;land&quot;   
+## [15] &quot;music&quot;   &quot;video&quot;   &quot;haha&quot;    &quot;realli&quot;  &quot;good&quot;    &quot;smile&quot;</code></pre>
+<pre class="r"><code>train_tokens[[30]]</code></pre>
+<pre><code>##  [1] &quot;allow&quot;   &quot;drum&quot;    &quot;stuck&quot;   &quot;bass&quot;    &quot;instead&quot; &quot;jack&quot;    &quot;bruce&quot;  
+##  [8] &quot;still&quot;   &quot;blew&quot;    &quot;band&quot;    &quot;member&quot;  &quot;away&quot;    &quot;natch&quot;</code></pre>
+<p>You can see that “allowed” becomes “allow”, and “drums” becomes “drum”, etc.</p>
+</div>
+<div id="create-a-document-feature-matrix" class="section level3">
+<h3>Create a Document-Feature Matrix</h3>
+<pre class="r"><code># Create a DFM
+train_dfm &lt;- dfm(train_tokens, 
+                 tolower = FALSE)</code></pre>
+<p>Let’s take a quick look at a wordcloud of what is in the dfm.</p>
+<pre class="r"><code># Create wordcloud
+train_dfm %&gt;% textplot_wordcloud()</code></pre>
+<p><img src="/post/CopyOf2019-12-10-twitter-sentiment-analysis_files/figure-html/wordcloud-1.png" width="672" /></p>
+<pre class="r"><code># Convert to matrix
+train_dfm &lt;- as.matrix(train_dfm)</code></pre>
+<p>We now have a matrix–the length of our original data frame–now with 9581 features in the term. That is a lot of features. We are definitely suffering from the “curse of dimensionality”. We’ll need to do some feature reduction at some point.</p>
+<pre class="r"><code># Check dimensions of the DFM
+dim(train_dfm)</code></pre>
+<pre><code>## [1] 4732 9581</code></pre>
+<p>Let’s look at the first 6 documents (as rows) and the first 20 features of the term (as columns).</p>
+<pre class="r"><code># View part of the matrix
+kable(head(train_dfm[1:6, 1:20]))</code></pre>
+<table style="width:100%;">
+<colgroup>
+<col width="5%" />
+<col width="4%" />
+<col width="4%" />
+<col width="3%" />
+<col width="4%" />
+<col width="3%" />
+<col width="3%" />
+<col width="3%" />
+<col width="5%" />
+<col width="5%" />
+<col width="5%" />
+<col width="5%" />
+<col width="5%" />
+<col width="6%" />
+<col width="4%" />
+<col width="5%" />
+<col width="4%" />
+<col width="5%" />
+<col width="4%" />
+<col width="6%" />
+<col width="4%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="left"></th>
+<th align="right">case</th>
+<th align="right">feel</th>
+<th align="right">emo</th>
+<th align="right">camp</th>
+<th align="right">wee</th>
+<th align="right">bit</th>
+<th align="right">alr</th>
+<th align="right">bring</th>
+<th align="right">human</th>
+<th align="right">right</th>
+<th align="right">watch</th>
+<th align="right">world</th>
+<th align="right">report</th>
+<th align="right">hope</th>
+<th align="right">it’ll</th>
+<th align="right">work</th>
+<th align="right">think</th>
+<th align="right">felt</th>
+<th align="right">realli</th>
+<th align="right">sick</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">text1</td>
+<td align="right">1</td>
+<td align="right">2</td>
+<td align="right">1</td>
+<td align="right">1</td>
+<td align="right">1</td>
+<td align="right">1</td>
+<td align="right">1</td>
+<td align="right">1</td>
+<td align="right">1</td>
+<td align="right">1</td>
+<td align="right">1</td>
+<td align="right">1</td>
+<td align="right">1</td>
+<td align="right">1</td>
+<td align="right">1</td>
+<td align="right">1</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+</tr>
+<tr class="even">
+<td align="left">text2</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">1</td>
+<td align="right">1</td>
+<td align="right">1</td>
+<td align="right">1</td>
+</tr>
+<tr class="odd">
+<td align="left">text3</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+</tr>
+<tr class="even">
+<td align="left">text4</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+</tr>
+<tr class="odd">
+<td align="left">text5</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+</tr>
+<tr class="even">
+<td align="left">text6</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">1</td>
+</tr>
+</tbody>
+</table>
+<p>Now we have a nice DFM. The columns are the features, and the column-space is the term. The rows are the documents and the row-space are the corpus.</p>
+<pre class="r"><code># Bind the DFM, Sentiment together as a dataframe
+train_df &lt;- cbind(&quot;Sentiment&quot; = as.factor(train$Sentiment), 
+                  as.data.frame(train_dfm))
+kable(train_df[5:15, 35:50])</code></pre>
+<table>
+<colgroup>
+<col width="6%" />
+<col width="5%" />
+<col width="5%" />
+<col width="4%" />
+<col width="4%" />
+<col width="4%" />
+<col width="5%" />
+<col width="4%" />
+<col width="5%" />
+<col width="5%" />
+<col width="4%" />
+<col width="4%" />
+<col width="5%" />
+<col width="18%" />
+<col width="3%" />
+<col width="5%" />
+<col width="3%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="left"></th>
+<th align="right">eurgh</th>
+<th align="right">silli</th>
+<th align="right">cold</th>
+<th align="right">tire</th>
+<th align="right">need</th>
+<th align="right">stuff</th>
+<th align="right">back</th>
+<th align="right">gov’t</th>
+<th align="right">motor</th>
+<th align="right">just</th>
+<th align="right">peed</th>
+<th align="right">littl</th>
+<th align="right"><a href="http://bit.ly/aldxf" class="uri">http://bit.ly/aldxf</a></th>
+<th align="right">via</th>
+<th align="right"><span class="citation">@ttac</span></th>
+<th align="right">amp</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">text5</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+</tr>
+<tr class="even">
+<td align="left">text6</td>
+<td align="right">1</td>
+<td align="right">3</td>
+<td align="right">1</td>
+<td align="right">1</td>
+<td align="right">1</td>
+<td align="right">1</td>
+<td align="right">1</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+</tr>
+<tr class="odd">
+<td align="left">text7</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">1</td>
+<td align="right">1</td>
+<td align="right">1</td>
+<td align="right">1</td>
+<td align="right">1</td>
+<td align="right">1</td>
+<td align="right">1</td>
+<td align="right">1</td>
+<td align="right">1</td>
+</tr>
+<tr class="even">
+<td align="left">text8</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+</tr>
+<tr class="odd">
+<td align="left">text9</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">1</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+</tr>
+<tr class="even">
+<td align="left">text10</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+</tr>
+<tr class="odd">
+<td align="left">text11</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+</tr>
+<tr class="even">
+<td align="left">text12</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+</tr>
+<tr class="odd">
+<td align="left">text13</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+</tr>
+<tr class="even">
+<td align="left">text14</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+</tr>
+<tr class="odd">
+<td align="left">text15</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+</tr>
+</tbody>
+</table>
+<p>Unfortunately, R cannot handle some of these tokens as columns in a data frame. The names cannot begin with an integer or a special character for example. We can use the <code>make.names()</code> function, to insure we don’t have any invalid names.</p>
+<pre class="r"><code># Alter any names that don&#39;t work as columns
+names(train_df) &lt;- make.names(names(train_df), 
+                              unique = TRUE)</code></pre>
+</div>
+<div id="setting-up-for-k-fold-cross-validation" class="section level3">
+<h3>Setting up for K-fold Cross Validation</h3>
+<p>We will set up a control plan for 30 models. We should be able to use this plan for all our subsequent modeling.</p>
+<pre class="r"><code># Set seed
+set.seed(42)
+# Define indexes for the training control 
+cv_folds &lt;- createMultiFolds(train$Sentiment, 
+                             k = 10, times = 3)
+# Build training control object
+cv_cntrl &lt;- trainControl(method = &quot;repeatedcv&quot;, 
+                         number = 10,
+                         repeats = 3, 
+                         index = cv_folds)</code></pre>
+</div>
+<div id="train-the-first-model" class="section level3">
+<h3>Train the First Model</h3>
+<p>Let’s train the first model to see what kind of accuracy we have. Let’s use a single decision tree algorithm. This algorithm will, however, create 30 * 7 or 210 models. <a href="#fn2" class="footnote-ref" id="fnref2"><sup>2</sup></a></p>
+<pre class="r"><code># Train a decision tree model using 
+# the training control we setup
+ rpart1 &lt;- train(Sentiment ~ ., 
+                 data = train_df, 
+                 method = &quot;rpart&quot;, 
+                 trControl = cv_cntrl, 
+                 tuneLength = 7)</code></pre>
+<pre class="r"><code># Inspect the model output
+rpart1</code></pre>
+<pre><code>## CART 
+## 
+## 4732 samples
+## 9157 predictors
+##    2 classes: &#39;Negative&#39;, &#39;Positive&#39; 
+## 
+## No pre-processing
+## Resampling: Cross-Validated (10 fold, repeated 3 times) 
+## Summary of sample sizes: 4258, 4258, 4259, 4259, 4259, 4260, ... 
+## Resampling results across tuning parameters:
+## 
+##   cp            Accuracy   Kappa     
+##   0.0004246285  0.6254591  0.24905423
+##   0.0012738854  0.6288400  0.25581092
+##   0.0014437367  0.6289804  0.25608746
+##   0.0076433121  0.5839126  0.16641297
+##   0.0162774239  0.5546603  0.10857242
+##   0.0184713376  0.5383143  0.07756101
+##   0.0441613588  0.5101443  0.01978729
+## 
+## Accuracy was used to select the optimal model using the largest value.
+## The final value used for the model was cp = 0.001443737.</code></pre>
+<p>Outputting the model results we see that we have an accuracy 62.9% accuracy already. That isn’t bad. Really we want to get to about 90% if we can. This is already better than a coin flip and we haven’t even begun. Let’s take some steps to improve things.</p>
+<div id="to-be-continued" class="section level4">
+<h4>To be continued…</h4>
+</div>
+</div>
+<div class="footnotes footnotes-end-of-document">
+<hr />
+<ol>
+<li id="fn1"><p>The file is &gt; 50 MB, so I have taken a stratified sample and loaded it for this example (mainly so that this website will load). If you want to begin with the original, you will need to download it from the source above and read it into your working directory as an object named <em>raw_tweets</em>.<a href="#fnref1" class="footnote-back">↩︎</a></p></li>
+<li id="fn2"><p>Note: I am loading a pre-processed model. Training the model takes a long time. If you wishd to run the model yourself, you will have to modify the code below. You’ll need to remove the <code>eval=FALSE</code> on the next to sections and add <code>eval=FALSE</code> to the <code>load("../../rpart1.rds")</code> section.<a href="#fnref2" class="footnote-back">↩︎</a></p></li>
+</ol>
+</div>
+
+        </div>
+      </div>
+      <div class="col-lg-8 mx-auto block shadow">
+        
+        
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<footer class="py-4 bg-light border-top">
+  <div class="container">
+    <div class="row justify-content-between align-items-center">
+      <div class="col-lg-4 text-center text-lg-left mb-4 mb-lg-0">
+        <a href="https://nervous-wright-ea05a8.netlify.app/"><img src="/images/resume.png" class="img-fluid"
+            alt="Kevin Bonds | Portfolio"></a>
+      </div>
+      <div class="col-lg-4 text-center mb-4 mb-lg-0">
+        <ul class="list-inline mb-0">
+          
+          <li class="list-inline-item"><a class="text-dark d-block p-2" href="https://nervous-wright-ea05a8.netlify.app/resume">Resumé</a>
+          </li>
+          
+          <li class="list-inline-item"><a class="text-dark d-block p-2" href="https://nervous-wright-ea05a8.netlify.app/contact">Contact</a>
+          </li>
+          
+          <li class="list-inline-item"><a class="text-dark d-block p-2" href="https://github.com/kwbonds?tab=repositories">Project Repos</a>
+          </li>
+          
+        </ul>
+      </div>
+      <div class="col-lg-4 text-lg-right text-center mb-4 mb-lg-0">
+        <ul class="list-inline social-icon mb-0">
+          
+          <li class="list-inline-item"><a href="https://join.skype.com/invite/u45PzQhKsLp5"><i class="ti-skype"></i></a></li>
+          
+          <li class="list-inline-item"><a href="https://twitter.com/KevinWBonds"><i class="ti-twitter-alt"></i></a></li>
+          
+          <li class="list-inline-item"><a href="https://github.com/kwbonds"><i class="ti-github"></i></a></li>
+          
+          <li class="list-inline-item"><a href="https://www.linkedin.com/in/kevin-bonds/"><i class="ti-linkedin"></i></a></li>
+          
+        </ul>
+      </div>
+      <div class="col-12 text-center mt-4">
+        <span></span>
+      </div>
+    </div>
+  </div>
+</footer>
+
+
+
+
+<script>
+  var indexURL = "https://nervous-wright-ea05a8.netlify.app/index.json"
+</script>
+
+
+<!-- JS Plugins -->
+
+<script src="https://nervous-wright-ea05a8.netlify.app/plugins/jQuery/jquery.min.js"></script>
+
+<script src="https://nervous-wright-ea05a8.netlify.app/plugins/bootstrap/bootstrap.min.js"></script>
+
+<script src="https://nervous-wright-ea05a8.netlify.app/plugins/search/fuse.min.js"></script>
+
+<script src="https://nervous-wright-ea05a8.netlify.app/plugins/search/mark.js"></script>
+
+<script src="https://nervous-wright-ea05a8.netlify.app/plugins/search/search.js"></script>
+
+<!-- Main Script -->
+
+<script src="https://nervous-wright-ea05a8.netlify.app/js/script.min.js"></script>
+<!-- google analitycs -->
+<script>
+  (function (i, s, o, g, r, a, m) {
+    i['GoogleAnalyticsObject'] = r;
+    i[r] = i[r] || function () {
+      (i[r].q = i[r].q || []).push(arguments)
+    }, i[r].l = 1 * new Date();
+    a = s.createElement(o),
+      m = s.getElementsByTagName(o)[0];
+    a.async = 1;
+    a.src = g;
+    m.parentNode.insertBefore(a, m)
+  })(window, document, 'script', '//www.google-analytics.com/analytics.js', 'ga');
+  ga('create', 'UA-113458466-2', 'auto');
+  ga('send', 'pageview');
+</script></body>
+</html>

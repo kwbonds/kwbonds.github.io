@@ -86,7 +86,7 @@ year_stats <- crude_oil %>%
         summarize( "yr_mean_crude" = mean(`Cushing, OK WTI Spot Price FOB (Dollars per Barrel)`),
                    "yr_median_crude" = median(`Cushing, OK WTI Spot Price FOB (Dollars per Barrel)`))
 # Join to larger dataframe
-crude_oil <- left_join(crude_oil, year_stats, on = c("Year" = "Year"))
+crude_oil <- dplyr::left_join(crude_oil, year_stats, by = c("Year" = "Year"))
 kable(crude_oil[12:17,], caption= "Table with Yearly Stats")
 ```
 
@@ -121,12 +121,12 @@ Since prices are taken at the end of the month, dates are converted to month end
 ```{r join_all, warning=FALSE, message=FALSE, tidy=TRUE}
 # Join conv_gasoline and heating_oil
 energy_df <- 
-        left_join(crude_oil, conv_gasoline[,2:5], on = c("Year" = "Year", "Month" = "Month")) %>% 
-        left_join(heating_oil[,2:4], on = c("Year" = "Year", "Month" = "Month")) %>%
-        left_join(uls_diesel[-1], on = c("Year" = "Year", "Month" = "Month")) %>% 
-        left_join(RBOB_gasoline[-1], on = c("Year" = "Year", "Month" = "Month")) %>% 
-        left_join(jet[-1], on = c("Year" = "Year", "Month" = "Month")) %>% 
-        left_join(propane[-1], on = c("Year" = "Year", "Month" = "Month"))
+        left_join(crude_oil, conv_gasoline[,2:5], by = c("Year" = "Year", "Month" = "Month")) %>% 
+        left_join(heating_oil[,2:4], by = c("Year" = "Year", "Month" = "Month")) %>%
+        left_join(uls_diesel[-1], by = c("Year" = "Year", "Month" = "Month")) %>% 
+        left_join(RBOB_gasoline[-1], by = c("Year" = "Year", "Month" = "Month")) %>% 
+        left_join(jet[-1], by = c("Year" = "Year", "Month" = "Month")) %>% 
+        left_join(propane[-1], by = c("Year" = "Year", "Month" = "Month"))
 energy_df <- energy_df %>% select("Date"= `Date2`, c(5:6, 2:3, 7:length(energy_df)))
 kable(head(energy_df))
 ```

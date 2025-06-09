@@ -2,35 +2,44 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Posts on Kevin Bonds | Portfolio</title>
-    <link>https://nervous-wright-ea05a8.netlify.com/post/</link>
+    <link>https://nervous-wright-ea05a8.netlify.app/post/</link>
     <description>Recent content in Posts on Kevin Bonds | Portfolio</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Sat, 13 May 2023 00:00:00 +0000</lastBuildDate><atom:link href="https://nervous-wright-ea05a8.netlify.com/post/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Sat, 07 Jun 2025 00:00:00 +0000</lastBuildDate><atom:link href="https://nervous-wright-ea05a8.netlify.app/post/index.xml" rel="self" type="application/rss+xml" />
     <item>
-      <title>A/B Testing</title>
-      <link>https://nervous-wright-ea05a8.netlify.com/post/ab-test-p1/</link>
+      <title>A/B/N Testing in Python (In Progress)</title>
+      <link>https://nervous-wright-ea05a8.netlify.app/post/abn-testing-python/</link>
+      <pubDate>Sat, 07 Jun 2025 00:00:00 +0000</pubDate>
+      
+      <guid>https://nervous-wright-ea05a8.netlify.app/post/abn-testing-python/</guid>
+      <description>The following case study will illustrate how to perform a multitest (A/N) in Python.</description>
+    </item>
+    
+    <item>
+      <title>A/B Testing in Python</title>
+      <link>https://nervous-wright-ea05a8.netlify.app/post/ab-test-p1/</link>
       <pubDate>Sat, 13 May 2023 00:00:00 +0000</pubDate>
       
-      <guid>https://nervous-wright-ea05a8.netlify.com/post/ab-test-p1/</guid>
+      <guid>https://nervous-wright-ea05a8.netlify.app/post/ab-test-p1/</guid>
       <description>A stakeholder may ask if a particular change, to an application, will make a user more likely to make a purchase (or more likely to make a larger purchase, etc.</description>
     </item>
     
     <item>
       <title>Time for a New Chapter</title>
-      <link>https://nervous-wright-ea05a8.netlify.com/post/time-for-a-new-chapter/</link>
+      <link>https://nervous-wright-ea05a8.netlify.app/post/time-for-a-new-chapter/</link>
       <pubDate>Mon, 20 Mar 2023 00:00:00 +0000</pubDate>
       
-      <guid>https://nervous-wright-ea05a8.netlify.com/post/time-for-a-new-chapter/</guid>
-      <description>Having spent the last three years as a Data Scientist at Location Labs by Avast and later at Smith Micro Software Inc (following the division’s acquisition from Avast), I am now seeking my next opportunity.</description>
+      <guid>https://nervous-wright-ea05a8.netlify.app/post/time-for-a-new-chapter/</guid>
+      <description>Having spent the last three years as a Data Scientist at Location Labs by Avast and later at Smith Micro Software Inc (following the division&amp;rsquo;s acquisition from Avast), I am now seeking my next opportunity.</description>
     </item>
     
     <item>
       <title>Twitter Sentiment Analysis: Part 2</title>
-      <link>https://nervous-wright-ea05a8.netlify.com/post/twitter-sentiment-analysis-part-2/</link>
+      <link>https://nervous-wright-ea05a8.netlify.app/post/twitter-sentiment-analysis-part-2/</link>
       <pubDate>Fri, 03 Jan 2020 00:00:00 +0000</pubDate>
       
-      <guid>https://nervous-wright-ea05a8.netlify.com/post/twitter-sentiment-analysis-part-2/</guid>
+      <guid>https://nervous-wright-ea05a8.netlify.app/post/twitter-sentiment-analysis-part-2/</guid>
       <description>
 
 &lt;div id=&#34;TOC&#34;&gt;
@@ -48,38 +57,32 @@
     
     <item>
       <title>Twitter Sentiment Analysis: Part 1</title>
-      <link>https://nervous-wright-ea05a8.netlify.com/post/twitter-sentiment-analysis/</link>
+      <link>https://nervous-wright-ea05a8.netlify.app/post/twitter-sentiment-analysis/</link>
       <pubDate>Tue, 10 Dec 2019 00:00:00 +0000</pubDate>
       
-      <guid>https://nervous-wright-ea05a8.netlify.com/post/twitter-sentiment-analysis/</guid>
-      <description>
-
-&lt;div id=&#34;TOC&#34;&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;a href=&#34;#libraries-used&#34; id=&#34;toc-libraries-used&#34;&gt;Libraries Used&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;#count-features&#34; id=&#34;toc-count-features&#34;&gt;Count Features&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;#some-manual-work&#34; id=&#34;toc-some-manual-work&#34;&gt;Some Manual Work&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;#visualize-distributions-of-engineered-features&#34; id=&#34;toc-visualize-distributions-of-engineered-features&#34;&gt;Visualize Distributions of Engineered Features&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;#stratified-sampling&#34; id=&#34;toc-stratified-sampling&#34;&gt;Stratified Sampling&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;#tokenization&#34; id=&#34;toc-tokenization&#34;&gt;Tokenization&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;#remove-stopwords&#34; id=&#34;toc-remove-stopwords&#34;&gt;Remove Stopwords&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;#stemming&#34; id=&#34;toc-stemming&#34;&gt;Stemming&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;#create-a-document-feature-matrix&#34; id=&#34;toc-create-a-document-feature-matrix&#34;&gt;Create a Document-Feature Matrix&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;#setting-up-for-k-fold-cross-validation&#34; id=&#34;toc-setting-up-for-k-fold-cross-validation&#34;&gt;Setting up for K-fold Cross Validation&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;#train-the-first-model&#34; id=&#34;toc-train-the-first-model&#34;&gt;Train the First Model&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;
-&lt;/div&gt;
-
-&lt;p&gt;The following is an analysis of the &lt;em&gt;Twitter Sentiment Analysis Dataset&lt;/em&gt; available at: &lt;a href=&#34;http://thinknook.com/twitter-sentiment-analysis-training-corpus-dataset-2012-09-22/&#34; class=&#34;uri&#34;&gt;http://thinknook.com/twitter-sentiment-analysis-training-corpus-dataset-2012-09-22/&lt;/a&gt;. I will attempt to use this data to train a model to label unseen tweets into &lt;strong&gt;“Positive”&lt;/strong&gt; or &lt;strong&gt;“Negative”&lt;/strong&gt; sentiment. I will walk through my methodology and include code. </description>
+      <guid>https://nervous-wright-ea05a8.netlify.app/post/twitter-sentiment-analysis/</guid>
+      <description>&lt;p&gt;The following is an analysis of the &lt;em&gt;Twitter Sentiment Analysis Dataset&lt;/em&gt; available at: &lt;a href=&#34;http://thinknook.com/twitter-sentiment-analysis-training-corpus-dataset-2012-09-22/&#34;&gt;http://thinknook.com/twitter-sentiment-analysis-training-corpus-dataset-2012-09-22/&lt;/a&gt;. I will attempt to use this data to train a model to label unseen tweets into &lt;strong&gt;&amp;ldquo;Positive&amp;rdquo;&lt;/strong&gt; or &lt;strong&gt;&amp;ldquo;Negative&amp;rdquo;&lt;/strong&gt; sentiment. I will walk through my methodology and include code.&lt;/p&gt;</description>
     </item>
     
     <item>
       <title>Time Series Analysis of crude oil</title>
-      <link>https://nervous-wright-ea05a8.netlify.com/post/time-series-analysis-of-crude-oil/</link>
+      <link>https://nervous-wright-ea05a8.netlify.app/post/time-series-analysis-of-crude-oil/</link>
       <pubDate>Sat, 30 Nov 2019 00:00:00 +0000</pubDate>
       
-      <guid>https://nervous-wright-ea05a8.netlify.com/post/time-series-analysis-of-crude-oil/</guid>
+      <guid>https://nervous-wright-ea05a8.netlify.app/post/time-series-analysis-of-crude-oil/</guid>
       <description>In order to illustrate data modeling techniques, and also experiment and learn, the following data analysis will be carried out and discussed.</description>
+    </item>
+    
+    <item>
+      <title>Twitter Sentiment Analysis: Part 1</title>
+      <link>https://nervous-wright-ea05a8.netlify.app/post/copyof2019-12-10-twitter-sentiment-analysis/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://nervous-wright-ea05a8.netlify.app/post/copyof2019-12-10-twitter-sentiment-analysis/</guid>
+      <description>
+
+
+&lt;p&gt;The following is an analysis of the &lt;em&gt;Twitter Sentiment Analysis Dataset&lt;/em&gt; available at: &lt;a href=&#34;http://thinknook.com/twitter-sentiment-analysis-training-corpus-dataset-2012-09-22/&#34; class=&#34;uri&#34;&gt;http://thinknook.com/twitter-sentiment-analysis-training-corpus-dataset-2012-09-22/&lt;/a&gt;. I will attempt to use this data to train a model to label unseen tweets into &lt;strong&gt;“Positive”&lt;/strong&gt; or &lt;strong&gt;“Negative”&lt;/strong&gt; sentiment. I will walk through my methodology and include code. </description>
     </item>
     
   </channel>

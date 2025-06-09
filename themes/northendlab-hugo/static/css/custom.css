@@ -1,0 +1,12 @@
+    /* Example CSS for custom classes */
+    .my-python-code {
+      background-color: #f0f0f0;
+      border: 1px solid #ccc;
+      padding: 10px;
+    }
+
+    .my-python-output {
+      color: #0056b3;
+      font-family: monospace;
+      margin-top: 5px;
+    }

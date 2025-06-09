@@ -2,17 +2,26 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>EDA on Kevin Bonds | Portfolio</title>
-    <link>https://nervous-wright-ea05a8.netlify.com/tags/eda/</link>
+    <link>https://nervous-wright-ea05a8.netlify.app/tags/eda/</link>
     <description>Recent content in EDA on Kevin Bonds | Portfolio</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Sat, 13 May 2023 00:00:00 +0000</lastBuildDate><atom:link href="https://nervous-wright-ea05a8.netlify.com/tags/eda/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Sat, 07 Jun 2025 00:00:00 +0000</lastBuildDate><atom:link href="https://nervous-wright-ea05a8.netlify.app/tags/eda/index.xml" rel="self" type="application/rss+xml" />
     <item>
-      <title>A/B Testing</title>
-      <link>https://nervous-wright-ea05a8.netlify.com/post/ab-test-p1/</link>
+      <title>A/B/N Testing in Python (In Progress)</title>
+      <link>https://nervous-wright-ea05a8.netlify.app/post/abn-testing-python/</link>
+      <pubDate>Sat, 07 Jun 2025 00:00:00 +0000</pubDate>
+      
+      <guid>https://nervous-wright-ea05a8.netlify.app/post/abn-testing-python/</guid>
+      <description>The following case study will illustrate how to perform a multitest (A/N) in Python.</description>
+    </item>
+    
+    <item>
+      <title>A/B Testing in Python</title>
+      <link>https://nervous-wright-ea05a8.netlify.app/post/ab-test-p1/</link>
       <pubDate>Sat, 13 May 2023 00:00:00 +0000</pubDate>
       
-      <guid>https://nervous-wright-ea05a8.netlify.com/post/ab-test-p1/</guid>
+      <guid>https://nervous-wright-ea05a8.netlify.app/post/ab-test-p1/</guid>
       <description>A stakeholder may ask if a particular change, to an application, will make a user more likely to make a purchase (or more likely to make a larger purchase, etc.</description>
     </item>
     

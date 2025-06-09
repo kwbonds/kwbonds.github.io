@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="en-us"><head>
+  <meta charset="utf-8">
+  <title>A/B/N Testing in Python (In Progress)</title>
+
+  <!-- mobile responsive meta -->
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="Data Science Portfilio">
+  
+  <meta name="author" content="Themefisher">
+  <meta name="generator" content="Hugo 0.111.3">
+
+  <!-- plugins -->
+  
+  <link rel="stylesheet" href="https://nervous-wright-ea05a8.netlify.app/plugins/bootstrap/bootstrap.min.css ">
+  
+  <link rel="stylesheet" href="https://nervous-wright-ea05a8.netlify.app/plugins/themify-icons/themify-icons.css ">
+  
+
+  <!-- Main Stylesheet -->
+  
+  <link rel="stylesheet" href="https://nervous-wright-ea05a8.netlify.app/scss/style.min.css" media="screen">
+
+  <!--Favicon-->
+  <link rel="shortcut icon" href="https://nervous-wright-ea05a8.netlify.app/images/favicon.png " type="image/x-icon">
+  <link rel="icon" href="https://nervous-wright-ea05a8.netlify.app/images/favicon.png " type="image/x-icon">
+
+</head><body>
+<!-- preloader start -->
+<div class="preloader">
+  
+</div>
+<!-- preloader end -->
+<!-- navigation -->
+<header class="fixed-top navigation">
+  <div class="container">
+    
+    <nav class="navbar navbar-expand-lg navbar-light bg-transparent">
+      <a class="navbar-brand"href="https://nervous-wright-ea05a8.netlify.app/"><img class="img-fluid" src="/images/resume.png" alt="Kevin Bonds | Portfolio"></a>
+      <button class="navbar-toggler border-0" type="button" data-toggle="collapse" data-target="#navigation">
+        <i class="ti-menu h3"></i>
+      </button>
+
+      <div class="collapse navbar-collapse text-center" id="navigation">
+        <ul class="navbar-nav ml-auto">
+          <li class="nav-item">
+            <a class="nav-link" href="https://nervous-wright-ea05a8.netlify.app/"> Home </a>
+          </li>
+          
+            
+            <li class="nav-item">
+              <a class="nav-link" href="https://nervous-wright-ea05a8.netlify.app/resume">Resumé</a>
+            </li>
+            
+          
+            
+            <li class="nav-item">
+              <a class="nav-link" href="https://nervous-wright-ea05a8.netlify.app/contact">Contact</a>
+            </li>
+            
+          
+            
+            <li class="nav-item">
+              <a class="nav-link" href="https://github.com/kwbonds?tab=repositories">Project Repos</a>
+            </li>
+            
+          
+        </ul>
+        
+        <!-- search -->
+        <div class="search">
+          <button id="searchOpen" class="search-btn"><i class="ti-search"></i></button>
+          <div class="search-wrapper">
+            <form action="https://nervous-wright-ea05a8.netlify.app//search" class="h-100">
+              <input class="search-box px-4" id="search-query" name="s" type="search" placeholder="Type & Hit Enter...">
+            </form>
+            <button id="searchClose" class="search-close"><i class="ti-close text-dark"></i></button>
+          </div>
+        </div>
+        
+      </div>
+    </nav>
+  </div>
+</header>
+<!-- /navigation --> <div class="py-5 d-none d-lg-block"></div> 
+
+<section class="section">
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-8 mx-auto block shadow mb-5">
+        <h2>A/B/N Testing in Python (In Progress)</h2>
+        <div class="mb-3"><span>by <a href="/author/package-build">Package build</a></span>,
+          <span>at 07 June 2025</span>, category :
+          
+          <a href="/categories/ab-testing">Ab testing</a>
+          
+          <a href="/categories/python">Python</a>
+          
+          <a href="/categories/eda">Eda</a>
+          
+        </div>
+        
+        <div class="content mb-5">
+          
+
+
+<p>The following case study will illustrate how to perform a multitest (A/N) in Python. We will test a control and 2 variants and use a correction for Family Wise Error Rate when determining statistical significance. Since multiple tests can increase error the rate.</p>
+<div id="analyzing-results" class="section level2">
+<h2>Analyzing results</h2>
+<p>We are asked to analyze the results of tests performed on the splash-page for a fictional theme park called Redwood Ridge. The park wants to launch an AI assisted booking agent they are calling Rocky Raccoon to help customers book flights, rental car, meals, etc. They wish to test a control page with no agent widget, Variant_A with a simplified widget, and Variant_B with a more complex interactive wizard. The test has already been performed; we just need to make sense of the results.</p>
+<http>
+<center>
+<img src="variants2.png" alt = "Something"  width = "85%">
+</center>
+<p></http></p>
+<p>The Alternate Hypothesis: Adding an interactive travel planning wizard to the Homepage would boost ticket purchase conversion rates</p>
+<p>Null Hypothesis: Any difference in our test statistic is just due to random chance</p>
+<p>Test Statistic: Ticket Purchase Conversion Rate = (purchase count)/(unique visit count)</p>
+</div>
+<div id="load-python-libraries" class="section level2">
+<h2>Load Python libraries</h2>
+<pre class="python my-python-code"><code>import pandas as pd
+import numpy as np</code></pre>
+<pre class="python my-python-code"><code>
+rocky = pd.read_csv(&quot;../../../static/images/a-b-n-testing-in-python/data.csv&quot;)</code></pre>
+<pre class="python my-python-code"><code>print(rocky)</code></pre>
+<pre class="my-python-output"><code>##               date  visit_id  ... trip_planner_engaged  ticket_purchased
+## 0       2024-04-01    514882  ...                    0                 0
+## 1       2024-04-01    514883  ...                    1                 0
+## 2       2024-04-01    514884  ...                    0                 0
+## 3       2024-04-01    514885  ...                    0                 0
+## 4       2024-04-01    514886  ...                    0                 0
+## ...            ...       ...  ...                  ...               ...
+## 264943  2024-04-30    779702  ...                    0                 0
+## 264944  2024-04-30    779703  ...                    0                 0
+## 264945  2024-04-30    779703  ...                    0                 0
+## 264946  2024-04-30    779704  ...                    0                 0
+## 264947  2024-04-30    779704  ...                    0                 0
+## 
+## [264948 rows x 5 columns]</code></pre>
+<div id="inspect-the-variants" class="section level3">
+<h3>Inspect the Variants</h3>
+<pre class="python my-python-code"><code>rocky.groupby(&#39;treatment&#39;)[&#39;ticket_purchased&#39;].agg([&#39;mean&#39;, &#39;count&#39;, &#39;std&#39;])</code></pre>
+<pre class="my-python-output"><code>##                  mean  count       std
+## treatment                             
+## control      0.020993  88266  0.143363
+## variation_A  0.022494  88112  0.148285
+## variation_B  0.023800  88570  0.152428</code></pre>
+</div>
+</div>
+<div id="check-for-duplicates" class="section level2">
+<h2>Check for Duplicates</h2>
+<pre class="python my-python-code"><code>print(len(rocky))</code></pre>
+<pre><code>## 264948</code></pre>
+<pre class="python my-python-code"><code>print(len(rocky.drop_duplicates(keep=&#39;first&#39;)))</code></pre>
+<pre><code>## 264948</code></pre>
+<pre class="python my-python-code"><code>print(rocky[[&#39;visit_id&#39;, &#39;treatment&#39;]].nunique())</code></pre>
+<pre><code>## visit_id     264823
+## treatment         3
+## dtype: int64</code></pre>
+<pre class="python my-python-code"><code>print(len(rocky.drop_duplicates(subset=[&#39;visit_id&#39;,&#39;treatment&#39;], keep=False)))</code></pre>
+<pre><code>## 264948</code></pre>
+<p>There are some duplicate visit id’s. Considering only visit_id and treatment there are no dupes. Therefore, some visits have multiple records for visit_id with diffent versions of the homepage. This may be a bug in the design if the intent was for a visit to have only one version of the homepage.</p>
+</div>
+<div id="drop-duplicates" class="section level2">
+<h2>Drop Duplicates</h2>
+<pre class="python my-python-code"><code>rocky = rocky.drop_duplicates(subset=[&#39;visit_id&#39;], keep=False)
+print(len(rocky))</code></pre>
+<pre><code>## 264698</code></pre>
+<pre class="python my-python-code"><code>rocky.groupby(&#39;treatment&#39;)[[&#39;trip_planner_engaged&#39;, &#39;ticket_purchased&#39;]].agg([&#39;mean&#39;, &#39;count&#39;])</code></pre>
+<pre><code>##             trip_planner_engaged        ticket_purchased       
+##                             mean  count             mean  count
+## treatment                                                      
+## control                 0.132095  88141         0.021000  88141
+## variation_A             0.276302  87987         0.022503  87987
+## variation_B             0.274201  88570         0.023800  88570</code></pre>
+</div>
+<div id="group-and-inspect" class="section level2">
+<h2>Group and Inspect</h2>
+<pre class="python my-python-code"><code>rocky.groupby([&#39;treatment&#39;, &#39;trip_planner_engaged&#39;])[ &#39;ticket_purchased&#39;].mean()</code></pre>
+<pre><code>## treatment    trip_planner_engaged
+## control      0                       0.020876
+##              1                       0.021816
+## variation_A  0                       0.023117
+##              1                       0.020896
+## variation_B  0                       0.024205
+##              1                       0.022729
+## Name: ticket_purchased, dtype: float64</code></pre>
+<p>It doesn’t make sense that there would be trip planner engagment for the control group. Something is amiss. We should alert Engineering that our logging seems to be broken. Ah. The is a large imbalance in the groups. hmmm. But there is a bigger problem with the trip_planner_engaged field. We’ll ignore this field and focus on just the raw effect of the impact of the variants on ticket purchases.</p>
+</div>
+<div id="checking-for-significance-in-the-difference-in-means" class="section level2">
+<h2>Checking for Significance in the Difference in Means</h2>
+<p>Since <em>varation_B</em> seems to have the highest lift let’s see if the results are significant (without correction).</p>
+<pre class="python my-python-code"><code>from statsmodels.stats.proportion import proportions_ztest, proportion_confint
+# Calculate the number of visits
+n_C = rocky[rocky[&#39;treatment&#39;] == &#39;control&#39;][&#39;ticket_purchased&#39;].count()
+n_B = rocky[rocky[&#39;treatment&#39;] == &#39;variation_B&#39;][&#39;ticket_purchased&#39;].count()
+print(&#39;Group C users:&#39;,n_C)
+print(&#39;Group B users:&#39;,n_B)
+
+# Compute unique purshases in each group and assign to lists
+signup_C = rocky[rocky[&#39;treatment&#39;] == &#39;control&#39;].groupby(&#39;visit_id&#39;)[&#39;ticket_purchased&#39;].max().sum()
+signup_B = rocky[rocky[&#39;treatment&#39;] == &#39;variation_B&#39;].groupby(&#39;visit_id&#39;)[&#39;ticket_purchased&#39;].max().sum()
+
+purchase_abtest = [signup_C, signup_B]
+n_cbtest = [n_C, n_B]
+
+# Calculate the z_stat, p-value, and 95% confidence intervals
+z_stat, pvalue = proportions_ztest(purchase_abtest, nobs=n_cbtest)
+(C_lo95, B_lo95), (C_up95, B_up95) = proportion_confint(purchase_abtest, nobs=n_cbtest, alpha=.05)
+
+pvalue_C_B = pvalue
+print(f&#39;p-value: {pvalue:.6f}&#39;)
+print(f&#39;Group C 95% CI : [{C_lo95:.4f}, {C_up95:.4f}]&#39;)
+print(f&#39;Group B 95% CI : [{B_lo95:.4f}, {B_up95:.4f}]&#39;)</code></pre>
+<pre><code>## Group C users: 88141
+## Group B users: 88570
+## p-value: 0.000070
+## Group C 95% CI : [0.0201, 0.0219]
+## Group B 95% CI : [0.0228, 0.0248]</code></pre>
+<p>Next let’s look at <em>control</em> vs <em>variation_A</em></p>
+<pre class="python my-python-code"><code># Calculate the number of visits
+n_C = rocky[rocky[&#39;treatment&#39;] == &#39;control&#39;][&#39;ticket_purchased&#39;].count()
+n_B = rocky[rocky[&#39;treatment&#39;] == &#39;variation_A&#39;][&#39;ticket_purchased&#39;].count()
+print(&#39;Group C users:&#39;,n_C)
+print(&#39;Group A users:&#39;,n_B)
+
+# Compute unique purshases in each group and assign to lists
+signup_C = rocky[rocky[&#39;treatment&#39;] == &#39;control&#39;].groupby(&#39;visit_id&#39;)[&#39;ticket_purchased&#39;].max().sum()
+signup_B = rocky[rocky[&#39;treatment&#39;] == &#39;variation_A&#39;].groupby(&#39;visit_id&#39;)[&#39;ticket_purchased&#39;].max().sum()
+
+purchase_abtest = [signup_C, signup_B]
+n_cbtest = [n_C, n_B]
+
+# Calculate the z_stat, p-value, and 95% confidence intervals
+z_stat, pvalue = proportions_ztest(purchase_abtest, nobs=n_cbtest)
+(C_lo95, B_lo95), (C_up95, B_up95) = proportion_confint(purchase_abtest, nobs=n_cbtest, alpha=.05)
+
+pvalue_C_A = pvalue
+
+print(f&#39;p-value: {pvalue:.6f}&#39;)
+print(f&#39;Group C 95% CI : [{C_lo95:.4f}, {C_up95:.4f}]&#39;)
+print(f&#39;Group A 95% CI : [{B_lo95:.4f}, {B_up95:.4f}]&#39;)</code></pre>
+<pre><code>## Group C users: 88141
+## Group A users: 87987
+## p-value: 0.030623
+## Group C 95% CI : [0.0201, 0.0219]
+## Group A 95% CI : [0.0215, 0.0235]</code></pre>
+<pre class="python my-python-code"><code># Calculate the number of visits
+n_C = rocky[rocky[&#39;treatment&#39;] == &#39;variation_A&#39;][&#39;ticket_purchased&#39;].count()
+n_B = rocky[rocky[&#39;treatment&#39;] == &#39;variation_B&#39;][&#39;ticket_purchased&#39;].count()
+print(&#39;Group A users:&#39;,n_C)
+print(&#39;Group B users:&#39;,n_B)
+
+# Compute unique purshases in each group and assign to lists
+signup_C = rocky[rocky[&#39;treatment&#39;] == &#39;variation_A&#39;].groupby(&#39;visit_id&#39;)[&#39;ticket_purchased&#39;].max().sum()
+signup_B = rocky[rocky[&#39;treatment&#39;] == &#39;variation_B&#39;].groupby(&#39;visit_id&#39;)[&#39;ticket_purchased&#39;].max().sum()
+
+purchase_abtest = [signup_C, signup_B]
+n_cbtest = [n_C, n_B]
+
+# Calculate the z_stat, p-value, and 95% confidence intervals
+z_stat, pvalue = proportions_ztest(purchase_abtest, nobs=n_cbtest)
+(C_lo95, B_lo95), (C_up95, B_up95) = proportion_confint(purchase_abtest, nobs=n_cbtest, alpha=.05)
+
+pvalue_A_B = pvalue
+
+print(f&#39;p-value: {pvalue:.6f}&#39;)
+print(f&#39;Group A 95% CI : [{C_lo95:.4f}, {C_up95:.4f}]&#39;)
+print(f&#39;Group B 95% CI : [{B_lo95:.4f}, {B_up95:.4f}]&#39;)</code></pre>
+<pre><code>## Group A users: 87987
+## Group B users: 88570
+## p-value: 0.069995
+## Group A 95% CI : [0.0215, 0.0235]
+## Group B 95% CI : [0.0228, 0.0248]</code></pre>
+</div>
+<div id="visualizing-the-bootstrapped-data" class="section level1">
+<h1>Visualizing the Bootstrapped Data</h1>
+<p>Now let’s bootstrap random sample and calculate the mean of each group: <em>Control</em> and <em>variation_A</em> to visualize the distributions. This will give us a sense of the difference between the groups.</p>
+<pre class="python my-python-code"><code>import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+import seaborn as sns
+from scipy import stats
+
+# Extract the two variants as requested
+control_data = rocky[rocky[&#39;treatment&#39;] == &#39;control&#39;].groupby(&#39;visit_id&#39;)[&#39;ticket_purchased&#39;].mean()
+variation_b_data = rocky[rocky[&#39;treatment&#39;] == &#39;variation_B&#39;].groupby(&#39;visit_id&#39;)[&#39;ticket_purchased&#39;].mean()
+
+# Number of random samples to generate
+num_samples = 1000
+sample_size = 80000  # Size of each random sample
+
+# Lists to store the sample means
+control_sample_means = []
+variation_b_sample_means = []
+
+# For loop to build normal distributions through random sampling
+for _ in range(num_samples):
+    # Random sampling with replacement
+    if len(control_data) &gt; 0:
+        control_sample = np.random.choice(control_data, size=min(sample_size, len(control_data)), replace=True)
+        control_sample_means.append(control_sample.mean())
+    
+    if len(variation_b_data) &gt; 0:
+        variation_b_sample = np.random.choice(variation_b_data, size=min(sample_size, len(variation_b_data)), replace=True)
+        variation_b_sample_means.append(variation_b_sample.mean())
+
+# Create a figure with multiple plots
+fig, ax = plt.subplots(figsize=(6, 4))
+
+
+# Plot sampling distributions (normal distributions from random sampling)
+sns.histplot(control_sample_means, kde=True, color=&#39;blue&#39;, ax=ax, label=&#39;Control&#39;)
+sns.histplot(variation_b_sample_means, kde=True, color=&#39;orange&#39;, ax=ax, label=&#39;Variation B&#39;)
+ax.set_title(&#39;Sampling Distributions (Normal Approximation)&#39;)
+ax.set_xlabel(&#39;Sample Mean Ticket Purchase Rate&#39;)
+ax.set_ylabel(&#39;Frequency&#39;)
+ax.legend()
+
+
+plt.tight_layout()
+# plt.subplots_adjust(bottom=0.15)
+
+plt.show()
+# Print sample sizes
+print(f&quot;Control group size: {len(control_data)}&quot;)
+print(f&quot;Variation B group size: {len(variation_b_data)}&quot;)
+print(f&quot;Number of random samples generated for each group: {num_samples}&quot;)
+print(f&quot;Size of each random sample: {sample_size}&quot;)</code></pre>
+<pre><code>## &lt;Axes: ylabel=&#39;Count&#39;&gt;
+## &lt;Axes: ylabel=&#39;Count&#39;&gt;
+## Text(0.5, 1.0, &#39;Sampling Distributions (Normal Approximation)&#39;)
+## Text(0.5, 0, &#39;Sample Mean Ticket Purchase Rate&#39;)
+## Text(0, 0.5, &#39;Frequency&#39;)
+## &lt;matplotlib.legend.Legend object at 0x177e4c940&gt;</code></pre>
+<p><img src="https://nervous-wright-ea05a8.netlify.app/post/abn-testing-python/index_files/figure-html/unnamed-chunk-13-1.png" width="576" /></p>
+<pre><code>## Control group size: 88141
+## Variation B group size: 88570
+## Number of random samples generated for each group: 1000
+## Size of each random sample: 80000</code></pre>
+<p>If we take fairly large sample sizes and enough samples we can see that these two distributions are distinct.</p>
+<p>Try this</p>
+</div>
+
+        </div>
+      </div>
+      <div class="col-lg-8 mx-auto block shadow">
+        
+        
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<footer class="py-4 bg-light border-top">
+  <div class="container">
+    <div class="row justify-content-between align-items-center">
+      <div class="col-lg-4 text-center text-lg-left mb-4 mb-lg-0">
+        <a href="https://nervous-wright-ea05a8.netlify.app/"><img src="/images/resume.png" class="img-fluid"
+            alt="Kevin Bonds | Portfolio"></a>
+      </div>
+      <div class="col-lg-4 text-center mb-4 mb-lg-0">
+        <ul class="list-inline mb-0">
+          
+          <li class="list-inline-item"><a class="text-dark d-block p-2" href="https://nervous-wright-ea05a8.netlify.app/resume">Resumé</a>
+          </li>
+          
+          <li class="list-inline-item"><a class="text-dark d-block p-2" href="https://nervous-wright-ea05a8.netlify.app/contact">Contact</a>
+          </li>
+          
+          <li class="list-inline-item"><a class="text-dark d-block p-2" href="https://github.com/kwbonds?tab=repositories">Project Repos</a>
+          </li>
+          
+        </ul>
+      </div>
+      <div class="col-lg-4 text-lg-right text-center mb-4 mb-lg-0">
+        <ul class="list-inline social-icon mb-0">
+          
+          <li class="list-inline-item"><a href="https://join.skype.com/invite/u45PzQhKsLp5"><i class="ti-skype"></i></a></li>
+          
+          <li class="list-inline-item"><a href="https://twitter.com/KevinWBonds"><i class="ti-twitter-alt"></i></a></li>
+          
+          <li class="list-inline-item"><a href="https://github.com/kwbonds"><i class="ti-github"></i></a></li>
+          
+          <li class="list-inline-item"><a href="https://www.linkedin.com/in/kevin-bonds/"><i class="ti-linkedin"></i></a></li>
+          
+        </ul>
+      </div>
+      <div class="col-12 text-center mt-4">
+        <span></span>
+      </div>
+    </div>
+  </div>
+</footer>
+
+
+
+
+<script>
+  var indexURL = "https://nervous-wright-ea05a8.netlify.app/index.json"
+</script>
+
+
+<!-- JS Plugins -->
+
+<script src="https://nervous-wright-ea05a8.netlify.app/plugins/jQuery/jquery.min.js"></script>
+
+<script src="https://nervous-wright-ea05a8.netlify.app/plugins/bootstrap/bootstrap.min.js"></script>
+
+<script src="https://nervous-wright-ea05a8.netlify.app/plugins/search/fuse.min.js"></script>
+
+<script src="https://nervous-wright-ea05a8.netlify.app/plugins/search/mark.js"></script>
+
+<script src="https://nervous-wright-ea05a8.netlify.app/plugins/search/search.js"></script>
+
+<!-- Main Script -->
+
+<script src="https://nervous-wright-ea05a8.netlify.app/js/script.min.js"></script>
+<!-- google analitycs -->
+<script>
+  (function (i, s, o, g, r, a, m) {
+    i['GoogleAnalyticsObject'] = r;
+    i[r] = i[r] || function () {
+      (i[r].q = i[r].q || []).push(arguments)
+    }, i[r].l = 1 * new Date();
+    a = s.createElement(o),
+      m = s.getElementsByTagName(o)[0];
+    a.async = 1;
+    a.src = g;
+    m.parentNode.insertBefore(a, m)
+  })(window, document, 'script', '//www.google-analytics.com/analytics.js', 'ga');
+  ga('create', 'UA-113458466-2', 'auto');
+  ga('send', 'pageview');
+</script></body>
+</html>

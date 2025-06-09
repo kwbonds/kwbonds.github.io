@@ -1,5 +1,5 @@
 ---
-title: "A/B Testing"
+title: "A/B Testing in Python"
 author: Kevin Bonds
 date: '2023-05-13'
 slug: ab-test-p1
@@ -310,4 +310,3 @@ ab_df %>% select(VARIANT_NAME, REVENUE) %>% group_by(VARIANT_NAME) %>% summarise
 # saveRDS(results_df, file = "../../static/post/2023-05-15-ab-test_files/results_df.rds")
 # saveRDS(user_results_df, file = "../../static/post/2023-05-15-ab-test_files/user_results_df.rds")
 ```
-

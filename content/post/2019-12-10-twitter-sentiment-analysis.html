@@ -435,10 +435,10 @@ train_dfm %&gt;% textplot_wordcloud()</code></pre>
 <p><img src="/post/2019-12-10-twitter-sentiment-analysis_files/figure-html/wordcloud-1.png" width="672" /></p>
 <pre class="r"><code># Convert to matrix
 train_dfm &lt;- as.matrix(train_dfm)</code></pre>
-<p>We now have a matrix–the length of our original data frame–now with 9581 features in the term. That is a lot of features. We are definitely suffering from the “curse of dimensionality”. We’ll need to do some feature reduction at some point.</p>
+<p>We now have a matrix–the length of our original data frame–now with 9546 features in the term. That is a lot of features. We are definitely suffering from the “curse of dimensionality”. We’ll need to do some feature reduction at some point.</p>
 <pre class="r"><code># Check dimensions of the DFM
 dim(train_dfm)</code></pre>
-<pre><code>## [1] 4732 9581</code></pre>
+<pre><code>## [1] 4732 9546</code></pre>
 <p>Let’s look at the first 6 documents (as rows) and the first 20 features of the term (as columns).</p>
 <pre class="r"><code># View part of the matrix
 kable(head(train_dfm[1:6, 1:20]))</code></pre>

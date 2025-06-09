@@ -63,10 +63,22 @@ year_stats &lt;- crude_oil %&gt;%
         summarize( &quot;yr_mean_crude&quot; = mean(`Cushing, OK WTI Spot Price FOB (Dollars per Barrel)`),
                    &quot;yr_median_crude&quot; = median(`Cushing, OK WTI Spot Price FOB (Dollars per Barrel)`))
 # Join to larger dataframe
-crude_oil &lt;- left_join(crude_oil, year_stats, on = c(&quot;Year&quot; = &quot;Year&quot;))
+crude_oil &lt;- dplyr::left_join(crude_oil, year_stats, by = c(&quot;Year&quot; = &quot;Year&quot;))
 kable(crude_oil[12:17,], caption= &quot;Table with Yearly Stats&quot;)</code></pre>
-<table>
+<table style="width:100%;">
 <caption>(#tab:yearly_stats)Table with Yearly Stats</caption>
+<colgroup>
+<col width="5%" />
+<col width="27%" />
+<col width="25%" />
+<col width="5%" />
+<col width="3%" />
+<col width="2%" />
+<col width="7%" />
+<col width="7%" />
+<col width="7%" />
+<col width="8%" />
+</colgroup>
 <thead>
 <tr class="header">
 <th align="left">Date</th>
@@ -177,16 +189,36 @@ jet &lt;- readRDS(&quot;../../jet.rds&quot;)
 propane &lt;- readRDS(&quot;../../propane.rds&quot;)</code></pre>
 <p>Since prices are taken at the end of the month, dates are converted to month end just for clarity.</p>
 <pre class="r"><code># Join conv_gasoline and heating_oil
-energy_df &lt;- 
-        left_join(crude_oil, conv_gasoline[,2:5], on = c(&quot;Year&quot; = &quot;Year&quot;, &quot;Month&quot; = &quot;Month&quot;)) %&gt;% 
-        left_join(heating_oil[,2:4], on = c(&quot;Year&quot; = &quot;Year&quot;, &quot;Month&quot; = &quot;Month&quot;)) %&gt;%
-        left_join(uls_diesel[-1], on = c(&quot;Year&quot; = &quot;Year&quot;, &quot;Month&quot; = &quot;Month&quot;)) %&gt;% 
-        left_join(RBOB_gasoline[-1], on = c(&quot;Year&quot; = &quot;Year&quot;, &quot;Month&quot; = &quot;Month&quot;)) %&gt;% 
-        left_join(jet[-1], on = c(&quot;Year&quot; = &quot;Year&quot;, &quot;Month&quot; = &quot;Month&quot;)) %&gt;% 
-        left_join(propane[-1], on = c(&quot;Year&quot; = &quot;Year&quot;, &quot;Month&quot; = &quot;Month&quot;))
-energy_df &lt;- energy_df %&gt;% select(&quot;Date&quot;= `Date2`, c(5:6, 2:3, 7:length(energy_df)))
+energy_df &lt;- left_join(crude_oil, conv_gasoline[, 2:5], by = c(Year = &quot;Year&quot;, Month = &quot;Month&quot;)) %&gt;%
+    left_join(heating_oil[, 2:4], by = c(Year = &quot;Year&quot;, Month = &quot;Month&quot;)) %&gt;%
+    left_join(uls_diesel[-1], by = c(Year = &quot;Year&quot;, Month = &quot;Month&quot;)) %&gt;%
+    left_join(RBOB_gasoline[-1], by = c(Year = &quot;Year&quot;, Month = &quot;Month&quot;)) %&gt;%
+    left_join(jet[-1], by = c(Year = &quot;Year&quot;, Month = &quot;Month&quot;)) %&gt;%
+    left_join(propane[-1], by = c(Year = &quot;Year&quot;, Month = &quot;Month&quot;))
+energy_df &lt;- energy_df %&gt;%
+    select(Date = Date2, c(5:6, 2:3, 7:length(energy_df)))
 kable(head(energy_df))</code></pre>
-<table>
+<table style="width:100%;">
+<colgroup>
+<col width="1%" />
+<col width="0%" />
+<col width="0%" />
+<col width="6%" />
+<col width="5%" />
+<col width="1%" />
+<col width="1%" />
+<col width="1%" />
+<col width="1%" />
+<col width="9%" />
+<col width="9%" />
+<col width="8%" />
+<col width="8%" />
+<col width="8%" />
+<col width="8%" />
+<col width="9%" />
+<col width="8%" />
+<col width="7%" />
+</colgroup>
 <thead>
 <tr class="header">
 <th align="left">Date</th>
@@ -337,7 +369,13 @@ kable(head(energy_df))</code></pre>
 <div id="modeling-crude-oil" class="section level1">
 <h1>Modeling crude oil</h1>
 <p>Let’s go ahead and try some ARIMA modeling. To create a time series model for crude oil price we should determine what sort of model may best fit. Looking at the plot of the data:</p>
-<pre class="r"><code>ggplot(energy_df, aes(x = energy_df$Date, y = energy_df$`Cushing, OK WTI Spot Price FOB (Dollars per Barrel)`)) + geom_line() + ylab(&quot;WTI Spot Price (Dollars per Barrel)&quot;) + xlab(&quot;Date&quot;) + ggtitle(&quot;Monthly average for West Texas Crude Oil&quot;)</code></pre>
+<pre class="r"><code>ggplot(energy_df, aes(x = energy_df$Date, y = energy_df$`Cushing, OK WTI Spot Price FOB (Dollars per Barrel)`)) +
+    geom_line() + ylab(&quot;WTI Spot Price (Dollars per Barrel)&quot;) + xlab(&quot;Date&quot;) + ggtitle(&quot;Monthly average for West Texas Crude Oil&quot;)</code></pre>
+<pre><code>## Warning: Use of `energy_df$Date` is discouraged.
+## ℹ Use `Date` instead.</code></pre>
+<pre><code>## Warning: Use of `` energy_df$`Cushing, OK WTI Spot Price FOB (Dollars per Barrel)` `` is
+## discouraged.
+## ℹ Use `Cushing, OK WTI Spot Price FOB (Dollars per Barrel)` instead.</code></pre>
 <p><img src="/post/2019-12-10-time-series-analysis-of-crude-oil_files/figure-html/unnamed-chunk-4-1.png" width="672" /></p>
 <p>It appears the data is not stabilized. There is a general trend and possibly some exponential behavior. Let’s try standardizing the data by log-differencing to remove trend and growth.</p>
 <pre class="r"><code>cop &lt;-  ts(energy_df$`Cushing, OK WTI Spot Price FOB (Dollars per Barrel)`, start= c(1986,1), end = c(2019,8), frequency = 12)</code></pre>
@@ -356,9 +394,9 @@ plot(crude_oil_returns, type = &quot;l&quot;)</code></pre>
 <pre><code>## $fit
 ## 
 ## Call:
-## stats::arima(x = xdata, order = c(p, d, q), seasonal = list(order = c(P, D, 
-##     Q), period = S), xreg = constant, transform.pars = trans, fixed = fixed, 
-##     optim.control = list(trace = trc, REPORT = 1, reltol = tol))
+## arima(x = xdata, order = c(p, d, q), seasonal = list(order = c(P, D, Q), period = S), 
+##     xreg = constant, transform.pars = trans, fixed = fixed, optim.control = list(trace = trc, 
+##         REPORT = 1, reltol = tol))
 ## 
 ## Coefficients:
 ##          ar1  constant
@@ -375,14 +413,9 @@ plot(crude_oil_returns, type = &quot;l&quot;)</code></pre>
 ## ar1        0.2834 0.0491  5.7729  0.0000
 ## constant   0.0017 0.0058  0.2958  0.7676
 ## 
-## $AIC
-## [1] -2.114934
-## 
-## $AICc
-## [1] -2.11486
-## 
-## $BIC
-## [1] -2.085165</code></pre>
+## $ICs
+##       AIC      AICc       BIC 
+## -2.114934 -2.114860 -2.085165</code></pre>
 <p>We can see from above, the AR1 parameter is significant as the p.value is zero. Also, we note to AIC and BIC for comparison with subsequent models. We want these to be as small as possible.</p>
 <p>Let’s try adding a parameter and see if that improves things? We are looking for the Akaike Information Criterion (AIC) and the Bayesian Information Criterion (BIC) to judge the strength of the model. The lower these values the more information is captured.</p>
 <pre class="r"><code>ar_sim_x_2 &lt;- sarima(crude_oil_returns, p = 2, d = 1, q = 0)</code></pre>
@@ -391,9 +424,9 @@ plot(crude_oil_returns, type = &quot;l&quot;)</code></pre>
 <pre><code>## $fit
 ## 
 ## Call:
-## stats::arima(x = xdata, order = c(p, d, q), seasonal = list(order = c(P, D, 
-##     Q), period = S), xreg = constant, transform.pars = trans, fixed = fixed, 
-##     optim.control = list(trace = trc, REPORT = 1, reltol = tol))
+## arima(x = xdata, order = c(p, d, q), seasonal = list(order = c(P, D, Q), period = S), 
+##     xreg = constant, transform.pars = trans, fixed = fixed, optim.control = list(trace = trc, 
+##         REPORT = 1, reltol = tol))
 ## 
 ## Coefficients:
 ##          ar1      ar2  constant
@@ -411,14 +444,9 @@ plot(crude_oil_returns, type = &quot;l&quot;)</code></pre>
 ## ar2       -0.0359 0.0511 -0.7014  0.4835
 ## constant   0.0018 0.0056  0.3222  0.7474
 ## 
-## $AIC
-## [1] -2.111192
-## 
-## $AICc
-## [1] -2.111043
-## 
-## $BIC
-## [1] -2.0715</code></pre>
+## $ICs
+##       AIC      AICc       BIC 
+## -2.111192 -2.111043 -2.071500</code></pre>
 <p>That does not. We can see that the added parameter is not statistically significant and the BIC and AIC both go up. After a few more less probable attempts we can be certain that the first model is looking best.</p>
 <p>Now let’s see if adding seasonality to the model will improve it. Looking at the ACF/PCF for the differenced data.</p>
 <pre class="r"><code>acf2(diff(diff(crude_oil_returns), 48))</code></pre>
@@ -430,9 +458,9 @@ plot(crude_oil_returns, type = &quot;l&quot;)</code></pre>
 <pre><code>## $fit
 ## 
 ## Call:
-## stats::arima(x = xdata, order = c(p, d, q), seasonal = list(order = c(P, D, 
-##     Q), period = S), xreg = constant, transform.pars = trans, fixed = fixed, 
-##     optim.control = list(trace = trc, REPORT = 1, reltol = tol))
+## arima(x = xdata, order = c(p, d, q), seasonal = list(order = c(P, D, Q), period = S), 
+##     xreg = constant, transform.pars = trans, fixed = fixed, optim.control = list(trace = trc, 
+##         REPORT = 1, reltol = tol))
 ## 
 ## Coefficients:
 ##          ar1    sar1  constant
@@ -450,14 +478,9 @@ plot(crude_oil_returns, type = &quot;l&quot;)</code></pre>
 ## sar1       0.0241 0.0535  0.4494  0.6534
 ## constant   0.0017 0.0059  0.2851  0.7757
 ## 
-## $AIC
-## [1] -2.110472
-## 
-## $AICc
-## [1] -2.110323
-## 
-## $BIC
-## [1] -2.070781</code></pre>
+## $ICs
+##       AIC      AICc       BIC 
+## -2.110472 -2.110323 -2.070781</code></pre>
 <p>This model is not better. The seasonal AR is not significant and the AIC and BIC have increased. Seems adding a seasonal component doesn’t improve the model.</p>
 <p>Now that we are satisfied with the non-seasonal ARIMA(1,1,0), let’s forecast 6 months ahead. We’ll use the sarima package</p>
 <pre class="r"><code>oil_for &lt;- sarima.for(cop, n.ahead = 6, 1,1,0)</code></pre>
@@ -500,7 +523,7 @@ plot(gas_returns, type = &quot;l&quot;)</code></pre>
 ## 
 ## $se
 ##            Jan       Feb Mar Apr May Jun Jul Aug       Sep       Oct       Nov
-## 2019                                             0.1279105 0.2074903 0.2557773
+## 2019                                             0.1279105 0.2074902 0.2557773
 ## 2020 0.3180102 0.3403182                                                      
 ##            Dec
 ## 2019 0.2907294

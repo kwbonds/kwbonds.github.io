@@ -1,0 +1,16 @@
+---
+title: "About Me"
+author: "Kevin Bonds"
+date: "`r Sys.Date()`"
+slug: about
+categories: 
+  - "about"
+tags:
+  - "about"
+---
+
+I am a Data Science Professional with experience designing and deploying production level code for data applications and Machine Learning efforts. I have experience working with SQL and relational databases as well as unstructured and cloud-based storage solutions. My expertise in Python and R programming languages, along with my experience with developing and deploying distributed services with Docker/Kubernetes, make me a strong candidate for any organization putting data applications or models into production.
+
+I have experience working with subscription, application data and knowledge of visualization tools such as Jupyter Notebooks, ggplot, Plotly, Streamlit and Shiny. I also have experience building data pipelines for Machine Learning applications and there deployment.
+
+With my professional experience as a Data Scientist and Data Science Platform Lead, I have gained skills in R, SQL, Docker, Python, Shiny, Plumber/OpenAPI, Kubenetes, AWS, Google Cloud, Spinnaker, data applications, data pipelining, production workflows, and product analytics (Churn, Retention, Segmentation, A/B Testing).

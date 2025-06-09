@@ -2,80 +2,89 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Categories on Kevin Bonds | Portfolio</title>
-    <link>https://nervous-wright-ea05a8.netlify.com/categories/</link>
+    <link>https://nervous-wright-ea05a8.netlify.app/categories/</link>
     <description>Recent content in Categories on Kevin Bonds | Portfolio</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Sat, 13 May 2023 00:00:00 +0000</lastBuildDate><atom:link href="https://nervous-wright-ea05a8.netlify.com/categories/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Sat, 07 Jun 2025 00:00:00 +0000</lastBuildDate><atom:link href="https://nervous-wright-ea05a8.netlify.app/categories/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>AB-Testing</title>
-      <link>https://nervous-wright-ea05a8.netlify.com/categories/ab-testing/</link>
-      <pubDate>Sat, 13 May 2023 00:00:00 +0000</pubDate>
+      <link>https://nervous-wright-ea05a8.netlify.app/categories/ab-testing/</link>
+      <pubDate>Sat, 07 Jun 2025 00:00:00 +0000</pubDate>
       
-      <guid>https://nervous-wright-ea05a8.netlify.com/categories/ab-testing/</guid>
+      <guid>https://nervous-wright-ea05a8.netlify.app/categories/ab-testing/</guid>
       <description></description>
     </item>
     
     <item>
       <title>EDA</title>
-      <link>https://nervous-wright-ea05a8.netlify.com/categories/eda/</link>
-      <pubDate>Sat, 13 May 2023 00:00:00 +0000</pubDate>
+      <link>https://nervous-wright-ea05a8.netlify.app/categories/eda/</link>
+      <pubDate>Sat, 07 Jun 2025 00:00:00 +0000</pubDate>
       
-      <guid>https://nervous-wright-ea05a8.netlify.com/categories/eda/</guid>
+      <guid>https://nervous-wright-ea05a8.netlify.app/categories/eda/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Python</title>
+      <link>https://nervous-wright-ea05a8.netlify.app/categories/python/</link>
+      <pubDate>Sat, 07 Jun 2025 00:00:00 +0000</pubDate>
+      
+      <guid>https://nervous-wright-ea05a8.netlify.app/categories/python/</guid>
       <description></description>
     </item>
     
     <item>
       <title>Job Hunting</title>
-      <link>https://nervous-wright-ea05a8.netlify.com/categories/job-hunting/</link>
+      <link>https://nervous-wright-ea05a8.netlify.app/categories/job-hunting/</link>
       <pubDate>Mon, 20 Mar 2023 00:00:00 +0000</pubDate>
       
-      <guid>https://nervous-wright-ea05a8.netlify.com/categories/job-hunting/</guid>
+      <guid>https://nervous-wright-ea05a8.netlify.app/categories/job-hunting/</guid>
       <description></description>
     </item>
     
     <item>
       <title>Sentiment Analysis</title>
-      <link>https://nervous-wright-ea05a8.netlify.com/categories/sentiment-analysis/</link>
+      <link>https://nervous-wright-ea05a8.netlify.app/categories/sentiment-analysis/</link>
       <pubDate>Fri, 03 Jan 2020 00:00:00 +0000</pubDate>
       
-      <guid>https://nervous-wright-ea05a8.netlify.com/categories/sentiment-analysis/</guid>
+      <guid>https://nervous-wright-ea05a8.netlify.app/categories/sentiment-analysis/</guid>
       <description></description>
     </item>
     
     <item>
       <title>Text Analysis</title>
-      <link>https://nervous-wright-ea05a8.netlify.com/categories/text-analysis/</link>
+      <link>https://nervous-wright-ea05a8.netlify.app/categories/text-analysis/</link>
       <pubDate>Fri, 03 Jan 2020 00:00:00 +0000</pubDate>
       
-      <guid>https://nervous-wright-ea05a8.netlify.com/categories/text-analysis/</guid>
+      <guid>https://nervous-wright-ea05a8.netlify.app/categories/text-analysis/</guid>
       <description></description>
     </item>
     
     <item>
       <title>Feature Engineering</title>
-      <link>https://nervous-wright-ea05a8.netlify.com/categories/feature-engineering/</link>
+      <link>https://nervous-wright-ea05a8.netlify.app/categories/feature-engineering/</link>
       <pubDate>Tue, 10 Dec 2019 00:00:00 +0000</pubDate>
       
-      <guid>https://nervous-wright-ea05a8.netlify.com/categories/feature-engineering/</guid>
+      <guid>https://nervous-wright-ea05a8.netlify.app/categories/feature-engineering/</guid>
       <description></description>
     </item>
     
     <item>
       <title>ARIMA</title>
-      <link>https://nervous-wright-ea05a8.netlify.com/categories/arima/</link>
+      <link>https://nervous-wright-ea05a8.netlify.app/categories/arima/</link>
       <pubDate>Sat, 30 Nov 2019 00:00:00 +0000</pubDate>
       
-      <guid>https://nervous-wright-ea05a8.netlify.com/categories/arima/</guid>
+      <guid>https://nervous-wright-ea05a8.netlify.app/categories/arima/</guid>
       <description></description>
     </item>
     
     <item>
       <title>Time Series</title>
-      <link>https://nervous-wright-ea05a8.netlify.com/categories/time-series/</link>
+      <link>https://nervous-wright-ea05a8.netlify.app/categories/time-series/</link>
       <pubDate>Sat, 30 Nov 2019 00:00:00 +0000</pubDate>
       
-      <guid>https://nervous-wright-ea05a8.netlify.com/categories/time-series/</guid>
+      <guid>https://nervous-wright-ea05a8.netlify.app/categories/time-series/</guid>
       <description></description>
     </item>
     

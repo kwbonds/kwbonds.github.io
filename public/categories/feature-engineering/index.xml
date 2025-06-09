@@ -2,36 +2,18 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Feature Engineering on Kevin Bonds | Portfolio</title>
-    <link>https://nervous-wright-ea05a8.netlify.com/categories/feature-engineering/</link>
+    <link>https://nervous-wright-ea05a8.netlify.app/categories/feature-engineering/</link>
     <description>Recent content in Feature Engineering on Kevin Bonds | Portfolio</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Tue, 10 Dec 2019 00:00:00 +0000</lastBuildDate><atom:link href="https://nervous-wright-ea05a8.netlify.com/categories/feature-engineering/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Tue, 10 Dec 2019 00:00:00 +0000</lastBuildDate><atom:link href="https://nervous-wright-ea05a8.netlify.app/categories/feature-engineering/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>Twitter Sentiment Analysis: Part 1</title>
-      <link>https://nervous-wright-ea05a8.netlify.com/post/twitter-sentiment-analysis/</link>
+      <link>https://nervous-wright-ea05a8.netlify.app/post/twitter-sentiment-analysis/</link>
       <pubDate>Tue, 10 Dec 2019 00:00:00 +0000</pubDate>
       
-      <guid>https://nervous-wright-ea05a8.netlify.com/post/twitter-sentiment-analysis/</guid>
-      <description>
-
-&lt;div id=&#34;TOC&#34;&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;a href=&#34;#libraries-used&#34; id=&#34;toc-libraries-used&#34;&gt;Libraries Used&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;#count-features&#34; id=&#34;toc-count-features&#34;&gt;Count Features&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;#some-manual-work&#34; id=&#34;toc-some-manual-work&#34;&gt;Some Manual Work&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;#visualize-distributions-of-engineered-features&#34; id=&#34;toc-visualize-distributions-of-engineered-features&#34;&gt;Visualize Distributions of Engineered Features&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;#stratified-sampling&#34; id=&#34;toc-stratified-sampling&#34;&gt;Stratified Sampling&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;#tokenization&#34; id=&#34;toc-tokenization&#34;&gt;Tokenization&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;#remove-stopwords&#34; id=&#34;toc-remove-stopwords&#34;&gt;Remove Stopwords&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;#stemming&#34; id=&#34;toc-stemming&#34;&gt;Stemming&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;#create-a-document-feature-matrix&#34; id=&#34;toc-create-a-document-feature-matrix&#34;&gt;Create a Document-Feature Matrix&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;#setting-up-for-k-fold-cross-validation&#34; id=&#34;toc-setting-up-for-k-fold-cross-validation&#34;&gt;Setting up for K-fold Cross Validation&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;#train-the-first-model&#34; id=&#34;toc-train-the-first-model&#34;&gt;Train the First Model&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;
-&lt;/div&gt;
-
-&lt;p&gt;The following is an analysis of the &lt;em&gt;Twitter Sentiment Analysis Dataset&lt;/em&gt; available at: &lt;a href=&#34;http://thinknook.com/twitter-sentiment-analysis-training-corpus-dataset-2012-09-22/&#34; class=&#34;uri&#34;&gt;http://thinknook.com/twitter-sentiment-analysis-training-corpus-dataset-2012-09-22/&lt;/a&gt;. I will attempt to use this data to train a model to label unseen tweets into &lt;strong&gt;“Positive”&lt;/strong&gt; or &lt;strong&gt;“Negative”&lt;/strong&gt; sentiment. I will walk through my methodology and include code. </description>
+      <guid>https://nervous-wright-ea05a8.netlify.app/post/twitter-sentiment-analysis/</guid>
+      <description>&lt;p&gt;The following is an analysis of the &lt;em&gt;Twitter Sentiment Analysis Dataset&lt;/em&gt; available at: &lt;a href=&#34;http://thinknook.com/twitter-sentiment-analysis-training-corpus-dataset-2012-09-22/&#34;&gt;http://thinknook.com/twitter-sentiment-analysis-training-corpus-dataset-2012-09-22/&lt;/a&gt;. I will attempt to use this data to train a model to label unseen tweets into &lt;strong&gt;&amp;ldquo;Positive&amp;rdquo;&lt;/strong&gt; or &lt;strong&gt;&amp;ldquo;Negative&amp;rdquo;&lt;/strong&gt; sentiment. I will walk through my methodology and include code.&lt;/p&gt;</description>
     </item>
     
   </channel>
