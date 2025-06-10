@@ -104,8 +104,8 @@
           
 
 
-<p>The following case study will illustrate how to analyze the results of a type of experiment known as a multitest (A/N). An A/N Test is just an A/B Test in which multiple variants are tested at the same time.</p>
-<p>We will compare 2 variants against a control to the increase purchase rate on a website. Since testing multiple variants at once will increase error the rate (known as Family Wise Error Rate–FWER), we will use a correction when determining statistical significance.</p>
+<p>The following case study will illustrate how to analyze the results of a type of experiment known as an A/N Test (or multitest). An A/N Test is an A/B Test in which multiple (N number of) variants are tested at the same time.</p>
+<p>Here we will compare 2 variants against a control to the increase purchase rate on a website. Since testing multiple variants at once will increase error the rate (known as Family Wise Error Rate–FWER), we will use a correction when determining statistical significance.</p>
 <div id="analyzing-results" class="section level1">
 <h1>Analyzing results</h1>
 <p>We are asked to analyze the results of an experiment, performed on the splash-page, for a fictional theme park called Redwood Ridge. The park wants to launch an AI assisted booking agent, referred to as Rocky Raccoon, to help customers book flights, rental cars, meals, etc. They wish to test: Variant_A with a simplified widget; Variant_B with a more complex interactive wizard; against the control page with no agent.</p>
@@ -376,7 +376,7 @@ print(f&quot;Size of each random sample: {sample_size}&quot;)</code></pre>
 ## Text(0.5, 1.0, &#39;Sampling Distributions (Normal Approximation)&#39;)
 ## Text(0.5, 0, &#39;Sample Mean Ticket Purchase Rate&#39;)
 ## Text(0, 0.5, &#39;Frequency&#39;)
-## &lt;matplotlib.legend.Legend object at 0x1750b3280&gt;</code></pre>
+## &lt;matplotlib.legend.Legend object at 0x3197f6d70&gt;</code></pre>
 <p><img src="https://nervous-wright-ea05a8.netlify.app/post/abn-testing-python/index_files/figure-html/unnamed-chunk-14-1.png" width="576" /></p>
 <pre><code>## Control group size: 88141
 ## Variation B group size: 88570

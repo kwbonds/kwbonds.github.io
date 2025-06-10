@@ -15,9 +15,9 @@ tags:
 
 
 
-The following case study will illustrate how to analyze the results of a type of experiment known as a multitest (A/N). An A/N Test is just an A/B Test in which multiple variants are tested at the same time. 
+The following case study will illustrate how to analyze the results of a type of experiment known as an A/N Test (or multitest). An A/N Test is an A/B Test in which multiple (N number of) variants are tested at the same time. 
 
-We will compare 2 variants against a control to the increase purchase rate on a website. Since testing multiple variants at once will increase error the rate (known as Family Wise Error Rate--FWER), we will use a correction when determining statistical significance. 
+Here we will compare 2 variants against a control to the increase purchase rate on a website. Since testing multiple variants at once will increase error the rate (known as Family Wise Error Rate--FWER), we will use a correction when determining statistical significance. 
 
 # Analyzing results
 
@@ -399,7 +399,7 @@ print(f"Size of each random sample: {sample_size}")
 ## Text(0.5, 1.0, 'Sampling Distributions (Normal Approximation)')
 ## Text(0.5, 0, 'Sample Mean Ticket Purchase Rate')
 ## Text(0, 0.5, 'Frequency')
-## <matplotlib.legend.Legend object at 0x30775d2a0>
+## <matplotlib.legend.Legend object at 0x30f44f8e0>
 ```
 
 <img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-14-1.png" width="576" />
