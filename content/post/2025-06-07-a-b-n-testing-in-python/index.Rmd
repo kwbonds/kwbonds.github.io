@@ -40,13 +40,15 @@ The test has already been performed. Therefore, we will skip the test planning a
 
 First we formulate the alternate hypothesis. This is the one we are trying to accept by default of rejecting the Null Hypothesis.
 
-#### The Alternate Hypothesis: Adding an interactive travel planning wizard to the Homepage would boost ticket purchase conversion rates
+__The Alternate Hypothesis: Adding an interactive travel planning wizard to the Homepage will boost ticket purchase conversion rates__
 
 The null hypothesis is always based on the idea that that every difference detected, in the measured statistic, is simply due to random chance. All hypothesis boils down to trying to reject the null hypothesis if there is enough evidence that it is unlikely the results due to chance.
 
-#### Null Hypothesis: Any difference in our test statistic is just due to random chance
+__Null Hypothesis: An increase in ticket purchase rate can be explained as random chance__
 
-Test Statistic: Ticket Purchase Conversion Rate = (purchase count)/(unique visit count)
+Our test statistic is defined as:
+
+__Test Statistic: Ticket Purchase Conversion Rate = (purchase count)/(unique visit count)__
 
 ```{r, setup, include=FALSE}
 # Sys.setenv(RETICULATE_PYTHON = "/Users/kevinbonds/anaconda3/bin/python3")
@@ -83,18 +85,22 @@ print(rocky)
 rocky.groupby('treatment')['ticket_purchased'].agg(['mean', 'count', 'std'])
 ```
 
-We see there is a difference in the means with the *variation_B* showing the highest. But let's make sure we don't have any duplicates.
+We see there is a difference in the means; with the *variation_B* showing the highest lift. But let's make sure we don't have duplicates.
 
 ## Check for Duplicates
 
 ```{python, class.source="my-python-code", results='hold'}
 print(len(rocky))
-print(len(rocky.drop_duplicates(keep='first')))
+print(len(rocky.drop_duplicates(keep=False)))
 ```
+
+No purely duplicate records.
 
 ```{python, class.source="my-python-code", results='hold'}
 print(rocky[['visit_id', 'treatment']].nunique())
 ```
+
+But there are some with different treatments for the same visit.
 
 ```{python, class.source="my-python-code", results='hold'}
 print(len(rocky.drop_duplicates(subset=['visit_id','treatment'], keep=False)))
@@ -104,6 +110,11 @@ There are some duplicate visit id's. Considering only visit_id and treatment the
 
 ## Drop Duplicates
 
+Now we can drop these duplicates and check lift for each variation again. We should exclude these visits where the same visit resulted in seeing more than one treatment. We'll use the `keep=False` argument to the `drop_duplicates()` method in Pandas.
+
+> **_NOTE:_** It is possible to run an experiment where someone sees multiple variants known as "paired samples"--using a different method known as a "paired" test to analyze. But these seem to be due to a flaw in the experiment, rather than intentional, and led to a small sample size. We'll focus on analyzing the rest as independent samples or "un-paired" samples. 
+
+
 ```{python, class.source="my-python-code", results='hold'}
 rocky = rocky.drop_duplicates(subset=['visit_id'], keep=False)
 print(len(rocky))
@@ -111,13 +122,15 @@ rocky.groupby('treatment')[['trip_planner_engaged', 'ticket_purchased']].agg(['m
 
 ```
 
+So we discarded all records for any *visit_id* that has multiple records.
+
 ## Group and Inspect
 
 ```{python, class.source="my-python-code", results='hold'}
-rocky.groupby(['treatment', 'trip_planner_engaged'])[ 'ticket_purchased'].mean()
+rocky.groupby(['treatment', 'trip_planner_engaged'])[ 'ticket_purchased'].agg(['mean', 'count'])
 ```
 
-It doesn't make sense that there would be trip planner engagment for the control group. Something is amiss. We should alert Engineering that our logging seems to be broken. Ah. The is a large imbalance in the groups. hmmm. But there is a bigger problem with the trip_planner_engaged field. We'll ignore this field and focus on just the raw effect of the impact of the variants on ticket purchases.
+It doesn't make sense to have trip planner engagment for the control group. Something is amiss. We should alert Engineering that our logging seems to be broken. Also, there is a large imbalance in the groups, but there is a bigger problem with the *trip_planner_engaged* field. We'll ignore this field focusing on just the impact of the variants on ticket purchases.
 
 # Checking for Significance in the Difference in Means
 
@@ -210,7 +223,7 @@ So the pvalues are:
 
 Normally a pvalue less that 0.05 indicates strong evidence against the NULL hypothesis and that we should reject it. And since both variants show significance (uncorrected) we might be tempted to reject the NULL hypothesis for both and only accept it when pitting the two variants against each other--leading us to conclude the difference between the 2 variants is not significant (or is simply random chance). And secondly, that either would be preferable to the Control. But this would be a mistake. 
 
-When performing an experiment with more than variation we need to apply a correction to account for Family Wise Eror Rate (FWER) since the probability of making at least one Type I error (a false positive) across all the hypothesis tests increases with each test. A simple correction is to use the Bonferroni correction. Essentially this method divides the significance level (alpha) across the number of tests. This gives us a more conservative mark to hit. 
+When performing an experiment with more than variation we need to apply a correction to account for Family Wise Eror Rate (FWER) since the probability of making at least one Type I error (a false positive) across all the hypothesis tests increases with each test. A simple correction is to use the Bonferroni correction. Essentially, this method divides the significance level (alpha) across the number of tests. This gives us a more conservative mark to hit. 
 
 If we use the 3 pvalues we calculated and apply this method:
 
@@ -296,5 +309,27 @@ If we take fairly large sample sizes and enough samples we can see that these tw
 
 ## Recommendation
 
+We could recommend the *variation_B* as statistically significant at the 95% confidence level. 
 
+## Alternate Recommendation/consideration
+
+Since we saw that we cannot reject the null hypothesis at the 95% confidence level between *variant_A* and *variant_B* even after correction, we cannot say that they are statistically dissimilar from one another. It is possible that the slight differnce between them is just random chance. This may be important if one variant is more costly to implement than the other. For instance if *variation_A* is considerably cheaper than *variation_B* then we might want to loosen our confidence level a bit to see if we can reject the null for *variation_B* at a slightly lower confidence. 
+
+If we go back to our Bonferroni correction calculation and lower our alpha to 0.10 (corresponding to 90% confidence)
+
+```{python, results='hold', class.source="my-python-code", warning=FALSE, message=FALSE, error=FALSE,}
+# Bonferroni correction for 95% Confidence interval
+import statsmodels.stats.multitest as smt
+
+pvals = [0.030713, 0.000067, 0.0679]
+
+# Perform a Bonferroni correction and print the output
+corrected = smt.multipletests(pvals, alpha = .10, method = 'bonferroni')
+
+print('Significant Test:', corrected[0])
+print('Corrected P-values:', corrected[1])
+print('Bonferroni Corrected alpha: {:.4f}'.format(corrected[2]))
+```
+
+We can see that now both variants can be said to be significant at 90% confidence and that they still show no distinct difference between each other. If *variation_B* is more expensive we may feel confident in choosing *variation_A*.
 
