@@ -15,18 +15,29 @@ tags:
 
 
 
-<p>The following case study will illustrate how to perform a multitest (A/N) in Python. We will test a control and 2 variants and use a correction for Family Wise Error Rate when determining statistical significance. Since multiple tests can increase error the rate.</p>
-<div id="analyzing-results" class="section level2">
-<h2>Analyzing results</h2>
-<p>We are asked to analyze the results of tests performed on the splash-page for a fictional theme park called Redwood Ridge. The park wants to launch an AI assisted booking agent they are calling Rocky Raccoon to help customers book flights, rental car, meals, etc. They wish to test a control page with no agent widget, Variant_A with a simplified widget, and Variant_B with a more complex interactive wizard. The test has already been performed; we just need to make sense of the results.</p>
+<p>The following case study will illustrate how to analyze the results of a type of experiment known as a multitest (A/N). An A/N Test is just an A/B Test in which multiple variants are tested at the same time.</p>
+<p>We will compare 2 variants against a control to the increase purchase rate on a website. Since testing multiple variants at once will increase error the rate (known as Family Wise Error Rate–FWER), we will use a correction when determining statistical significance.</p>
+<div id="analyzing-results" class="section level1">
+<h1>Analyzing results</h1>
+<p>We are asked to analyze the results of an experiment, performed on the splash-page, for a fictional theme park called Redwood Ridge. The park wants to launch an AI assisted booking agent, referred to as Rocky Raccoon, to help customers book flights, rental cars, meals, etc. They wish to test: Variant_A with a simplified widget; Variant_B with a more complex interactive wizard; against the control page with no agent.</p>
 <http>
 <center>
-<img src="variants2.png" alt = "Something"  width = "85%">
+<img src="variants2.png" alt = "The three pages"  width = "85%">
 </center>
 <p></http></p>
-<p>The Alternate Hypothesis: Adding an interactive travel planning wizard to the Homepage would boost ticket purchase conversion rates</p>
-<p>Null Hypothesis: Any difference in our test statistic is just due to random chance</p>
+<p>The test has already been performed. Therefore, we will skip the test planning and sample size calculations accepting this has all been done for us.</p>
+</div>
+<div id="formulating-the-hypothesis" class="section level1">
+<h1>Formulating the Hypothesis</h1>
+<p>First we formulate the alternate hypothesis. This is the one we are trying to accept by default of rejecting the Null Hypothesis.</p>
+<div id="the-alternate-hypothesis-adding-an-interactive-travel-planning-wizard-to-the-homepage-would-boost-ticket-purchase-conversion-rates" class="section level4">
+<h4>The Alternate Hypothesis: Adding an interactive travel planning wizard to the Homepage would boost ticket purchase conversion rates</h4>
+<p>The null hypothesis is always based on the idea that that every difference detected, in the measured statistic, is simply due to random chance. All hypothesis boils down to trying to reject the null hypothesis if there is enough evidence that it is unlikely the results due to chance.</p>
+</div>
+<div id="null-hypothesis-any-difference-in-our-test-statistic-is-just-due-to-random-chance" class="section level4">
+<h4>Null Hypothesis: Any difference in our test statistic is just due to random chance</h4>
 <p>Test Statistic: Ticket Purchase Conversion Rate = (purchase count)/(unique visit count)</p>
+<p>Let’s use Python to analyze the results and determine if it is safe to reject the Null Hypothesis.</p>
 </div>
 <div id="load-python-libraries" class="section level2">
 <h2>Load Python libraries</h2>
@@ -48,6 +59,9 @@ import numpy as np</code></pre>
 ## 264947  2024-04-30    779704  ...                    0                 0
 ## 
 ## [264948 rows x 5 columns]</code></pre>
+</div>
+<div id="eda" class="section level2">
+<h2>EDA</h2>
 <div id="inspect-the-variants" class="section level3">
 <h3>Inspect the Variants</h3>
 <pre class="python my-python-code"><code>rocky.groupby(&#39;treatment&#39;)[&#39;ticket_purchased&#39;].agg([&#39;mean&#39;, &#39;count&#39;, &#39;std&#39;])</code></pre>
@@ -56,6 +70,7 @@ import numpy as np</code></pre>
 ## control      0.020993  88266  0.143363
 ## variation_A  0.022494  88112  0.148285
 ## variation_B  0.023800  88570  0.152428</code></pre>
+<p>We see there is a difference in the means with the <em>variation_B</em> showing the highest. But let’s make sure we don’t have any duplicates.</p>
 </div>
 </div>
 <div id="check-for-duplicates" class="section level2">
@@ -98,8 +113,9 @@ rocky.groupby(&#39;treatment&#39;)[[&#39;trip_planner_engaged&#39;, &#39;ticket_
 ## Name: ticket_purchased, dtype: float64</code></pre>
 <p>It doesn’t make sense that there would be trip planner engagment for the control group. Something is amiss. We should alert Engineering that our logging seems to be broken. Ah. The is a large imbalance in the groups. hmmm. But there is a bigger problem with the trip_planner_engaged field. We’ll ignore this field and focus on just the raw effect of the impact of the variants on ticket purchases.</p>
 </div>
-<div id="checking-for-significance-in-the-difference-in-means" class="section level2">
-<h2>Checking for Significance in the Difference in Means</h2>
+</div>
+<div id="checking-for-significance-in-the-difference-in-means" class="section level1">
+<h1>Checking for Significance in the Difference in Means</h1>
 <p>Since <em>varation_B</em> seems to have the highest lift let’s see if the results are significant (without correction).</p>
 <pre class="python my-python-code"><code>from statsmodels.stats.proportion import proportions_ztest, proportion_confint
 # Calculate the number of visits
@@ -189,7 +205,7 @@ print(f&#39;Group B 95% CI : [{B_lo95:.4f}, {B_up95:.4f}]&#39;)</code></pre>
 <li><em>Control</em> vs <em>variant_B</em>: 6.9916103^{-5}</li>
 <li><em>variant_A</em> vs <em>variant_B</em>: 0.0699954</li>
 </ul>
-<p>Normally a pvalue less that 0.05 indicates strong evidence against the NULL hypothesis and that we should reject it. And since both variants show significance (uncorrected) we might be tempted to reject the NULL hypothesis for both and only accept it when pitting the two variants agains each other. Leading us to conclude that the difference between the 2 variants is not significant (or simply random chance), and that either would be preferrable to the Control. But this would be a mistake.</p>
+<p>Normally a pvalue less that 0.05 indicates strong evidence against the NULL hypothesis and that we should reject it. And since both variants show significance (uncorrected) we might be tempted to reject the NULL hypothesis for both and only accept it when pitting the two variants against each other–leading us to conclude the difference between the 2 variants is not significant (or is simply random chance). And secondly, that either would be preferable to the Control. But this would be a mistake.</p>
 <p>When performing an experiment with more than variation we need to apply a correction to account for Family Wise Eror Rate (FWER) since the probability of making at least one Type I error (a false positive) across all the hypothesis tests increases with each test. A simple correction is to use the Bonferroni correction. Essentially this method divides the significance level (alpha) across the number of tests. This gives us a more conservative mark to hit.</p>
 <p>If we use the 3 pvalues we calculated and apply this method:</p>
 <pre class="python my-python-code"><code># Bonferroni correction for 95% Confidence interval
@@ -267,7 +283,7 @@ print(f&quot;Size of each random sample: {sample_size}&quot;)</code></pre>
 ## Text(0.5, 1.0, &#39;Sampling Distributions (Normal Approximation)&#39;)
 ## Text(0.5, 0, &#39;Sample Mean Ticket Purchase Rate&#39;)
 ## Text(0, 0.5, &#39;Frequency&#39;)
-## &lt;matplotlib.legend.Legend object at 0x30fc53610&gt;</code></pre>
+## &lt;matplotlib.legend.Legend object at 0x311375ae0&gt;</code></pre>
 <p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-14-1.png" width="576" /></p>
 <pre><code>## Control group size: 88141
 ## Variation B group size: 88570

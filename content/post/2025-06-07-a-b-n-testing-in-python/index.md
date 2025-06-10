@@ -15,26 +15,37 @@ tags:
 
 
 
-The following case study will illustrate how to perform a multitest (A/N) in Python. We will test a control and 2 variants and use a correction for Family Wise Error Rate when determining statistical significance. Since multiple tests can increase error the rate.
+The following case study will illustrate how to analyze the results of a type of experiment known as a multitest (A/N). An A/N Test is just an A/B Test in which multiple variants are tested at the same time. 
 
-## Analyzing results
+We will compare 2 variants against a control to the increase purchase rate on a website. Since testing multiple variants at once will increase error the rate (known as Family Wise Error Rate--FWER), we will use a correction when determining statistical significance. 
 
-We are asked to analyze the results of tests performed on the splash-page for a fictional theme park called Redwood Ridge. The park wants to launch an AI assisted booking agent they are calling Rocky Raccoon to help customers book flights, rental car, meals, etc. They wish to test a control page with no agent widget, Variant_A with a simplified widget, and Variant_B with a more complex interactive wizard. The test has already been performed; we just need to make sense of the results.
+# Analyzing results
+
+We are asked to analyze the results of an experiment, performed on the splash-page, for a fictional theme park called Redwood Ridge. The park wants to launch an AI assisted booking agent, referred to as Rocky Raccoon, to help customers book flights, rental cars, meals, etc. They wish to test: Variant_A with a simplified widget; Variant_B with a more complex interactive wizard; against the control page with no agent. 
 
 <http>
 <center>
-<img src="variants2.png" alt = "Something"  width = "85%">
+<img src="variants2.png" alt = "The three pages"  width = "85%">
 </center>
 </http>
 
+The test has already been performed. Therefore, we will skip the test planning and sample size calculations accepting this has all been done for us.
 
-The Alternate Hypothesis: Adding an interactive travel planning wizard to the Homepage would boost ticket purchase conversion rates
+# Formulating the Hypothesis
 
-Null Hypothesis: Any difference in our test statistic is just due to random chance
+First we formulate the alternate hypothesis. This is the one we are trying to accept by default of rejecting the Null Hypothesis.
+
+#### The Alternate Hypothesis: Adding an interactive travel planning wizard to the Homepage would boost ticket purchase conversion rates
+
+The null hypothesis is always based on the idea that that every difference detected, in the measured statistic, is simply due to random chance. All hypothesis boils down to trying to reject the null hypothesis if there is enough evidence that it is unlikely the results due to chance.
+
+#### Null Hypothesis: Any difference in our test statistic is just due to random chance
 
 Test Statistic: Ticket Purchase Conversion Rate = (purchase count)/(unique visit count)
 
 
+
+Let's use Python to analyze the results and determine if it is safe to reject the Null Hypothesis. 
 
 ## Load Python libraries
 
@@ -71,6 +82,7 @@ print(rocky)
 ## 
 ## [264948 rows x 5 columns]
 ```
+## EDA
 
 ### Inspect the Variants
 
@@ -86,6 +98,9 @@ rocky.groupby('treatment')['ticket_purchased'].agg(['mean', 'count', 'std'])
 ## variation_A  0.022494  88112  0.148285
 ## variation_B  0.023800  88570  0.152428
 ```
+
+We see there is a difference in the means with the *variation_B* showing the highest. But let's make sure we don't have any duplicates.
+
 ## Check for Duplicates
 
 
@@ -160,7 +175,7 @@ rocky.groupby(['treatment', 'trip_planner_engaged'])[ 'ticket_purchased'].mean()
 
 It doesn't make sense that there would be trip planner engagment for the control group. Something is amiss. We should alert Engineering that our logging seems to be broken. Ah. The is a large imbalance in the groups. hmmm. But there is a bigger problem with the trip_planner_engaged field. We'll ignore this field and focus on just the raw effect of the impact of the variants on ticket purchases.
 
-## Checking for Significance in the Difference in Means
+# Checking for Significance in the Difference in Means
 
 Since *varation_B* seems to have the highest lift let's see if the results are significant (without correction).
 
@@ -371,7 +386,7 @@ print(f"Size of each random sample: {sample_size}")
 ## Text(0.5, 1.0, 'Sampling Distributions (Normal Approximation)')
 ## Text(0.5, 0, 'Sample Mean Ticket Purchase Rate')
 ## Text(0, 0.5, 'Frequency')
-## <matplotlib.legend.Legend object at 0x169babd60>
+## <matplotlib.legend.Legend object at 0x30f6f5210>
 ```
 
 <img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-14-1.png" width="576" />
