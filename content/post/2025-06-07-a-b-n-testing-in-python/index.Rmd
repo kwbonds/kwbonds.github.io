@@ -1,5 +1,5 @@
 ---
-title: A/B/N Testing in Python (In Progress)
+title: A/B/N Testing in Python
 author: Package Build
 date: '2025-06-07'
 slug: abn-testing-python

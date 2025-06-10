@@ -1,5 +1,5 @@
 ---
-title: A/B/N Testing in Python (In Progress)
+title: A/B/N Testing in Python
 author: Package Build
 date: '2025-06-07'
 slug: abn-testing-python
@@ -399,7 +399,7 @@ print(f"Size of each random sample: {sample_size}")
 ## Text(0.5, 1.0, 'Sampling Distributions (Normal Approximation)')
 ## Text(0.5, 0, 'Sample Mean Ticket Purchase Rate')
 ## Text(0, 0.5, 'Frequency')
-## <matplotlib.legend.Legend object at 0x30f44f8e0>
+## <matplotlib.legend.Legend object at 0x307057bb0>
 ```
 
 <img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-14-1.png" width="576" />
