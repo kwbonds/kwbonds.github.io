@@ -412,7 +412,7 @@ print(f"Size of each random sample: {sample_size}")
 ## Text(0.5, 1.0, 'Sampling Distributions (Normal Approximation)')
 ## Text(0.5, 0, 'Sample Mean Ticket Purchase Rate')
 ## Text(0, 0.5, 'Frequency')
-## <matplotlib.legend.Legend object at 0x309eaeb00>
+## <matplotlib.legend.Legend object at 0x306afa440>
 ```
 
 <img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-15-1.png" width="576" />
@@ -430,21 +430,21 @@ If we take fairly large sample sizes and enough samples we can see that these tw
 
 We could recommend the *variation_B* as statistically significant at the 95% confidence level. 
 
-## Alternate Recommendation/consideration
+## Alternate Consideration
 
 Since we saw that we cannot reject the null hypothesis at the 95% confidence level between *variant_A* and *variant_B* even after correction, we cannot say that they are statistically dissimilar from one another. It is possible that the slight differnce between them is just random chance. This may be important if one variant is more costly to implement than the other. For instance if *variation_A* is considerably cheaper than *variation_B* then we might want to loosen our confidence level a bit to see if we can reject the null for *variation_B* at a slightly lower confidence. 
 
-If we go back to our Bonferroni correction calculation and lower our alpha to 0.11 (corresponding to 89% confidence)
+If we go back to our Bonferroni correction calculation and lower our alpha to 0.10 (corresponding to 90% confidence)
 
 
 ```{.python .my-python-code}
-# Bonferroni correction for 89% Confidence interval
+# Bonferroni correction for 90% Confidence interval
 import statsmodels.stats.multitest as smt
 
 pvals = [pvalue_C_A, pvalue_C_B, pvalue_A_B]
 
 # Perform a Bonferroni correction and print the output
-corrected = smt.multipletests(pvals, alpha = .11, method = 'bonferroni')
+corrected = smt.multipletests(pvals, alpha = .10, method = 'bonferroni')
 
 print('Significant Test:', corrected[0])
 print('Corrected P-values:', corrected[1])
@@ -454,8 +454,8 @@ print('Bonferroni Corrected alpha: {:.4f}'.format(corrected[2]))
 ```
 ## Significant Test: [False  True False]
 ## Corrected P-values: [0.14968898 0.00022752 0.13721744]
-## Bonferroni Corrected alpha: 0.0381
+## Bonferroni Corrected alpha: 0.0345
 ```
 
-We can see that now both variants can be said to be significant at 89% confidence and that they still show no distinct difference between each other. If *variation_B* is more expensive we may feel confident in choosing *variation_A*.
+We can see that now, even at 90% confidence level, the only test that is significant is the variation_B over control. Given this *variation_B* should be chosen. 
 

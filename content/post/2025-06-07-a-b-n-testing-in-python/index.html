@@ -293,7 +293,7 @@ print(f&quot;Size of each random sample: {sample_size}&quot;)</code></pre>
 ## Text(0.5, 1.0, &#39;Sampling Distributions (Normal Approximation)&#39;)
 ## Text(0.5, 0, &#39;Sample Mean Ticket Purchase Rate&#39;)
 ## Text(0, 0.5, &#39;Frequency&#39;)
-## &lt;matplotlib.legend.Legend object at 0x317ccd450&gt;</code></pre>
+## &lt;matplotlib.legend.Legend object at 0x17f787fd0&gt;</code></pre>
 <p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-15-1.png" width="576" /></p>
 <pre><code>## Control group size: 85000
 ## Variation B group size: 85000
@@ -304,24 +304,24 @@ print(f&quot;Size of each random sample: {sample_size}&quot;)</code></pre>
 <h2>Recommendation</h2>
 <p>We could recommend the <em>variation_B</em> as statistically significant at the 95% confidence level.</p>
 </div>
-<div id="alternate-recommendationconsideration" class="section level2">
-<h2>Alternate Recommendation/consideration</h2>
+<div id="alternate-consideration" class="section level2">
+<h2>Alternate Consideration</h2>
 <p>Since we saw that we cannot reject the null hypothesis at the 95% confidence level between <em>variant_A</em> and <em>variant_B</em> even after correction, we cannot say that they are statistically dissimilar from one another. It is possible that the slight differnce between them is just random chance. This may be important if one variant is more costly to implement than the other. For instance if <em>variation_A</em> is considerably cheaper than <em>variation_B</em> then we might want to loosen our confidence level a bit to see if we can reject the null for <em>variation_B</em> at a slightly lower confidence.</p>
-<p>If we go back to our Bonferroni correction calculation and lower our alpha to 0.11 (corresponding to 89% confidence)</p>
-<pre class="python my-python-code"><code># Bonferroni correction for 89% Confidence interval
+<p>If we go back to our Bonferroni correction calculation and lower our alpha to 0.10 (corresponding to 90% confidence)</p>
+<pre class="python my-python-code"><code># Bonferroni correction for 90% Confidence interval
 import statsmodels.stats.multitest as smt
 
 pvals = [pvalue_C_A, pvalue_C_B, pvalue_A_B]
 
 # Perform a Bonferroni correction and print the output
-corrected = smt.multipletests(pvals, alpha = .11, method = &#39;bonferroni&#39;)
+corrected = smt.multipletests(pvals, alpha = .10, method = &#39;bonferroni&#39;)
 
 print(&#39;Significant Test:&#39;, corrected[0])
 print(&#39;Corrected P-values:&#39;, corrected[1])
 print(&#39;Bonferroni Corrected alpha: {:.4f}&#39;.format(corrected[2]))</code></pre>
 <pre><code>## Significant Test: [False  True False]
 ## Corrected P-values: [0.14968898 0.00022752 0.13721744]
-## Bonferroni Corrected alpha: 0.0381</code></pre>
-<p>We can see that now both variants can be said to be significant at 89% confidence and that they still show no distinct difference between each other. If <em>variation_B</em> is more expensive we may feel confident in choosing <em>variation_A</em>.</p>
+## Bonferroni Corrected alpha: 0.0345</code></pre>
+<p>We can see that now, even at 90% confidence level, the only test that is significant is the variation_B over control. Given this <em>variation_B</em> should be chosen.</p>
 </div>
 </div>
