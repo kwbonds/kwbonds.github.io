@@ -237,7 +237,7 @@ print(f'Group B 95% CI : [{B_lo95:.4f}, {B_up95:.4f}]')
 ## Group B 95% CI : [0.0229, 0.0250]
 ```
 
-Next let's look at *control* vs *variation_A*
+Next let's look at *control* vs *variation_A*:
 
 
 ```{.python .my-python-code}
@@ -272,6 +272,8 @@ print(f'Group A 95% CI : [{B_lo95:.4f}, {B_up95:.4f}]')
 ## Group C 95% CI : [0.0201, 0.0220]
 ## Group A 95% CI : [0.0215, 0.0235]
 ```
+
+Then *variation_A* vs *variation_B*:
 
 
 ```{.python .my-python-code}
@@ -410,7 +412,7 @@ print(f"Size of each random sample: {sample_size}")
 ## Text(0.5, 1.0, 'Sampling Distributions (Normal Approximation)')
 ## Text(0.5, 0, 'Sample Mean Ticket Purchase Rate')
 ## Text(0, 0.5, 'Frequency')
-## <matplotlib.legend.Legend object at 0x308fb2590>
+## <matplotlib.legend.Legend object at 0x309eaeb00>
 ```
 
 <img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-15-1.png" width="576" />

@@ -171,7 +171,7 @@ print(f'Group C 95% CI : [{C_lo95:.4f}, {C_up95:.4f}]')
 print(f'Group B 95% CI : [{B_lo95:.4f}, {B_up95:.4f}]')
 ```
 
-Next let's look at *control* vs *variation_A*
+Next let's look at *control* vs *variation_A*:
 
 ```{python, class.source="my-python-code", results='hold'}
 
@@ -198,6 +198,8 @@ print(f'p-value: {pvalue:.6f}')
 print(f'Group C 95% CI : [{C_lo95:.4f}, {C_up95:.4f}]')
 print(f'Group A 95% CI : [{B_lo95:.4f}, {B_up95:.4f}]')
 ```
+
+Then *variation_A* vs *variation_B*:
 
 ```{python, class.source="my-python-code", results='hold'}
 
