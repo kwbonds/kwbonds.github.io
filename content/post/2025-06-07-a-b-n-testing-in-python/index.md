@@ -168,6 +168,17 @@ rocky.groupby('treatment')[['trip_planner_engaged', 'ticket_purchased']].agg(['m
 
 So we discarded all records for any *visit_id* that has multiple records.
 
+Now we should balance the groups by sampling from each equally and concatenating the data frames back together. This will insure group size doesn't influence results.
+
+
+```{.python .my-python-code}
+rocky_sample_control = rocky[rocky['treatment']=='control'].sample(n=85000, replace=False, random_state=42)
+rocky_sample_A = rocky[rocky['treatment']=='variation_A'].sample(n=85000, replace=False, random_state=42)
+rocky_sample_B = rocky[rocky['treatment']=='variation_B'].sample(n=85000, replace=False, random_state=42)
+rocky = pd.concat([rocky_sample_control, rocky_sample_A, rocky_sample_B])
+```
+
+
 ## Group and Inspect
 
 
@@ -178,12 +189,12 @@ rocky.groupby(['treatment', 'trip_planner_engaged'])[ 'ticket_purchased'].agg(['
 ```
 ##                                       mean  count
 ## treatment   trip_planner_engaged                 
-## control     0                     0.020876  76498
-##             1                     0.021816  11643
-## variation_A 0                     0.023117  63676
-##             1                     0.020896  24311
-## variation_B 0                     0.024205  64284
-##             1                     0.022729  24286
+## control     0                     0.020911  73789
+##             1                     0.022210  11211
+## variation_A 0                     0.023133  61470
+##             1                     0.020739  23530
+## variation_B 0                     0.024252  61686
+##             1                     0.023076  23314
 ```
 
 It doesn't make sense to have trip planner engagment for the control group. Something is amiss. We should alert Engineering that our logging seems to be broken. Also, there is a large imbalance in the groups, but there is a bigger problem with the *trip_planner_engaged* field. We'll ignore this field focusing on just the impact of the variants on ticket purchases.
@@ -219,11 +230,11 @@ print(f'Group B 95% CI : [{B_lo95:.4f}, {B_up95:.4f}]')
 ```
 
 ```
-## Group C users: 88141
-## Group B users: 88570
-## p-value: 0.000070
-## Group C 95% CI : [0.0201, 0.0219]
-## Group B 95% CI : [0.0228, 0.0248]
+## Group C users: 85000
+## Group B users: 85000
+## p-value: 0.000076
+## Group C 95% CI : [0.0201, 0.0220]
+## Group B 95% CI : [0.0229, 0.0250]
 ```
 
 Next let's look at *control* vs *variation_A*
@@ -255,10 +266,10 @@ print(f'Group A 95% CI : [{B_lo95:.4f}, {B_up95:.4f}]')
 ```
 
 ```
-## Group C users: 88141
-## Group A users: 87987
-## p-value: 0.030623
-## Group C 95% CI : [0.0201, 0.0219]
+## Group C users: 85000
+## Group A users: 85000
+## p-value: 0.049896
+## Group C 95% CI : [0.0201, 0.0220]
 ## Group A 95% CI : [0.0215, 0.0235]
 ```
 
@@ -289,20 +300,20 @@ print(f'Group B 95% CI : [{B_lo95:.4f}, {B_up95:.4f}]')
 ```
 
 ```
-## Group A users: 87987
-## Group B users: 88570
-## p-value: 0.069995
+## Group A users: 85000
+## Group B users: 85000
+## p-value: 0.045739
 ## Group A 95% CI : [0.0215, 0.0235]
-## Group B 95% CI : [0.0228, 0.0248]
+## Group B 95% CI : [0.0229, 0.0250]
 ```
 
 So the pvalues are:
 
-* *Control* vs *variant_A*: 0.0306233
-* *Control* vs *variant_B*: 6.9916103\times 10^{-5}
-* *variant_A* vs *variant_B*: 0.0699954
+* *Control* vs *variant_A*: 0.0498963
+* *Control* vs *variant_B*: 7.5839779\times 10^{-5}
+* *variant_A* vs *variant_B*: 0.0457391
 
-Normally a pvalue less that 0.05 indicates strong evidence against the NULL hypothesis and that we should reject it. And since both variants show significance (uncorrected) we might be tempted to reject the NULL hypothesis for both and only accept it when pitting the two variants against each other--leading us to conclude the difference between the 2 variants is not significant (or is simply random chance). And secondly, that either would be preferable to the Control. But this would be a mistake. 
+Normally a pvalue less that 0.05 indicates strong evidence against the NULL hypothesis and that we should reject it. And since both variants show significance (uncorrected) we might be tempted to reject the NULL hypothesis and against each other--leading us to conclude the difference between the 2 variants is not significant (or is simply random chance). And secondly, that either would be preferable to the Control. But this would be a mistake. 
 
 When performing an experiment with more than variation we need to apply a correction to account for Family Wise Eror Rate (FWER) since the probability of making at least one Type I error (a false positive) across all the hypothesis tests increases with each test. A simple correction is to use the Bonferroni correction. Essentially, this method divides the significance level (alpha) across the number of tests. This gives us a more conservative mark to hit. 
 
@@ -313,7 +324,7 @@ If we use the 3 pvalues we calculated and apply this method:
 # Bonferroni correction for 95% Confidence interval
 import statsmodels.stats.multitest as smt
 
-pvals = [0.030713, 0.000067, 0.0679]
+pvals = [pvalue_C_A, pvalue_C_B, pvalue_A_B]
 
 # Perform a Bonferroni correction and print the output
 corrected = smt.multipletests(pvals, alpha = .05, method = 'bonferroni')
@@ -325,7 +336,7 @@ print('Bonferroni Corrected alpha: {:.4f}'.format(corrected[2]))
 
 ```
 ## Significant Test: [False  True False]
-## Corrected P-values: [9.2139e-02 2.0100e-04 2.0370e-01]
+## Corrected P-values: [0.14968898 0.00022752 0.13721744]
 ## Bonferroni Corrected alpha: 0.0170
 ```
 
@@ -399,14 +410,14 @@ print(f"Size of each random sample: {sample_size}")
 ## Text(0.5, 1.0, 'Sampling Distributions (Normal Approximation)')
 ## Text(0.5, 0, 'Sample Mean Ticket Purchase Rate')
 ## Text(0, 0.5, 'Frequency')
-## <matplotlib.legend.Legend object at 0x307057bb0>
+## <matplotlib.legend.Legend object at 0x308fb2590>
 ```
 
-<img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-14-1.png" width="576" />
+<img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-15-1.png" width="576" />
 
 ```
-## Control group size: 88141
-## Variation B group size: 88570
+## Control group size: 85000
+## Variation B group size: 85000
 ## Number of random samples generated for each group: 1000
 ## Size of each random sample: 80000
 ```
@@ -421,17 +432,17 @@ We could recommend the *variation_B* as statistically significant at the 95% con
 
 Since we saw that we cannot reject the null hypothesis at the 95% confidence level between *variant_A* and *variant_B* even after correction, we cannot say that they are statistically dissimilar from one another. It is possible that the slight differnce between them is just random chance. This may be important if one variant is more costly to implement than the other. For instance if *variation_A* is considerably cheaper than *variation_B* then we might want to loosen our confidence level a bit to see if we can reject the null for *variation_B* at a slightly lower confidence. 
 
-If we go back to our Bonferroni correction calculation and lower our alpha to 0.10 (corresponding to 90% confidence)
+If we go back to our Bonferroni correction calculation and lower our alpha to 0.11 (corresponding to 89% confidence)
 
 
 ```{.python .my-python-code}
-# Bonferroni correction for 95% Confidence interval
+# Bonferroni correction for 89% Confidence interval
 import statsmodels.stats.multitest as smt
 
-pvals = [0.030713, 0.000067, 0.0679]
+pvals = [pvalue_C_A, pvalue_C_B, pvalue_A_B]
 
 # Perform a Bonferroni correction and print the output
-corrected = smt.multipletests(pvals, alpha = .10, method = 'bonferroni')
+corrected = smt.multipletests(pvals, alpha = .11, method = 'bonferroni')
 
 print('Significant Test:', corrected[0])
 print('Corrected P-values:', corrected[1])
@@ -439,10 +450,10 @@ print('Bonferroni Corrected alpha: {:.4f}'.format(corrected[2]))
 ```
 
 ```
-## Significant Test: [ True  True False]
-## Corrected P-values: [9.2139e-02 2.0100e-04 2.0370e-01]
-## Bonferroni Corrected alpha: 0.0345
+## Significant Test: [False  True False]
+## Corrected P-values: [0.14968898 0.00022752 0.13721744]
+## Bonferroni Corrected alpha: 0.0381
 ```
 
-We can see that now both variants can be said to be significant at 90% confidence and that they still show no distinct difference between each other. If *variation_B* is more expensive we may feel confident in choosing *variation_A*.
+We can see that now both variants can be said to be significant at 89% confidence and that they still show no distinct difference between each other. If *variation_B* is more expensive we may feel confident in choosing *variation_A*.
 
