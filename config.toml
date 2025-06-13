@@ -115,7 +115,8 @@ enable = true
 ####################### banner #######################################
 [params.banner]
 bgImage = "images/banner/banner-bg.svg"
-title = "Hello there, I'm Kevin Bonds, a data scientist who specializes in helping companies make data driven decisions."
+title = "<p style=\"font-size: 40px;\">Hi there, I'm Kevin Bonds</p> <br> <p style=\"font-size: 20px;\">I'm a Data Scientist specializing in helping companies make data driven decisions. This blog is all about Data Science! And functions as a personal portfolio. </p> "
+# description = " Welcome to my blog. Below you'll find various case studies I've conducted."
 summary = "about/index.html"
 image = "images/banner/Desk_back.png"
 copyright = "&copy; Icons made by [freepik](https://www.flaticon.com/authors/freepik)"
