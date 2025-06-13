@@ -124,6 +124,8 @@ rocky.groupby('treatment')[['trip_planner_engaged', 'ticket_purchased']].agg(['m
 
 So we discarded all records for any *visit_id* that has multiple records.
 
+## Balancing the Classes
+
 Now we should balance the groups by sampling from each equally and concatenating the data frames back together. This will insure group size doesn't influence results.
 
 ```{python, class.source="my-python-code", results='hold'}
