@@ -14,6 +14,3 @@ AddOutputFilterByType DEFLATE image/gif
 AddOutputFilterByType DEFLATE image/jpeg
 AddOutputFilterByType DEFLATE image/svg+xml
 </IfModule>
-RewriteEngine On
-RewriteCond %{SERVER_PORT} !=443
-RewriteRule ^(.*)$ https://kevinbonds.me/$1 [R=301,L]

@@ -8,6 +8,7 @@ output:
     self_contained: true
 # uncomment this line to produce HTML and PDF in RStudio:
 knit: pagedown::chrome_print
+# output: officedown::rdocx_document
 ---
 
 Aside
@@ -20,6 +21,8 @@ Contact Info {#contact}
 --------------------------------------------------------------------------------
 
 - <i class="fa fa-envelope"></i> kevin.w.bonds@gmail.com
+- <i class="fa fa-link"></i> [www.kevinbonds.me](https://kevinbonds.me)
+- <i class="fa-solid fa-briefcase"></i> [LinkedIn](https://www.linkedin.com/in/kevin-bonds/)
 - <i class="fa fa-github"></i> [github.com/kwbonds](https://github.com/kwbonds?tab=repositories)
 - <i class="fa fa-phone"></i> +1 615-519-8432
 - For more information, please contact me via email.
@@ -28,24 +31,17 @@ Contact Info {#contact}
 Skills {#skills}
 --------------------------------------------------------------------------------
 
-- Highly skilled in R, SQL, Docker, Python, Shiny, Plumber/OpenAPI
+- Languages: R, Python, SQL
 
-- Experience in Kubenetes, AWS, Google Cloud, Spinnaker
+- Experimentation: A/B/N testing, experimental design, power analysis
 
-- Data applications and data pipelining, production workflows 
+- Cloud & Open Source Platforms: Kubernetes, AWS, Google Cloud, Great Expectations (OSS), Plumber/OpenAPI
 
-- R package development (including unit testing and code coverage)
+- ETL & Platform Architecture: Airflow, Shell, Docker, Shiny, Git
 
-- Product analytics (Churn, Retention, Segmentation, A/B Testing)
+- Data Workflows: Data applications, pipeline development, and production workflows
 
-
-Disclaimer {#disclaimer}
---------------------------------------------------------------------------------
-
-This resume was made with the R package [**pagedown**](https://github.com/rstudio/pagedown).
-
-Last updated on `r Sys.Date()`.
-
+- R Package Development: Including unit testing and code coverage
 
 
 Main
@@ -54,14 +50,32 @@ Main
 Kevin Bonds {#title}
 --------------------------------------------------------------------------------
 
-### Data Science Professional
+### Data Science/Data Analytics Platform Engineer
 
-As an experienced Data Scientist, I am dedicated to utilizing my strong technical background and passion for leveraging industry-leading technologies to uncover actionable insights that drive informed business decisions. My extensive expertise in data analysis, modeling, R package development, and data science platform engineering has equipped me with the ability to deliver high-quality solutions to complex business challenges. I am confident that my proven track record of success will enable me to make valuable contributions to any organization.
-
+Experienced data professional with a strong technical background in data and analytics. Focused on experimentation (hypothesis testing, A/B testing, experimental design) to guide key business decisions. Strong collaborator with experience working alongside product, marketing, engineering, and finance teams to advise on key metrics, analyze user behavior, and identify opportunities for product enhancement. Skilled in delivering data applications, APIs, A/B testing design and analysis, and ETL solutions across various projects.. 
 
 
 Professional Experience {data-icon=suitcase}
 --------------------------------------------------------------------------------
+
+### Sr. Manager, Analytics Engineer (Platform)
+
+Pfizer
+
+Remote, CA
+
+2025 - 2023
+
+Analytics Engineering Platform Lead
+
+- Architecture/strategy lead for local development and platform support (Docker + Airflow)
+- Security lead- Implemented pre-commit strategy for security scanning + Github
+Actions for push and PR scans of security leaks on platform
+- Design/Implementation of architecture for DO/DQ strategy for at-rest and in-transit data quality
+- Active mentoring of content developers for software development best practices and Agile principles on platform
+- Primary backup to Director/TL
+- Mentor and support for Git, Docker, Airflow, and other tooling in platform stack
+
 
 ### Data Scientist
 
@@ -73,12 +87,16 @@ Berkeley, CA
 
 Data Scientist and Data Science Platform Lead
 
-- Lead collaborative effort to model customer behavior
-- A/B Testing, API deployment, custom visualization tool deployment, reporting
-- Design, plan, and construct a Data Science Platform
 - Owner of Legacy workbench for experimentation and job
 automation using Python/R, AWS Kubes, cronjobs,
 Docker, and Kubernetes
+- Advise Product, Marketing, Engineering, Finance and Senior Leadership on KPI's and app tracking
+- A/B Testing, API deployment, custom visualization tooling/deployment, reporting
+- Data wrangling and pipe-lining for Dash boarding and ML modeling
+- Lead collaborative effort to model customer behavior (supervised and unsupervised ML modeling)
+- Build API's to expose Data and ML models
+- Dash-boarding of App Event and Subscription data (Amplitude, Shiny, R)
+- Subscription KPI owner (Churn, LTV, Retention, etc. )
 
 
 ### Sr. Business/Data Analyst
@@ -92,10 +110,10 @@ San Francisco, CA
 Lead Business Analyst/SME for marketing data migration project (IBM
 Coremetrics to Adobe Analytics)
 
-- Perform data validation in support of data engineering efforts 
+- Perform data validation (SQL) in support of data engineering efforts
 - Design and POC methods for leveraging new capabilities (data
 connections, API's)
-- Acted as engineer to develop an API clients (JWT, OAuth 2.0, Curl, etc)
+- Acted as engineer to develop an API client (JWT, OAuth 2.0, Curl, etc)
 using both R and Python
 
 ### Sr. Data Analyst (Global Supply Chain Strategy)
@@ -157,6 +175,14 @@ reported on data and control mechanisms
 Education {data-icon=graduation-cap data-concise=true}
 --------------------------------------------------------------------------------
 
+### General Assembly
+
+Machine Learning/Data Science Certification
+
+San Francisco, CA
+
+2017
+
 ### Middle Tennessee State University
 
 B.S Liberal Studies (Aerospace)
@@ -166,11 +192,12 @@ Murfreesboro, TN
 2011
 
 
-### General Assembly
+Disclaimer {#disclaimer}
+--------------------------------------------------------------------------------
 
-Machine Learning/Data Science Certification
 
-San Francisco, CA
 
-2017
+This resume was made with the R package [**pagedown**](https://github.com/rstudio/pagedown).
+
+Last updated on `r Sys.Date()`.
 
