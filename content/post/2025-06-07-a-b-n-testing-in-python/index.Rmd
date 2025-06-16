@@ -243,9 +243,9 @@ print(f'Group B 95% CI : [{B_lo95:.4f}, {B_up95:.4f}]')
 
 So the pvalues are:
 
-* *Control* vs *variant_A*: `r py$pvalue_C_A`
-* *Control* vs *variant_B*: `r py$pvalue_C_B`
-* *variant_A* vs *variant_B*: `r py$pvalue_A_B`
+* *Control* vs *variant_A*: `r format(py$pvalue_C_A, digits = 3, scientific = FALSE)`
+* *Control* vs *variant_B*: `r format(py$pvalue_C_B, digits = 3, scientific = FALSE)`
+* *variant_A* vs *variant_B*: `r format(py$pvalue_A_B, digits = 3, scientific = FALSE)`
 
 
 Normally a pvalue less that 0.05 indicates strong evidence against the NULL hypothesis and that we should reject it. And since both variants show significance (uncorrected) we might be tempted to reject the NULL hypothesis and against each other--leading us to conclude the difference between the 2 variants is not significant (or is simply random chance). And secondly, that either would be preferable to the Control. But this would be a mistake. 
