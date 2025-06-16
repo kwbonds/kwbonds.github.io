@@ -149,14 +149,14 @@ It doesn't make sense to have trip planner engagment for the control group. Some
 Since *varation_B* seems to have the highest lift let's see if the results are significant (without correction).
 
 ```{python, class.source="my-python-code", results='hold'}
-from statsmodels.stats.proportion import proportions_ztest, proportion_confint
+from statsmodels.stats.proportion import proportions_ztest, proportion_confint, confint_proportions_2indep
 # Calculate the number of visits
 n_C = rocky[rocky['treatment'] == 'control']['ticket_purchased'].count()
 n_B = rocky[rocky['treatment'] == 'variation_B']['ticket_purchased'].count()
 print('Group C users:',n_C)
 print('Group B users:',n_B)
 
-# Compute unique purshases in each group and assign to lists
+# Compute unique purchases in each group and assign to lists
 signup_C = rocky[rocky['treatment'] == 'control'].groupby('visit_id')['ticket_purchased'].max().sum()
 signup_B = rocky[rocky['treatment'] == 'variation_B'].groupby('visit_id')['ticket_purchased'].max().sum()
 
@@ -172,6 +172,18 @@ print(f'p-value: {pvalue:.6f}')
 print(f'Group C 95% CI : [{C_lo95:.4f}, {C_up95:.4f}]')
 print(f'Group B 95% CI : [{B_lo95:.4f}, {B_up95:.4f}]')
 ```
+
+The confidence intervals above are for each group. We can calculate the confidence interval of the difference between the 2 groups to inform us on how large might the difference be. Let's look at the difference between *control* and *variation_B*
+
+```{python, class.source="my-python-code", results='hold'}
+low, upp = confint_proportions_2indep(signup_B, n_B, signup_C, n_C, method=None, compare='diff', alpha=0.05, correction=True)
+
+print(f' Difference 95% CI [{low}, {upp}]')
+
+```
+
+This tells us the difference, in the two groups, falls somewhere between `r format(py$low, digits = 2)` and `r format(py$upp, digits = 2)` We might ask ourselves if this difference is worth the effort in building the variation--since the true difference may be as little is `r format(py$low * 100, digits = 2)`%. 
+
 
 Next let's look at *control* vs *variation_A*:
 
@@ -234,6 +246,7 @@ So the pvalues are:
 * *Control* vs *variant_A*: `r py$pvalue_C_A`
 * *Control* vs *variant_B*: `r py$pvalue_C_B`
 * *variant_A* vs *variant_B*: `r py$pvalue_A_B`
+
 
 Normally a pvalue less that 0.05 indicates strong evidence against the NULL hypothesis and that we should reject it. And since both variants show significance (uncorrected) we might be tempted to reject the NULL hypothesis and against each other--leading us to conclude the difference between the 2 variants is not significant (or is simply random chance). And secondly, that either would be preferable to the Control. But this would be a mistake. 
 
