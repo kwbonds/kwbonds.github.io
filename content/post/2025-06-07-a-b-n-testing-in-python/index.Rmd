@@ -30,7 +30,7 @@ We are asked to analyze the results of an experiment, performed on the splash-pa
 
 <http>
 <center>
-<img src="variants2.png" alt = "The three pages"  width = "85%">
+<img src="variants2.png" alt = "The three pages"  width = "98%">
 </center>
 </http>
 
