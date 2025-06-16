@@ -50,7 +50,7 @@ Main
 Kevin Bonds {#title}
 --------------------------------------------------------------------------------
 
-### Data Science/Data Analytics Platform Engineer
+### Data Science/Data Analytics Engineer
 
 Experienced data professional with a strong technical background in data and analytics. Focused on experimentation (hypothesis testing, A/B testing, experimental design) to guide key business decisions. Strong collaborator with experience working alongside product, marketing, engineering, and finance teams to advise on key metrics, analyze user behavior, and identify opportunities for product enhancement. Skilled in delivering data applications, APIs, A/B testing design and analysis, and ETL solutions across various projects.. 
 

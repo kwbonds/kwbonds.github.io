@@ -25,7 +25,7 @@ We are asked to analyze the results of an experiment, performed on the splash-pa
 
 <http>
 <center>
-<img src="variants2.png" alt = "The three pages"  width = "85%">
+<img src="variants2.png" alt = "The three pages"  width = "98%">
 </center>
 </http>
 
@@ -168,6 +168,8 @@ rocky.groupby('treatment')[['trip_planner_engaged', 'ticket_purchased']].agg(['m
 
 So we discarded all records for any *visit_id* that has multiple records.
 
+## Balancing the Classes
+
 Now we should balance the groups by sampling from each equally and concatenating the data frames back together. This will insure group size doesn't influence results.
 
 
@@ -205,14 +207,14 @@ Since *varation_B* seems to have the highest lift let's see if the results are s
 
 
 ```{.python .my-python-code}
-from statsmodels.stats.proportion import proportions_ztest, proportion_confint
+from statsmodels.stats.proportion import proportions_ztest, proportion_confint, confint_proportions_2indep
 # Calculate the number of visits
 n_C = rocky[rocky['treatment'] == 'control']['ticket_purchased'].count()
 n_B = rocky[rocky['treatment'] == 'variation_B']['ticket_purchased'].count()
 print('Group C users:',n_C)
 print('Group B users:',n_B)
 
-# Compute unique purshases in each group and assign to lists
+# Compute unique purchases in each group and assign to lists
 signup_C = rocky[rocky['treatment'] == 'control'].groupby('visit_id')['ticket_purchased'].max().sum()
 signup_B = rocky[rocky['treatment'] == 'variation_B'].groupby('visit_id')['ticket_purchased'].max().sum()
 
@@ -236,6 +238,22 @@ print(f'Group B 95% CI : [{B_lo95:.4f}, {B_up95:.4f}]')
 ## Group C 95% CI : [0.0201, 0.0220]
 ## Group B 95% CI : [0.0229, 0.0250]
 ```
+
+The confidence intervals above are for each group. We can calculate the confidence interval of the difference between the 2 groups to inform us on how large might the difference be. Let's look at the difference between *control* and *variation_B*
+
+
+```{.python .my-python-code}
+low, upp = confint_proportions_2indep(signup_B, n_B, signup_C, n_C, method=None, compare='diff', alpha=0.05, correction=True)
+
+print(f' Difference 95% CI [{low:.4f}, {upp:.4f}]')
+```
+
+```
+##  Difference 95% CI [0.0014, 0.0043]
+```
+
+This tells us the difference, in the two groups, falls somewhere between 0.0014 and 0.0043 We might ask ourselves if this difference is worth the effort in building the variation--since the true difference may be as little is 0.14%. 
+
 
 Next let's look at *control* vs *variation_A*:
 
@@ -311,9 +329,10 @@ print(f'Group B 95% CI : [{B_lo95:.4f}, {B_up95:.4f}]')
 
 So the pvalues are:
 
-* *Control* vs *variant_A*: 0.0498963
-* *Control* vs *variant_B*: 7.5839779\times 10^{-5}
-* *variant_A* vs *variant_B*: 0.0457391
+* *Control* vs *variant_A*: 0.0499
+* *Control* vs *variant_B*: 0.0000758
+* *variant_A* vs *variant_B*: 0.0457
+
 
 Normally a pvalue less that 0.05 indicates strong evidence against the NULL hypothesis and that we should reject it. And since both variants show significance (uncorrected) we might be tempted to reject the NULL hypothesis and against each other--leading us to conclude the difference between the 2 variants is not significant (or is simply random chance). And secondly, that either would be preferable to the Control. But this would be a mistake. 
 
@@ -412,10 +431,10 @@ print(f"Size of each random sample: {sample_size}")
 ## Text(0.5, 1.0, 'Sampling Distributions (Normal Approximation)')
 ## Text(0.5, 0, 'Sample Mean Ticket Purchase Rate')
 ## Text(0, 0.5, 'Frequency')
-## <matplotlib.legend.Legend object at 0x306afa440>
+## <matplotlib.legend.Legend object at 0x3106e8460>
 ```
 
-<img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-15-1.png" width="576" />
+<img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-16-1.png" width="576" />
 
 ```
 ## Control group size: 85000
