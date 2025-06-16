@@ -159,8 +159,8 @@ print(f&#39;Group B 95% CI : [{B_lo95:.4f}, {B_up95:.4f}]&#39;)</code></pre>
 <p>The confidence intervals above are for each group. We can calculate the confidence interval of the difference between the 2 groups to inform us on how large might the difference be. Let’s look at the difference between <em>control</em> and <em>variation_B</em></p>
 <pre class="python my-python-code"><code>low, upp = confint_proportions_2indep(signup_B, n_B, signup_C, n_C, method=None, compare=&#39;diff&#39;, alpha=0.05, correction=True)
 
-print(f&#39; Difference 95% CI [{low}, {upp}]&#39;)</code></pre>
-<pre><code>##  Difference 95% CI [0.0014372187755880856, 0.0042586025057437206]</code></pre>
+print(f&#39; Difference 95% CI [{low:.4f}, {upp:.4f}]&#39;)</code></pre>
+<pre><code>##  Difference 95% CI [0.0014, 0.0043]</code></pre>
 <p>This tells us the difference, in the two groups, falls somewhere between 0.0014 and 0.0043 We might ask ourselves if this difference is worth the effort in building the variation–since the true difference may be as little is 0.14%.</p>
 <p>Next let’s look at <em>control</em> vs <em>variation_A</em>:</p>
 <pre class="python my-python-code"><code># Calculate the number of visits
@@ -302,7 +302,7 @@ print(f&quot;Size of each random sample: {sample_size}&quot;)</code></pre>
 ## Text(0.5, 1.0, &#39;Sampling Distributions (Normal Approximation)&#39;)
 ## Text(0.5, 0, &#39;Sample Mean Ticket Purchase Rate&#39;)
 ## Text(0, 0.5, &#39;Frequency&#39;)
-## &lt;matplotlib.legend.Legend object at 0x30f528550&gt;</code></pre>
+## &lt;matplotlib.legend.Legend object at 0x315e5cf70&gt;</code></pre>
 <p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-16-1.png" width="576" /></p>
 <pre><code>## Control group size: 85000
 ## Variation B group size: 85000

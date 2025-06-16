@@ -178,7 +178,7 @@ The confidence intervals above are for each group. We can calculate the confiden
 ```{python, class.source="my-python-code", results='hold'}
 low, upp = confint_proportions_2indep(signup_B, n_B, signup_C, n_C, method=None, compare='diff', alpha=0.05, correction=True)
 
-print(f' Difference 95% CI [{low}, {upp}]')
+print(f' Difference 95% CI [{low:.4f}, {upp:.4f}]')
 
 ```
 
