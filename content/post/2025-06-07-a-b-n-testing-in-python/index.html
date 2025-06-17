@@ -15,27 +15,26 @@ tags:
 
 
 
-<p>The following case study will illustrate how to analyze the results of a type of experiment known as an A/N Test (or multitest). An A/N Test is an A/B Test in which multiple (N number of) variants are tested at the same time.</p>
-<p>Here we will compare 2 variants against a control to the increase purchase rate on a website. Since testing multiple variants at once will increase error the rate (known as Family Wise Error Rate–FWER), we will use a correction when determining statistical significance.</p>
+<p>The following case study will illustrate how to analyze the results for an A/N Test (or multitest). An A/N Test is a type of A/B Test in which multiple variants are tested at the same time.</p>
+<p>We’ll compare 2 variants, against a control, to increase purchase rate on a fictional website. Since testing multiple variants at once increases the error rate (known as Family Wise Error Rate–FWER), we’ll use a correction when determining statistical significance.</p>
 <div id="analyzing-results" class="section level1">
 <h1>Analyzing results</h1>
-<p>We are asked to analyze the results of an experiment, performed on the splash-page, for a fictional theme park called Redwood Ridge. The park wants to launch an AI assisted booking agent, referred to as Rocky Raccoon, to help customers book flights, rental cars, meals, etc. They wish to test: Variant_A with a simplified widget; Variant_B with a more complex interactive wizard; against the control page with no agent.</p>
+<p>We’re asked to analyze the results of an experiment, performed on the splash-page, for a fictional theme park called Redwood Ridge. The park wants to launch an AI assisted booking agent, referred to as Rocky Raccoon, to help customers book flights, rental cars, meals, etc. They wish to test 2 variants: Variant_A with a simplified widget; Variant_B with a more interactive wizard; against the control page with no agent.</p>
 <http>
 <center>
 <img src="variants2.png" alt = "The three pages"  width = "98%">
 </center>
 <p></http></p>
-<p>The test has already been performed. Therefore, we will skip the test planning and sample size calculations accepting this has all been done for us.</p>
 </div>
 <div id="formulating-the-hypothesis" class="section level1">
 <h1>Formulating the Hypothesis</h1>
 <p>First we formulate the alternate hypothesis. This is the one we are trying to accept by default of rejecting the Null Hypothesis.</p>
 <p><strong>The Alternate Hypothesis: Adding an interactive travel planning wizard to the Homepage will boost ticket purchase conversion rates</strong></p>
-<p>The null hypothesis is always based on the idea that that every difference detected, in the measured statistic, is simply due to random chance. All hypothesis boils down to trying to reject the null hypothesis if there is enough evidence that it is unlikely the results due to chance.</p>
+<p>The null hypothesis is always assumes the difference detected, in the measured statistic, is simply due to random chance. All hypothesis tests center on rejecting, for failing to reject, the null hypothesis. We reject the Null Hypothesis if there is enough evidence that it is unlikely the results are due to chance. We fail to reject whenever there is not enough evidence found in our experiment.</p>
 <p><strong>Null Hypothesis: An increase in ticket purchase rate can be explained as random chance</strong></p>
 <p>Our test statistic is defined as:</p>
 <p><strong>Test Statistic: Ticket Purchase Conversion Rate = (purchase count)/(unique visit count)</strong></p>
-<p>Let’s use Python to analyze the results and determine if it is safe to reject the Null Hypothesis.</p>
+<p>Let’s use Python to analyze the results and determine if it’s safe to reject the Null Hypothesis.</p>
 <div id="load-python-libraries" class="section level2">
 <h2>Load Python libraries</h2>
 <pre class="python my-python-code"><code>import pandas as pd
@@ -61,13 +60,24 @@ import numpy as np</code></pre>
 <h2>EDA</h2>
 <div id="inspect-the-variants" class="section level3">
 <h3>Inspect the Variants</h3>
+<p>What is the breakdown of purchases and non-purchases per treatment?</p>
+<pre class="python my-python-code"><code>rocky.groupby([&#39;treatment&#39;, &#39;ticket_purchased&#39;])[&#39;ticket_purchased&#39;].agg([&#39;count&#39;])</code></pre>
+<pre class="my-python-output"><code>##                               count
+## treatment   ticket_purchased       
+## control     0                 86413
+##             1                  1853
+## variation_A 0                 86130
+##             1                  1982
+## variation_B 0                 86462
+##             1                  2108</code></pre>
+<p>What is our raw purchase rates for each treatment?</p>
 <pre class="python my-python-code"><code>rocky.groupby(&#39;treatment&#39;)[&#39;ticket_purchased&#39;].agg([&#39;mean&#39;, &#39;count&#39;, &#39;std&#39;])</code></pre>
 <pre class="my-python-output"><code>##                  mean  count       std
 ## treatment                             
 ## control      0.020993  88266  0.143363
 ## variation_A  0.022494  88112  0.148285
 ## variation_B  0.023800  88570  0.152428</code></pre>
-<p>We see there is a difference in the means; with the <em>variation_B</em> showing the highest lift. But let’s make sure we don’t have duplicates.</p>
+<p>We see there is a difference in the means; with the <em>variation_B</em> showing the highest possible lift. But let’s make sure we don’t have duplicates.</p>
 </div>
 </div>
 <div id="check-for-duplicates" class="section level2">
@@ -156,7 +166,7 @@ print(f&#39;Group B 95% CI : [{B_lo95:.4f}, {B_up95:.4f}]&#39;)</code></pre>
 ## p-value: 0.000076
 ## Group C 95% CI : [0.0201, 0.0220]
 ## Group B 95% CI : [0.0229, 0.0250]</code></pre>
-<p>The confidence intervals above are for each group. We can calculate the confidence interval of the difference between the 2 groups to inform us on how large might the difference be. Let’s look at the difference between <em>control</em> and <em>variation_B</em></p>
+<p>The confidence intervals above are for each group. We can calculate the confidence interval of the difference between the 2 groups to inform how large might the difference be. Let’s look at the difference between <em>control</em> and <em>variation_B</em></p>
 <pre class="python my-python-code"><code>low, upp = confint_proportions_2indep(signup_B, n_B, signup_C, n_C, method=None, compare=&#39;diff&#39;, alpha=0.05, correction=True)
 
 print(f&#39; Difference 95% CI [{low:.4f}, {upp:.4f}]&#39;)</code></pre>
@@ -302,8 +312,8 @@ print(f&quot;Size of each random sample: {sample_size}&quot;)</code></pre>
 ## Text(0.5, 1.0, &#39;Sampling Distributions (Normal Approximation)&#39;)
 ## Text(0.5, 0, &#39;Sample Mean Ticket Purchase Rate&#39;)
 ## Text(0, 0.5, &#39;Frequency&#39;)
-## &lt;matplotlib.legend.Legend object at 0x30583c160&gt;</code></pre>
-<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-16-1.png" width="576" /></p>
+## &lt;matplotlib.legend.Legend object at 0x307bec580&gt;</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-17-1.png" width="576" /></p>
 <pre><code>## Control group size: 85000
 ## Variation B group size: 85000
 ## Number of random samples generated for each group: 1000

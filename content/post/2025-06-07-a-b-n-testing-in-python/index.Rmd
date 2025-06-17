@@ -20,13 +20,13 @@ knitr::include_graphics("post/2025-06-07-a-b-n-testing-in-python/variants2.png",
 
 ```
 
-The following case study will illustrate how to analyze the results of a type of experiment known as an A/N Test (or multitest). An A/N Test is an A/B Test in which multiple (N number of) variants are tested at the same time. 
+The following case study will illustrate how to analyze the results for an A/N Test (or multitest). An A/N Test is a type of A/B Test in which multiple variants are tested at the same time. 
 
-Here we will compare 2 variants against a control to the increase purchase rate on a website. Since testing multiple variants at once will increase error the rate (known as Family Wise Error Rate--FWER), we will use a correction when determining statistical significance. 
+We'll compare 2 variants, against a control, to increase purchase rate on a fictional website. Since testing multiple variants at once increases the error rate (known as Family Wise Error Rate--FWER), we'll use a correction when determining statistical significance. 
 
 # Analyzing results
 
-We are asked to analyze the results of an experiment, performed on the splash-page, for a fictional theme park called Redwood Ridge. The park wants to launch an AI assisted booking agent, referred to as Rocky Raccoon, to help customers book flights, rental cars, meals, etc. They wish to test: Variant_A with a simplified widget; Variant_B with a more complex interactive wizard; against the control page with no agent. 
+We're asked to analyze the results of an experiment, performed on the splash-page, for a fictional theme park called Redwood Ridge. The park wants to launch an AI assisted booking agent, referred to as Rocky Raccoon, to help customers book flights, rental cars, meals, etc. They wish to test 2 variants: Variant_A with a simplified widget; Variant_B with a more interactive wizard; against the control page with no agent. 
 
 <http>
 <center>
@@ -34,7 +34,6 @@ We are asked to analyze the results of an experiment, performed on the splash-pa
 </center>
 </http>
 
-The test has already been performed. Therefore, we will skip the test planning and sample size calculations accepting this has all been done for us.
 
 # Formulating the Hypothesis
 
@@ -42,7 +41,7 @@ First we formulate the alternate hypothesis. This is the one we are trying to ac
 
 __The Alternate Hypothesis: Adding an interactive travel planning wizard to the Homepage will boost ticket purchase conversion rates__
 
-The null hypothesis is always based on the idea that that every difference detected, in the measured statistic, is simply due to random chance. All hypothesis boils down to trying to reject the null hypothesis if there is enough evidence that it is unlikely the results due to chance.
+The null hypothesis is always assumes the difference detected, in the measured statistic, is simply due to random chance. All hypothesis tests center on rejecting, for failing to reject, the null hypothesis. We reject the Null Hypothesis if there is enough evidence that it is unlikely the results are due to chance. We fail to reject whenever there is not enough evidence found in our experiment. 
 
 __Null Hypothesis: An increase in ticket purchase rate can be explained as random chance__
 
@@ -58,7 +57,7 @@ use_python('/Users/kevinbonds/anaconda3/bin/python3', required = TRUE)
 py_config()
 ```
 
-Let's use Python to analyze the results and determine if it is safe to reject the Null Hypothesis. 
+Let's use Python to analyze the results and determine if it's safe to reject the Null Hypothesis. 
 
 ## Load Python libraries
 
@@ -81,11 +80,20 @@ print(rocky)
 
 ### Inspect the Variants
 
+What is the breakdown of purchases and non-purchases per treatment?
+
+```{python, class.source="my-python-code", class.output="my-python-output", results='hold'}
+rocky.groupby(['treatment', 'ticket_purchased'])['ticket_purchased'].agg(['count'])
+```
+
+What is our raw purchase rates for each treatment?
+
 ```{python, class.source="my-python-code", class.output="my-python-output", results='hold'}
 rocky.groupby('treatment')['ticket_purchased'].agg(['mean', 'count', 'std'])
 ```
 
-We see there is a difference in the means; with the *variation_B* showing the highest lift. But let's make sure we don't have duplicates.
+
+We see there is a difference in the means; with the *variation_B* showing the highest possible lift. But let's make sure we don't have duplicates.
 
 ## Check for Duplicates
 
@@ -173,7 +181,7 @@ print(f'Group C 95% CI : [{C_lo95:.4f}, {C_up95:.4f}]')
 print(f'Group B 95% CI : [{B_lo95:.4f}, {B_up95:.4f}]')
 ```
 
-The confidence intervals above are for each group. We can calculate the confidence interval of the difference between the 2 groups to inform us on how large might the difference be. Let's look at the difference between *control* and *variation_B*
+The confidence intervals above are for each group. We can calculate the confidence interval of the difference between the 2 groups to inform how large might the difference be. Let's look at the difference between *control* and *variation_B*
 
 ```{python, class.source="my-python-code", results='hold'}
 low, upp = confint_proportions_2indep(signup_B, n_B, signup_C, n_C, method=None, compare='diff', alpha=0.05, correction=True)
