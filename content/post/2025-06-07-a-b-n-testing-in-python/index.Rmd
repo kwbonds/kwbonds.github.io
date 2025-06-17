@@ -37,11 +37,11 @@ We're asked to analyze the results of an experiment, performed on the splash-pag
 
 # Formulating the Hypothesis
 
-First we formulate the alternate hypothesis. This is the one we are trying to accept by default of rejecting the Null Hypothesis.
+First we formulate the alternate hypothesis. This is the one we're trying to find evidence to support--by default of rejecting the Null Hypothesis.
 
 __The Alternate Hypothesis: Adding an interactive travel planning wizard to the Homepage will boost ticket purchase conversion rates__
 
-The null hypothesis is always assumes the difference detected, in the measured statistic, is simply due to random chance. All hypothesis tests center on rejecting, for failing to reject, the null hypothesis. We reject the Null Hypothesis if there is enough evidence that it is unlikely the results are due to chance. We fail to reject whenever there is not enough evidence found in our experiment. 
+The null hypothesis always assumes the difference detected, in the measured statistic, is simply due to random chance. All hypothesis tests center on rejecting, or failing to reject, the null hypothesis. We reject the Null Hypothesis if there is enough evidence that it is unlikely the results are due to chance. We fail to reject whenever there is not enough evidence found in our experiment. 
 
 __Null Hypothesis: An increase in ticket purchase rate can be explained as random chance__
 
