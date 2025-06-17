@@ -47,10 +47,6 @@ library(ggplot2)
 library(plotly)
 ```
 
-```{r}
-Sys.getenv("RSTUDIO_PANDOC")
-```
-
 
 Now we read in data and check the head to see how it looks.
 
