@@ -116,7 +116,7 @@ rocky.groupby(&#39;treatment&#39;)[[&#39;trip_planner_engaged&#39;, &#39;ticket_
 </div>
 <div id="balancing-the-classes" class="section level2">
 <h2>Balancing the Classes</h2>
-<p>Now we should balance the groups by sampling from each equally and concatenating the data frames back together. This will insure group size doesn’t influence results.</p>
+<p>Now we should balance the groups (by sampling from each equally) and concatenate the data frames back together. This will insure group size doesn’t influence results.</p>
 <pre class="python my-python-code"><code>rocky_sample_control = rocky[rocky[&#39;treatment&#39;]==&#39;control&#39;].sample(n=85000, replace=False, random_state=42)
 rocky_sample_A = rocky[rocky[&#39;treatment&#39;]==&#39;variation_A&#39;].sample(n=85000, replace=False, random_state=42)
 rocky_sample_B = rocky[rocky[&#39;treatment&#39;]==&#39;variation_B&#39;].sample(n=85000, replace=False, random_state=42)
@@ -133,7 +133,7 @@ rocky = pd.concat([rocky_sample_control, rocky_sample_A, rocky_sample_B])</code>
 ##             1                     0.020739  23530
 ## variation_B 0                     0.024252  61686
 ##             1                     0.023076  23314</code></pre>
-<p>It doesn’t make sense to have trip planner engagment for the control group. Something is amiss. We should alert Engineering that our logging seems to be broken. Also, there is a large imbalance in the groups, but there is a bigger problem with the <em>trip_planner_engaged</em> field. We’ll ignore this field focusing on just the impact of the variants on ticket purchases.</p>
+<p>There is a problem with the <em>trip_planner_engaged</em> field. It doesn’t make sense to have trip planner engagement for the control group. Something is amiss. We should alert Engineering that our logging seems to be broken. We’ll ignore this field focusing on just the impact of the variants on ticket purchases.</p>
 </div>
 </div>
 <div id="checking-for-significance-in-the-difference-in-means" class="section level1">
@@ -166,7 +166,7 @@ print(f&#39;Group B 95% CI : [{B_lo95:.4f}, {B_up95:.4f}]&#39;)</code></pre>
 ## p-value: 0.000076
 ## Group C 95% CI : [0.0201, 0.0220]
 ## Group B 95% CI : [0.0229, 0.0250]</code></pre>
-<p>The confidence intervals above are for each group. We can calculate the confidence interval of the difference between the 2 groups to inform how large might the difference be. Let’s look at the difference between <em>control</em> and <em>variation_B</em></p>
+<p>These confidence intervals are for each group. We can calculate the confidence interval of the difference between the 2 groups to inform how large might the difference be. Let’s look at the difference between <em>control</em> and <em>variation_B</em></p>
 <pre class="python my-python-code"><code>low, upp = confint_proportions_2indep(signup_B, n_B, signup_C, n_C, method=None, compare=&#39;diff&#39;, alpha=0.05, correction=True)
 
 print(f&#39; Difference 95% CI [{low:.4f}, {upp:.4f}]&#39;)</code></pre>
@@ -312,7 +312,7 @@ print(f&quot;Size of each random sample: {sample_size}&quot;)</code></pre>
 ## Text(0.5, 1.0, &#39;Sampling Distributions (Normal Approximation)&#39;)
 ## Text(0.5, 0, &#39;Sample Mean Ticket Purchase Rate&#39;)
 ## Text(0, 0.5, &#39;Frequency&#39;)
-## &lt;matplotlib.legend.Legend object at 0x319cac370&gt;</code></pre>
+## &lt;matplotlib.legend.Legend object at 0x30ebf8a00&gt;</code></pre>
 <p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-17-1.png" width="576" /></p>
 <pre><code>## Control group size: 85000
 ## Variation B group size: 85000

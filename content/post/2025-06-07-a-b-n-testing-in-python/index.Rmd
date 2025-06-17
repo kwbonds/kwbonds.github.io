@@ -134,7 +134,7 @@ So we discarded all records for any *visit_id* that has multiple records.
 
 ## Balancing the Classes
 
-Now we should balance the groups by sampling from each equally and concatenating the data frames back together. This will insure group size doesn't influence results.
+Now we should balance the groups (by sampling from each equally) and concatenate the data frames back together. This will insure group size doesn't influence results.
 
 ```{python, class.source="my-python-code", results='hold'}
 rocky_sample_control = rocky[rocky['treatment']=='control'].sample(n=85000, replace=False, random_state=42)
@@ -150,7 +150,7 @@ rocky = pd.concat([rocky_sample_control, rocky_sample_A, rocky_sample_B])
 rocky.groupby(['treatment', 'trip_planner_engaged'])[ 'ticket_purchased'].agg(['mean', 'count'])
 ```
 
-It doesn't make sense to have trip planner engagment for the control group. Something is amiss. We should alert Engineering that our logging seems to be broken. Also, there is a large imbalance in the groups, but there is a bigger problem with the *trip_planner_engaged* field. We'll ignore this field focusing on just the impact of the variants on ticket purchases.
+There is a problem with the *trip_planner_engaged* field. It doesn't make sense to have trip planner engagement for the control group. Something is amiss. We should alert Engineering that our logging seems to be broken. We'll ignore this field focusing on just the impact of the variants on ticket purchases.
 
 # Checking for Significance in the Difference in Means
 
@@ -181,7 +181,7 @@ print(f'Group C 95% CI : [{C_lo95:.4f}, {C_up95:.4f}]')
 print(f'Group B 95% CI : [{B_lo95:.4f}, {B_up95:.4f}]')
 ```
 
-The confidence intervals above are for each group. We can calculate the confidence interval of the difference between the 2 groups to inform how large might the difference be. Let's look at the difference between *control* and *variation_B*
+These confidence intervals are for each group. We can calculate the confidence interval of the difference between the 2 groups to inform how large might the difference be. Let's look at the difference between *control* and *variation_B*
 
 ```{python, class.source="my-python-code", results='hold'}
 low, upp = confint_proportions_2indep(signup_B, n_B, signup_C, n_C, method=None, compare='diff', alpha=0.05, correction=True)
