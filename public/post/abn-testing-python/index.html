@@ -111,7 +111,7 @@
 <p>We are asked to analyze the results of an experiment, performed on the splash-page, for a fictional theme park called Redwood Ridge. The park wants to launch an AI assisted booking agent, referred to as Rocky Raccoon, to help customers book flights, rental cars, meals, etc. They wish to test: Variant_A with a simplified widget; Variant_B with a more complex interactive wizard; against the control page with no agent.</p>
 <http>
 <center>
-<img src="variants2.png" alt = "The three pages"  width = "85%">
+<img src="variants2.png" alt = "The three pages"  width = "98%">
 </center>
 <p></http></p>
 <p>The test has already been performed. Therefore, we will skip the test planning and sample size calculations accepting this has all been done for us.</p>
@@ -218,14 +218,14 @@ rocky = pd.concat([rocky_sample_control, rocky_sample_A, rocky_sample_B])</code>
 <div id="checking-for-significance-in-the-difference-in-means" class="section level1">
 <h1>Checking for Significance in the Difference in Means</h1>
 <p>Since <em>varation_B</em> seems to have the highest lift let’s see if the results are significant (without correction).</p>
-<pre class="python my-python-code"><code>from statsmodels.stats.proportion import proportions_ztest, proportion_confint
+<pre class="python my-python-code"><code>from statsmodels.stats.proportion import proportions_ztest, proportion_confint, confint_proportions_2indep
 # Calculate the number of visits
 n_C = rocky[rocky[&#39;treatment&#39;] == &#39;control&#39;][&#39;ticket_purchased&#39;].count()
 n_B = rocky[rocky[&#39;treatment&#39;] == &#39;variation_B&#39;][&#39;ticket_purchased&#39;].count()
 print(&#39;Group C users:&#39;,n_C)
 print(&#39;Group B users:&#39;,n_B)
 
-# Compute unique purshases in each group and assign to lists
+# Compute unique purchases in each group and assign to lists
 signup_C = rocky[rocky[&#39;treatment&#39;] == &#39;control&#39;].groupby(&#39;visit_id&#39;)[&#39;ticket_purchased&#39;].max().sum()
 signup_B = rocky[rocky[&#39;treatment&#39;] == &#39;variation_B&#39;].groupby(&#39;visit_id&#39;)[&#39;ticket_purchased&#39;].max().sum()
 
@@ -245,6 +245,12 @@ print(f&#39;Group B 95% CI : [{B_lo95:.4f}, {B_up95:.4f}]&#39;)</code></pre>
 ## p-value: 0.000076
 ## Group C 95% CI : [0.0201, 0.0220]
 ## Group B 95% CI : [0.0229, 0.0250]</code></pre>
+<p>The confidence intervals above are for each group. We can calculate the confidence interval of the difference between the 2 groups to inform us on how large might the difference be. Let’s look at the difference between <em>control</em> and <em>variation_B</em></p>
+<pre class="python my-python-code"><code>low, upp = confint_proportions_2indep(signup_B, n_B, signup_C, n_C, method=None, compare=&#39;diff&#39;, alpha=0.05, correction=True)
+
+print(f&#39; Difference 95% CI [{low:.4f}, {upp:.4f}]&#39;)</code></pre>
+<pre><code>##  Difference 95% CI [0.0014, 0.0043]</code></pre>
+<p>This tells us the difference, in the two groups, falls somewhere between 0.0014 and 0.0043 We might ask ourselves if this difference is worth the effort in building the variation–since the true difference may be as little is 0.14%.</p>
 <p>Next let’s look at <em>control</em> vs <em>variation_A</em>:</p>
 <pre class="python my-python-code"><code># Calculate the number of visits
 n_C = rocky[rocky[&#39;treatment&#39;] == &#39;control&#39;][&#39;ticket_purchased&#39;].count()
@@ -303,9 +309,9 @@ print(f&#39;Group B 95% CI : [{B_lo95:.4f}, {B_up95:.4f}]&#39;)</code></pre>
 ## Group B 95% CI : [0.0229, 0.0250]</code></pre>
 <p>So the pvalues are:</p>
 <ul>
-<li><em>Control</em> vs <em>variant_A</em>: 0.0498963</li>
-<li><em>Control</em> vs <em>variant_B</em>: 7.5839779^{-5}</li>
-<li><em>variant_A</em> vs <em>variant_B</em>: 0.0457391</li>
+<li><em>Control</em> vs <em>variant_A</em>: 0.0499</li>
+<li><em>Control</em> vs <em>variant_B</em>: 0.0000758</li>
+<li><em>variant_A</em> vs <em>variant_B</em>: 0.0457</li>
 </ul>
 <p>Normally a pvalue less that 0.05 indicates strong evidence against the NULL hypothesis and that we should reject it. And since both variants show significance (uncorrected) we might be tempted to reject the NULL hypothesis and against each other–leading us to conclude the difference between the 2 variants is not significant (or is simply random chance). And secondly, that either would be preferable to the Control. But this would be a mistake.</p>
 <p>When performing an experiment with more than variation we need to apply a correction to account for Family Wise Eror Rate (FWER) since the probability of making at least one Type I error (a false positive) across all the hypothesis tests increases with each test. A simple correction is to use the Bonferroni correction. Essentially, this method divides the significance level (alpha) across the number of tests. This gives us a more conservative mark to hit.</p>
@@ -385,8 +391,8 @@ print(f&quot;Size of each random sample: {sample_size}&quot;)</code></pre>
 ## Text(0.5, 1.0, &#39;Sampling Distributions (Normal Approximation)&#39;)
 ## Text(0.5, 0, &#39;Sample Mean Ticket Purchase Rate&#39;)
 ## Text(0, 0.5, &#39;Frequency&#39;)
-## &lt;matplotlib.legend.Legend object at 0x174ee4c70&gt;</code></pre>
-<p><img src="https://nervous-wright-ea05a8.netlify.app/post/abn-testing-python/index_files/figure-html/unnamed-chunk-15-1.png" width="576" /></p>
+## &lt;matplotlib.legend.Legend object at 0x30583c160&gt;</code></pre>
+<p><img src="https://nervous-wright-ea05a8.netlify.app/post/abn-testing-python/index_files/figure-html/unnamed-chunk-16-1.png" width="576" /></p>
 <pre><code>## Control group size: 85000
 ## Variation B group size: 85000
 ## Number of random samples generated for each group: 1000

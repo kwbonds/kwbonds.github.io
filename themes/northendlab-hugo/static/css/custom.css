@@ -10,3 +10,15 @@
       font-family: monospace;
       margin-top: 5px;
     }
+      .normal-block {
+      background-color: #f0f0f0;
+      border: 3px solid white;
+      font-weight: bold;
+    }
+    }
+    
+    .r-output {
+    color: #0056b3;
+    font-family: monospace;
+    margin-top: 5px;
+    }

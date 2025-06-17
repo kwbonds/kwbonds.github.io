@@ -1,20 +1,24 @@
 ---
-title: "A/B Testing in Python"
-author: Kevin Bonds
-date: '2023-05-13'
-slug: ab-test-p1
+title: "A/B Testing in R"
+author: "Kevin Bonds"
+date: "2023-05-13"
+output:
+  html_document:
+    df_print: paged
 categories:
-  - "AB-Testing"
-  - "EDA"
+- "AB-Testing"
+- EDA
 tags:
-  - "A/B Testing"
-  - "EDA"
+- A/B Testing
+- EDA
+slug: "ab-test-p1"
 ---
 
 ```{r setup_options, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 
 ```
+
 
 A stakeholder may ask if a particular change, to an application, will make a user more likely to make a purchase (or more likely to make a larger purchase, etc.). These types of questions are excellent candidates for a controlled experiment--known as A/B Testing. To answer these questions, a data scientist must apply good testing methods; and understand well, certain statistical concepts to evaluate the experiment effectively. A/B testing can be tricky to conduct without bias and difficult to evaluate. And like all hypothesis testing, there is a certain amount of uncertainty inherent. It's this uncertainty that the Data Scientist attempts to quantify and explain.  
 
@@ -35,13 +39,18 @@ We can use publicly available data to demonstrate the approach and calculations 
 
 First import some libraries.
 
-```{r libraries, warnings=FALSE, message=FALSE}
+```{r libraries, warnings=FALSE, message=FALSE, class.source="normal-block", results='hold' }
 library(tidyverse)
 library(kableExtra)
 library(rmarkdown)
 library(ggplot2)
 library(plotly)
 ```
+
+```{r}
+Sys.getenv("RSTUDIO_PANDOC")
+```
+
 
 Now we read in data and check the head to see how it looks.
 
