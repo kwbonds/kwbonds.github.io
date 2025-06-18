@@ -4,34 +4,29 @@
     <title>Authors on Kevin Bonds | Portfolio</title>
     <link>https://nervous-wright-ea05a8.netlify.app/author/</link>
     <description>Recent content in Authors on Kevin Bonds | Portfolio</description>
-    <generator>Hugo -- gohugo.io</generator>
-    <language>en-us</language><atom:link href="https://nervous-wright-ea05a8.netlify.app/author/index.xml" rel="self" type="application/rss+xml" />
+    <generator>Hugo</generator>
+    <language>en-us</language>
+    <atom:link href="https://nervous-wright-ea05a8.netlify.app/author/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>John Doe</title>
       <link>https://nervous-wright-ea05a8.netlify.app/author/john-doe/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      
       <guid>https://nervous-wright-ea05a8.netlify.app/author/john-doe/</guid>
-      <description>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</description>
+      <description>&lt;p&gt;Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.&lt;/p&gt;</description>
     </item>
-    
     <item>
       <title>Kevin Bonds</title>
       <link>https://nervous-wright-ea05a8.netlify.app/author/kevin-bonds/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      
       <guid>https://nervous-wright-ea05a8.netlify.app/author/kevin-bonds/</guid>
-      <description>Strong analytics generalist with depth in many technical areas.</description>
+      <description>&lt;p&gt;Strong analytics generalist with depth in many technical areas. Experience applying industry best tech (SQL, Teradata, R, Python, Git, Shiny, Hadoop, Zeppelin, GCP, ODBC, JDBC, JWT, Outh2.0) to data analysis, data engineering validation, and data product design. Influencer for collaborative work flows and analytics best practices. Always curious and flexible with methods, tools, and techniques to add business value at minimal expense.&lt;/p&gt;</description>
     </item>
-    
     <item>
       <title>Mark Dinn</title>
       <link>https://nervous-wright-ea05a8.netlify.app/author/mark-dinn/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      
       <guid>https://nervous-wright-ea05a8.netlify.app/author/mark-dinn/</guid>
-      <description>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</description>
+      <description>&lt;p&gt;Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.&lt;/p&gt;</description>
     </item>
-    
   </channel>
 </rss>

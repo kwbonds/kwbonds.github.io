@@ -4,48 +4,16 @@
     <title>A/B Testing on Kevin Bonds | Portfolio</title>
     <link>https://nervous-wright-ea05a8.netlify.app/tags/a/b-testing/</link>
     <description>Recent content in A/B Testing on Kevin Bonds | Portfolio</description>
-    <generator>Hugo -- gohugo.io</generator>
-    <language>en-us</language><atom:link href="https://nervous-wright-ea05a8.netlify.app/tags/a/b-testing/index.xml" rel="self" type="application/rss+xml" />
+    <generator>Hugo</generator>
+    <language>en-us</language>
+    <lastBuildDate>Sat, 13 May 2023 00:00:00 +0000</lastBuildDate>
+    <atom:link href="https://nervous-wright-ea05a8.netlify.app/tags/a/b-testing/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>A/B Testing in R</title>
       <link>https://nervous-wright-ea05a8.netlify.app/post/ab-test-p1/</link>
       <pubDate>Sat, 13 May 2023 00:00:00 +0000</pubDate>
-      
       <guid>https://nervous-wright-ea05a8.netlify.app/post/ab-test-p1/</guid>
-      <description>
-&lt;link href=&#34;https://nervous-wright-ea05a8.netlify.app/rmarkdown-libs/htmltools-fill/fill.css&#34; rel=&#34;stylesheet&#34; /&gt;
-&lt;script src=&#34;https://nervous-wright-ea05a8.netlify.app/rmarkdown-libs/htmlwidgets/htmlwidgets.js&#34;&gt;&lt;/script&gt;
-&lt;script src=&#34;https://nervous-wright-ea05a8.netlify.app/rmarkdown-libs/plotly-binding/plotly.js&#34;&gt;&lt;/script&gt;
-&lt;script src=&#34;https://nervous-wright-ea05a8.netlify.app/rmarkdown-libs/typedarray/typedarray.min.js&#34;&gt;&lt;/script&gt;
-&lt;script src=&#34;https://nervous-wright-ea05a8.netlify.app/rmarkdown-libs/jquery/jquery.min.js&#34;&gt;&lt;/script&gt;
-&lt;link href=&#34;https://nervous-wright-ea05a8.netlify.app/rmarkdown-libs/crosstalk/css/crosstalk.min.css&#34; rel=&#34;stylesheet&#34; /&gt;
-&lt;script src=&#34;https://nervous-wright-ea05a8.netlify.app/rmarkdown-libs/crosstalk/js/crosstalk.min.js&#34;&gt;&lt;/script&gt;
-&lt;link href=&#34;https://nervous-wright-ea05a8.netlify.app/rmarkdown-libs/plotly-htmlwidgets-css/plotly-htmlwidgets.css&#34; rel=&#34;stylesheet&#34; /&gt;
-&lt;script src=&#34;https://nervous-wright-ea05a8.netlify.app/rmarkdown-libs/plotly-main/plotly-latest.min.js&#34;&gt;&lt;/script&gt;
-&lt;link href=&#34;https://nervous-wright-ea05a8.netlify.app/rmarkdown-libs/pagedtable/css/pagedtable.css&#34; rel=&#34;stylesheet&#34; /&gt;
-&lt;script src=&#34;https://nervous-wright-ea05a8.netlify.app/rmarkdown-libs/pagedtable/js/pagedtable.js&#34;&gt;&lt;/script&gt;
-
-&lt;div id=&#34;TOC&#34;&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;a href=&#34;#method&#34; id=&#34;toc-method&#34;&gt;Method&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;#prepping-ab-test-data&#34; id=&#34;toc-prepping-ab-test-data&#34;&gt;Prepping A/B Test Data&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;#cleaning-data&#34; id=&#34;toc-cleaning-data&#34;&gt;Cleaning Data&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;#considerations&#34; id=&#34;toc-considerations&#34;&gt;Considerations&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;#what-about-the-duplicates&#34; id=&#34;toc-what-about-the-duplicates&#34;&gt;What about the Duplicates&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;#adding-purchased-column-and-calculating-some-rates&#34; id=&#34;toc-adding-purchased-column-and-calculating-some-rates&#34;&gt;Adding Purchased Column and Calculating some rates&lt;/a&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;a href=&#34;#user-based&#34; id=&#34;toc-user-based&#34;&gt;User based&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;#power-calulations-2-methods&#34; id=&#34;toc-power-calulations-2-methods&#34;&gt;Power Calulations (2 methods)&lt;/a&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;a href=&#34;#power-calculation-test-for-proportions-method&#34; id=&#34;toc-power-calculation-test-for-proportions-method&#34;&gt;Power Calculation Test for Proportions Method&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;#using-logistic-regression&#34; id=&#34;toc-using-logistic-regression&#34;&gt;Using Logistic Regression&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;&lt;/li&gt;
-&lt;/ul&gt;
-&lt;/div&gt;
-
-&lt;p&gt;A stakeholder may ask if a particular change, to an application, will make a user more likely to make a purchase (or more likely to make a larger purchase, etc.). These types of questions are excellent candidates for a controlled experiment–known as A/B Testing. To answer these questions, a data scientist must apply good testing methods; and understand well, certain statistical concepts to evaluate the experiment effectively. </description>
+      <description>&lt;link href=&#34;https://nervous-wright-ea05a8.netlify.app/rmarkdown-libs/htmltools-fill/fill.css&#34; rel=&#34;stylesheet&#34; /&gt;&#xA;&lt;script src=&#34;https://nervous-wright-ea05a8.netlify.app/rmarkdown-libs/htmlwidgets/htmlwidgets.js&#34;&gt;&lt;/script&gt;&#xA;&lt;script src=&#34;https://nervous-wright-ea05a8.netlify.app/rmarkdown-libs/plotly-binding/plotly.js&#34;&gt;&lt;/script&gt;&#xA;&lt;script src=&#34;https://nervous-wright-ea05a8.netlify.app/rmarkdown-libs/typedarray/typedarray.min.js&#34;&gt;&lt;/script&gt;&#xA;&lt;script src=&#34;https://nervous-wright-ea05a8.netlify.app/rmarkdown-libs/jquery/jquery.min.js&#34;&gt;&lt;/script&gt;&#xA;&lt;link href=&#34;https://nervous-wright-ea05a8.netlify.app/rmarkdown-libs/crosstalk/css/crosstalk.min.css&#34; rel=&#34;stylesheet&#34; /&gt;&#xA;&lt;script src=&#34;https://nervous-wright-ea05a8.netlify.app/rmarkdown-libs/crosstalk/js/crosstalk.min.js&#34;&gt;&lt;/script&gt;&#xA;&lt;link href=&#34;https://nervous-wright-ea05a8.netlify.app/rmarkdown-libs/plotly-htmlwidgets-css/plotly-htmlwidgets.css&#34; rel=&#34;stylesheet&#34; /&gt;&#xA;&lt;script src=&#34;https://nervous-wright-ea05a8.netlify.app/rmarkdown-libs/plotly-main/plotly-latest.min.js&#34;&gt;&lt;/script&gt;&#xA;&lt;link href=&#34;https://nervous-wright-ea05a8.netlify.app/rmarkdown-libs/pagedtable/css/pagedtable.css&#34; rel=&#34;stylesheet&#34; /&gt;&#xA;&lt;script src=&#34;https://nervous-wright-ea05a8.netlify.app/rmarkdown-libs/pagedtable/js/pagedtable.js&#34;&gt;&lt;/script&gt;&#xA;&#xA;&lt;div id=&#34;TOC&#34;&gt;&#xA;&lt;ul&gt;&#xA;&lt;li&gt;&lt;a href=&#34;#method&#34; id=&#34;toc-method&#34;&gt;Method&lt;/a&gt;&lt;/li&gt;&#xA;&lt;li&gt;&lt;a href=&#34;#prepping-ab-test-data&#34; id=&#34;toc-prepping-ab-test-data&#34;&gt;Prepping A/B Test Data&lt;/a&gt;&lt;/li&gt;&#xA;&lt;li&gt;&lt;a href=&#34;#cleaning-data&#34; id=&#34;toc-cleaning-data&#34;&gt;Cleaning Data&lt;/a&gt;&lt;/li&gt;&#xA;&lt;li&gt;&lt;a href=&#34;#considerations&#34; id=&#34;toc-considerations&#34;&gt;Considerations&lt;/a&gt;&lt;/li&gt;&#xA;&lt;li&gt;&lt;a href=&#34;#what-about-the-duplicates&#34; id=&#34;toc-what-about-the-duplicates&#34;&gt;What about the Duplicates&lt;/a&gt;&lt;/li&gt;&#xA;&lt;li&gt;&lt;a href=&#34;#adding-purchased-column-and-calculating-some-rates&#34; id=&#34;toc-adding-purchased-column-and-calculating-some-rates&#34;&gt;Adding Purchased Column and Calculating some rates&lt;/a&gt;&#xA;&lt;ul&gt;&#xA;&lt;li&gt;&lt;a href=&#34;#user-based&#34; id=&#34;toc-user-based&#34;&gt;User based&lt;/a&gt;&lt;/li&gt;&#xA;&lt;/ul&gt;&lt;/li&gt;&#xA;&lt;li&gt;&lt;a href=&#34;#power-calulations-2-methods&#34; id=&#34;toc-power-calulations-2-methods&#34;&gt;Power Calulations (2 methods)&lt;/a&gt;&#xA;&lt;ul&gt;&#xA;&lt;li&gt;&lt;a href=&#34;#power-calculation-test-for-proportions-method&#34; id=&#34;toc-power-calculation-test-for-proportions-method&#34;&gt;Power Calculation Test for Proportions Method&lt;/a&gt;&lt;/li&gt;&#xA;&lt;li&gt;&lt;a href=&#34;#using-logistic-regression&#34; id=&#34;toc-using-logistic-regression&#34;&gt;Using Logistic Regression&lt;/a&gt;&lt;/li&gt;&#xA;&lt;/ul&gt;&lt;/li&gt;&#xA;&lt;/ul&gt;&#xA;&lt;/div&gt;&#xA;&#xA;&lt;p&gt;A stakeholder may ask if a particular change, to an application, will make a user more likely to make a purchase (or more likely to make a larger purchase, etc.). These types of questions are excellent candidates for a controlled experiment–known as A/B Testing. To answer these questions, a data scientist must apply good testing methods; and understand well, certain statistical concepts to evaluate the experiment effectively.</description>
     </item>
-    
   </channel>
 </rss>

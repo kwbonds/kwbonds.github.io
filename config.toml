@@ -7,7 +7,7 @@ title = "Kevin Bonds | Portfolio"
 theme = "northendlab-hugo"
 author = "Kevin Bonds"
 # post pagination
-paginate = "2"
+pagination.pagerSize  = "2"
 # post excerpt
 summaryLength = "5"
 # disqus short name

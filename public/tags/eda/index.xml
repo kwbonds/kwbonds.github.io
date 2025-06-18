@@ -4,80 +4,23 @@
     <title>EDA on Kevin Bonds | Portfolio</title>
     <link>https://nervous-wright-ea05a8.netlify.app/tags/eda/</link>
     <description>Recent content in EDA on Kevin Bonds | Portfolio</description>
-    <generator>Hugo -- gohugo.io</generator>
+    <generator>Hugo</generator>
     <language>en-us</language>
-    <lastBuildDate>Sat, 07 Jun 2025 00:00:00 +0000</lastBuildDate><atom:link href="https://nervous-wright-ea05a8.netlify.app/tags/eda/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Sat, 07 Jun 2025 00:00:00 +0000</lastBuildDate>
+    <atom:link href="https://nervous-wright-ea05a8.netlify.app/tags/eda/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>A/B/N Testing in Python</title>
       <link>https://nervous-wright-ea05a8.netlify.app/post/abn-testing-python/</link>
       <pubDate>Sat, 07 Jun 2025 00:00:00 +0000</pubDate>
-      
       <guid>https://nervous-wright-ea05a8.netlify.app/post/abn-testing-python/</guid>
-      <description>
-
-&lt;div id=&#34;TOC&#34;&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;a href=&#34;#intro&#34; id=&#34;toc-intro&#34;&gt;Intro&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;#formulating-the-hypothesis&#34; id=&#34;toc-formulating-the-hypothesis&#34;&gt;Formulating the Hypothesis&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;#analysis&#34; id=&#34;toc-analysis&#34;&gt;Analysis&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;#eda&#34; id=&#34;toc-eda&#34;&gt;EDA&lt;/a&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;a href=&#34;#inspect-the-variants&#34; id=&#34;toc-inspect-the-variants&#34;&gt;Inspect the Variants&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;#check-for-duplicates&#34; id=&#34;toc-check-for-duplicates&#34;&gt;Check for Duplicates&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;#drop-duplicates&#34; id=&#34;toc-drop-duplicates&#34;&gt;Drop Duplicates&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;#balancing-the-classes&#34; id=&#34;toc-balancing-the-classes&#34;&gt;Balancing the Classes&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;#group-and-inspect&#34; id=&#34;toc-group-and-inspect&#34;&gt;Group and Inspect&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;#checking-for-significance-in-the-difference-in-means&#34; id=&#34;toc-checking-for-significance-in-the-difference-in-means&#34;&gt;Checking for Significance in the Difference in Means&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;#visualizing-the-bootstrapped-data&#34; id=&#34;toc-visualizing-the-bootstrapped-data&#34;&gt;Visualizing the Bootstrapped Data&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;#recommendation&#34; id=&#34;toc-recommendation&#34;&gt;Recommendation&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;#alternate-consideration&#34; id=&#34;toc-alternate-consideration&#34;&gt;Alternate Consideration&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;
-&lt;/div&gt;
-
-&lt;p&gt;The following case study will illustrate how to analyze the results for an A/N Test (or multitest). An A/N Test is a type of A/B Test in which multiple variants are tested at the same time. &lt;br&gt; We’ll compare 2 variants, against a control, to increase purchase rate on a fictional website. Since testing multiple variants at once increases the error rate (known as Family Wise Error Rate–FWER), we’ll use a correction when determining statistical significance. </description>
+      <description>&lt;p&gt;The following case study will illustrate how to analyze the results for an A/N Test (or multitest). An A/N Test is a type of A/B Test in which multiple variants are tested at the same time. &lt;br&gt; We’ll compare 2 variants, against a control, to increase purchase rate on a fictional website. Since testing multiple variants at once increases the error rate (known as Family Wise Error Rate–FWER), we’ll use a correction when determining statistical significance.&lt;/p&gt;&#xA;&lt;div id=&#34;intro&#34; class=&#34;section level1&#34;&gt;&#xA;&lt;h1&gt;Intro&lt;/h1&gt;&#xA;&lt;p&gt;We’re asked to analyze the results of an experiment, performed on the splash-page, for a fictional theme park called Redwood Ridge. The park wants to launch an AI assisted booking agent, referred to as Rocky Raccoon, to help customers book flights, rental cars, meals, etc. They wish to test 2 variants: Variant_A with a simplified widget; Variant_B with a more interactive wizard; against the control page with no agent.&lt;/p&gt;&#xA;&lt;http&gt;&#xA;&lt;center&gt;&#xA;&lt;img src=&#34;abn-testing-python/variants2.png&#34; alt = &#34;The three pages&#34;  width = &#34;98%&#34;&gt;&#xA;&lt;/center&gt;&#xA;&lt;p&gt;&lt;/http&gt;&lt;/p&gt;</description>
     </item>
-    
     <item>
       <title>A/B Testing in R</title>
       <link>https://nervous-wright-ea05a8.netlify.app/post/ab-test-p1/</link>
       <pubDate>Sat, 13 May 2023 00:00:00 +0000</pubDate>
-      
       <guid>https://nervous-wright-ea05a8.netlify.app/post/ab-test-p1/</guid>
-      <description>
-&lt;link href=&#34;https://nervous-wright-ea05a8.netlify.app/rmarkdown-libs/htmltools-fill/fill.css&#34; rel=&#34;stylesheet&#34; /&gt;
-&lt;script src=&#34;https://nervous-wright-ea05a8.netlify.app/rmarkdown-libs/htmlwidgets/htmlwidgets.js&#34;&gt;&lt;/script&gt;
-&lt;script src=&#34;https://nervous-wright-ea05a8.netlify.app/rmarkdown-libs/plotly-binding/plotly.js&#34;&gt;&lt;/script&gt;
-&lt;script src=&#34;https://nervous-wright-ea05a8.netlify.app/rmarkdown-libs/typedarray/typedarray.min.js&#34;&gt;&lt;/script&gt;
-&lt;script src=&#34;https://nervous-wright-ea05a8.netlify.app/rmarkdown-libs/jquery/jquery.min.js&#34;&gt;&lt;/script&gt;
-&lt;link href=&#34;https://nervous-wright-ea05a8.netlify.app/rmarkdown-libs/crosstalk/css/crosstalk.min.css&#34; rel=&#34;stylesheet&#34; /&gt;
-&lt;script src=&#34;https://nervous-wright-ea05a8.netlify.app/rmarkdown-libs/crosstalk/js/crosstalk.min.js&#34;&gt;&lt;/script&gt;
-&lt;link href=&#34;https://nervous-wright-ea05a8.netlify.app/rmarkdown-libs/plotly-htmlwidgets-css/plotly-htmlwidgets.css&#34; rel=&#34;stylesheet&#34; /&gt;
-&lt;script src=&#34;https://nervous-wright-ea05a8.netlify.app/rmarkdown-libs/plotly-main/plotly-latest.min.js&#34;&gt;&lt;/script&gt;
-&lt;link href=&#34;https://nervous-wright-ea05a8.netlify.app/rmarkdown-libs/pagedtable/css/pagedtable.css&#34; rel=&#34;stylesheet&#34; /&gt;
-&lt;script src=&#34;https://nervous-wright-ea05a8.netlify.app/rmarkdown-libs/pagedtable/js/pagedtable.js&#34;&gt;&lt;/script&gt;
-
-&lt;div id=&#34;TOC&#34;&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;a href=&#34;#method&#34; id=&#34;toc-method&#34;&gt;Method&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;#prepping-ab-test-data&#34; id=&#34;toc-prepping-ab-test-data&#34;&gt;Prepping A/B Test Data&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;#cleaning-data&#34; id=&#34;toc-cleaning-data&#34;&gt;Cleaning Data&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;#considerations&#34; id=&#34;toc-considerations&#34;&gt;Considerations&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;#what-about-the-duplicates&#34; id=&#34;toc-what-about-the-duplicates&#34;&gt;What about the Duplicates&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;#adding-purchased-column-and-calculating-some-rates&#34; id=&#34;toc-adding-purchased-column-and-calculating-some-rates&#34;&gt;Adding Purchased Column and Calculating some rates&lt;/a&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;a href=&#34;#user-based&#34; id=&#34;toc-user-based&#34;&gt;User based&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;#power-calulations-2-methods&#34; id=&#34;toc-power-calulations-2-methods&#34;&gt;Power Calulations (2 methods)&lt;/a&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;a href=&#34;#power-calculation-test-for-proportions-method&#34; id=&#34;toc-power-calculation-test-for-proportions-method&#34;&gt;Power Calculation Test for Proportions Method&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;#using-logistic-regression&#34; id=&#34;toc-using-logistic-regression&#34;&gt;Using Logistic Regression&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;&lt;/li&gt;
-&lt;/ul&gt;
-&lt;/div&gt;
-
-&lt;p&gt;A stakeholder may ask if a particular change, to an application, will make a user more likely to make a purchase (or more likely to make a larger purchase, etc.). These types of questions are excellent candidates for a controlled experiment–known as A/B Testing. To answer these questions, a data scientist must apply good testing methods; and understand well, certain statistical concepts to evaluate the experiment effectively. </description>
+      <description>&lt;link href=&#34;https://nervous-wright-ea05a8.netlify.app/rmarkdown-libs/htmltools-fill/fill.css&#34; rel=&#34;stylesheet&#34; /&gt;&#xA;&lt;script src=&#34;https://nervous-wright-ea05a8.netlify.app/rmarkdown-libs/htmlwidgets/htmlwidgets.js&#34;&gt;&lt;/script&gt;&#xA;&lt;script src=&#34;https://nervous-wright-ea05a8.netlify.app/rmarkdown-libs/plotly-binding/plotly.js&#34;&gt;&lt;/script&gt;&#xA;&lt;script src=&#34;https://nervous-wright-ea05a8.netlify.app/rmarkdown-libs/typedarray/typedarray.min.js&#34;&gt;&lt;/script&gt;&#xA;&lt;script src=&#34;https://nervous-wright-ea05a8.netlify.app/rmarkdown-libs/jquery/jquery.min.js&#34;&gt;&lt;/script&gt;&#xA;&lt;link href=&#34;https://nervous-wright-ea05a8.netlify.app/rmarkdown-libs/crosstalk/css/crosstalk.min.css&#34; rel=&#34;stylesheet&#34; /&gt;&#xA;&lt;script src=&#34;https://nervous-wright-ea05a8.netlify.app/rmarkdown-libs/crosstalk/js/crosstalk.min.js&#34;&gt;&lt;/script&gt;&#xA;&lt;link href=&#34;https://nervous-wright-ea05a8.netlify.app/rmarkdown-libs/plotly-htmlwidgets-css/plotly-htmlwidgets.css&#34; rel=&#34;stylesheet&#34; /&gt;&#xA;&lt;script src=&#34;https://nervous-wright-ea05a8.netlify.app/rmarkdown-libs/plotly-main/plotly-latest.min.js&#34;&gt;&lt;/script&gt;&#xA;&lt;link href=&#34;https://nervous-wright-ea05a8.netlify.app/rmarkdown-libs/pagedtable/css/pagedtable.css&#34; rel=&#34;stylesheet&#34; /&gt;&#xA;&lt;script src=&#34;https://nervous-wright-ea05a8.netlify.app/rmarkdown-libs/pagedtable/js/pagedtable.js&#34;&gt;&lt;/script&gt;&#xA;&#xA;&lt;div id=&#34;TOC&#34;&gt;&#xA;&lt;ul&gt;&#xA;&lt;li&gt;&lt;a href=&#34;#method&#34; id=&#34;toc-method&#34;&gt;Method&lt;/a&gt;&lt;/li&gt;&#xA;&lt;li&gt;&lt;a href=&#34;#prepping-ab-test-data&#34; id=&#34;toc-prepping-ab-test-data&#34;&gt;Prepping A/B Test Data&lt;/a&gt;&lt;/li&gt;&#xA;&lt;li&gt;&lt;a href=&#34;#cleaning-data&#34; id=&#34;toc-cleaning-data&#34;&gt;Cleaning Data&lt;/a&gt;&lt;/li&gt;&#xA;&lt;li&gt;&lt;a href=&#34;#considerations&#34; id=&#34;toc-considerations&#34;&gt;Considerations&lt;/a&gt;&lt;/li&gt;&#xA;&lt;li&gt;&lt;a href=&#34;#what-about-the-duplicates&#34; id=&#34;toc-what-about-the-duplicates&#34;&gt;What about the Duplicates&lt;/a&gt;&lt;/li&gt;&#xA;&lt;li&gt;&lt;a href=&#34;#adding-purchased-column-and-calculating-some-rates&#34; id=&#34;toc-adding-purchased-column-and-calculating-some-rates&#34;&gt;Adding Purchased Column and Calculating some rates&lt;/a&gt;&#xA;&lt;ul&gt;&#xA;&lt;li&gt;&lt;a href=&#34;#user-based&#34; id=&#34;toc-user-based&#34;&gt;User based&lt;/a&gt;&lt;/li&gt;&#xA;&lt;/ul&gt;&lt;/li&gt;&#xA;&lt;li&gt;&lt;a href=&#34;#power-calulations-2-methods&#34; id=&#34;toc-power-calulations-2-methods&#34;&gt;Power Calulations (2 methods)&lt;/a&gt;&#xA;&lt;ul&gt;&#xA;&lt;li&gt;&lt;a href=&#34;#power-calculation-test-for-proportions-method&#34; id=&#34;toc-power-calculation-test-for-proportions-method&#34;&gt;Power Calculation Test for Proportions Method&lt;/a&gt;&lt;/li&gt;&#xA;&lt;li&gt;&lt;a href=&#34;#using-logistic-regression&#34; id=&#34;toc-using-logistic-regression&#34;&gt;Using Logistic Regression&lt;/a&gt;&lt;/li&gt;&#xA;&lt;/ul&gt;&lt;/li&gt;&#xA;&lt;/ul&gt;&#xA;&lt;/div&gt;&#xA;&#xA;&lt;p&gt;A stakeholder may ask if a particular change, to an application, will make a user more likely to make a purchase (or more likely to make a larger purchase, etc.). These types of questions are excellent candidates for a controlled experiment–known as A/B Testing. To answer these questions, a data scientist must apply good testing methods; and understand well, certain statistical concepts to evaluate the experiment effectively.</description>
     </item>
-    
   </channel>
 </rss>

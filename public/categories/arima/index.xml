@@ -4,17 +4,16 @@
     <title>ARIMA on Kevin Bonds | Portfolio</title>
     <link>https://nervous-wright-ea05a8.netlify.app/categories/arima/</link>
     <description>Recent content in ARIMA on Kevin Bonds | Portfolio</description>
-    <generator>Hugo -- gohugo.io</generator>
+    <generator>Hugo</generator>
     <language>en-us</language>
-    <lastBuildDate>Sat, 30 Nov 2019 00:00:00 +0000</lastBuildDate><atom:link href="https://nervous-wright-ea05a8.netlify.app/categories/arima/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Sat, 30 Nov 2019 00:00:00 +0000</lastBuildDate>
+    <atom:link href="https://nervous-wright-ea05a8.netlify.app/categories/arima/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>Time Series Analysis of crude oil</title>
       <link>https://nervous-wright-ea05a8.netlify.app/post/time-series-analysis-of-crude-oil/</link>
       <pubDate>Sat, 30 Nov 2019 00:00:00 +0000</pubDate>
-      
       <guid>https://nervous-wright-ea05a8.netlify.app/post/time-series-analysis-of-crude-oil/</guid>
-      <description>In order to illustrate data modeling techniques, and also experiment and learn, the following data analysis will be carried out and discussed.</description>
+      <description>&lt;div id=&#34;TOC&#34;&gt;&#xA;&lt;ul&gt;&#xA;&lt;li&gt;&lt;a href=&#34;#collecting-data&#34; id=&#34;toc-collecting-data&#34;&gt;Collecting data&lt;/a&gt;&#xA;&lt;ul&gt;&#xA;&lt;li&gt;&lt;a href=&#34;#loading-the-data&#34; id=&#34;toc-loading-the-data&#34;&gt;Loading the data&lt;/a&gt;&lt;/li&gt;&#xA;&lt;li&gt;&lt;a href=&#34;#adding-some-quick-stats&#34; id=&#34;toc-adding-some-quick-stats&#34;&gt;Adding some quick stats&lt;/a&gt;&lt;/li&gt;&#xA;&lt;/ul&gt;&lt;/li&gt;&#xA;&lt;li&gt;&lt;a href=&#34;#modeling-crude-oil&#34; id=&#34;toc-modeling-crude-oil&#34;&gt;Modeling crude oil&lt;/a&gt;&lt;/li&gt;&#xA;&lt;li&gt;&lt;a href=&#34;#gas-prices&#34; id=&#34;toc-gas-prices&#34;&gt;Gas Prices&lt;/a&gt;&lt;/li&gt;&#xA;&lt;/ul&gt;&#xA;&lt;/div&gt;&#xA;&#xA;&lt;p&gt;In order to illustrate data modeling techniques, and also experiment and learn, the following data analysis will be carried out and discussed. This blog will be an iterative process–meaning it may be incomplete to the viewer at any given time. Nonetheless, it will be public in it’s unfinished state for the purpose of feedback and discussion. All code for this analysis can be found at: &lt;a href=&#34;https://github.com/kwbonds/crudeoil_products&#34; class=&#34;uri&#34;&gt;https://github.com/kwbonds/crudeoil_products&lt;/a&gt;. Please Feel free to clone/fork. And please comment to me at &lt;a href=&#34;mailto:kevin.w.bonds@gmail.com&#34; class=&#34;email&#34;&gt;kevin.w.bonds@gmail.com&lt;/a&gt; with any helpful suggestions or feedback. I greatly incourage it.&lt;/p&gt;</description>
     </item>
-    
   </channel>
 </rss>

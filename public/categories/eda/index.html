@@ -8,7 +8,7 @@
   <meta name="description" content="Data Science Portfilio">
   
   <meta name="author" content="Themefisher">
-  <meta name="generator" content="Hugo 0.111.3">
+  <meta name="generator" content="Hugo 0.147.8">
 
   <!-- plugins -->
   
@@ -105,29 +105,15 @@
               <a href="/categories/eda">Eda</a>
               
             </div>
-            <p>
-
-<div id="TOC">
-<ul>
-<li><a href="#intro" id="toc-intro">Intro</a></li>
-<li><a href="#formulating-the-hypothesis" id="toc-formulating-the-hypothesis">Formulating the Hypothesis</a></li>
-<li><a href="#analysis" id="toc-analysis">Analysis</a></li>
-<li><a href="#eda" id="toc-eda">EDA</a>
-<ul>
-<li><a href="#inspect-the-variants" id="toc-inspect-the-variants">Inspect the Variants</a></li>
-<li><a href="#check-for-duplicates" id="toc-check-for-duplicates">Check for Duplicates</a></li>
-<li><a href="#drop-duplicates" id="toc-drop-duplicates">Drop Duplicates</a></li>
-<li><a href="#balancing-the-classes" id="toc-balancing-the-classes">Balancing the Classes</a></li>
-<li><a href="#group-and-inspect" id="toc-group-and-inspect">Group and Inspect</a></li>
-</ul></li>
-<li><a href="#checking-for-significance-in-the-difference-in-means" id="toc-checking-for-significance-in-the-difference-in-means">Checking for Significance in the Difference in Means</a></li>
-<li><a href="#visualizing-the-bootstrapped-data" id="toc-visualizing-the-bootstrapped-data">Visualizing the Bootstrapped Data</a></li>
-<li><a href="#recommendation" id="toc-recommendation">Recommendation</a></li>
-<li><a href="#alternate-consideration" id="toc-alternate-consideration">Alternate Consideration</a></li>
-</ul>
-</div>
-
-<p>The following case study will illustrate how to analyze the results for an A/N Test (or multitest). An A/N Test is a type of A/B Test in which multiple variants are tested at the same time. <br> We’ll compare 2 variants, against a control, to increase purchase rate on a fictional website. Since testing multiple variants at once increases the error rate (known as Family Wise Error Rate–FWER), we’ll use a correction when determining statistical significance. </p>
+            <p><p>The following case study will illustrate how to analyze the results for an A/N Test (or multitest). An A/N Test is a type of A/B Test in which multiple variants are tested at the same time. <br> We’ll compare 2 variants, against a control, to increase purchase rate on a fictional website. Since testing multiple variants at once increases the error rate (known as Family Wise Error Rate–FWER), we’ll use a correction when determining statistical significance.</p>
+<div id="intro" class="section level1">
+<h1>Intro</h1>
+<p>We’re asked to analyze the results of an experiment, performed on the splash-page, for a fictional theme park called Redwood Ridge. The park wants to launch an AI assisted booking agent, referred to as Rocky Raccoon, to help customers book flights, rental cars, meals, etc. They wish to test 2 variants: Variant_A with a simplified widget; Variant_B with a more interactive wizard; against the control page with no agent.</p>
+<http>
+<center>
+<img src="abn-testing-python/variants2.png" alt = "The three pages"  width = "98%">
+</center>
+<p></http></p></p>
             <a href="https://nervous-wright-ea05a8.netlify.app/post/abn-testing-python/" class="btn btn-sm btn-outline-primary">read more</a>
           </article>
           
@@ -141,8 +127,7 @@
               <a href="/categories/eda">Eda</a>
               
             </div>
-            <p>
-<link href="/rmarkdown-libs/htmltools-fill/fill.css" rel="stylesheet" />
+            <p><link href="/rmarkdown-libs/htmltools-fill/fill.css" rel="stylesheet" />
 <script src="/rmarkdown-libs/htmlwidgets/htmlwidgets.js"></script>
 <script src="/rmarkdown-libs/plotly-binding/plotly.js"></script>
 <script src="/rmarkdown-libs/typedarray/typedarray.min.js"></script>
@@ -173,7 +158,7 @@
 </ul>
 </div>
 
-<p>A stakeholder may ask if a particular change, to an application, will make a user more likely to make a purchase (or more likely to make a larger purchase, etc.). These types of questions are excellent candidates for a controlled experiment–known as A/B Testing. To answer these questions, a data scientist must apply good testing methods; and understand well, certain statistical concepts to evaluate the experiment effectively. </p>
+<p>A stakeholder may ask if a particular change, to an application, will make a user more likely to make a purchase (or more likely to make a larger purchase, etc.). These types of questions are excellent candidates for a controlled experiment–known as A/B Testing. To answer these questions, a data scientist must apply good testing methods; and understand well, certain statistical concepts to evaluate the experiment effectively.</p>
             <a href="https://nervous-wright-ea05a8.netlify.app/post/ab-test-p1/" class="btn btn-sm btn-outline-primary">read more</a>
           </article>
           

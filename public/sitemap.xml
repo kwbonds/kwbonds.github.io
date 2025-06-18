@@ -5,19 +5,19 @@
     <loc>https://nervous-wright-ea05a8.netlify.app/post/abn-testing-python/</loc>
     <lastmod>2025-06-07T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>https://nervous-wright-ea05a8.netlify.app/tags/ab-testing/</loc>
+    <loc>https://nervous-wright-ea05a8.netlify.app/categories/ab-testing/</loc>
     <lastmod>2025-06-07T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>https://nervous-wright-ea05a8.netlify.app/categories/ab-testing/</loc>
+    <loc>https://nervous-wright-ea05a8.netlify.app/tags/ab-testing/</loc>
     <lastmod>2025-06-07T00:00:00+00:00</lastmod>
   </url><url>
     <loc>https://nervous-wright-ea05a8.netlify.app/categories/</loc>
     <lastmod>2025-06-07T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>https://nervous-wright-ea05a8.netlify.app/tags/eda/</loc>
+    <loc>https://nervous-wright-ea05a8.netlify.app/categories/eda/</loc>
     <lastmod>2025-06-07T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>https://nervous-wright-ea05a8.netlify.app/categories/eda/</loc>
+    <loc>https://nervous-wright-ea05a8.netlify.app/tags/eda/</loc>
     <lastmod>2025-06-07T00:00:00+00:00</lastmod>
   </url><url>
     <loc>https://nervous-wright-ea05a8.netlify.app/</loc>
@@ -26,14 +26,17 @@
     <loc>https://nervous-wright-ea05a8.netlify.app/post/</loc>
     <lastmod>2025-06-07T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>https://nervous-wright-ea05a8.netlify.app/tags/python/</loc>
+    <loc>https://nervous-wright-ea05a8.netlify.app/categories/python/</loc>
     <lastmod>2025-06-07T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>https://nervous-wright-ea05a8.netlify.app/categories/python/</loc>
+    <loc>https://nervous-wright-ea05a8.netlify.app/tags/python/</loc>
     <lastmod>2025-06-07T00:00:00+00:00</lastmod>
   </url><url>
     <loc>https://nervous-wright-ea05a8.netlify.app/tags/</loc>
     <lastmod>2025-06-07T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://nervous-wright-ea05a8.netlify.app/tags/a/b-testing/</loc>
+    <lastmod>2023-05-13T00:00:00+00:00</lastmod>
   </url><url>
     <loc>https://nervous-wright-ea05a8.netlify.app/post/ab-test-p1/</loc>
     <lastmod>2023-05-13T00:00:00+00:00</lastmod>
@@ -44,16 +47,16 @@
     <loc>https://nervous-wright-ea05a8.netlify.app/post/time-for-a-new-chapter/</loc>
     <lastmod>2023-03-20T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>https://nervous-wright-ea05a8.netlify.app/tags/sentiment-analysis/</loc>
-    <lastmod>2020-01-03T00:00:00+00:00</lastmod>
-  </url><url>
     <loc>https://nervous-wright-ea05a8.netlify.app/categories/sentiment-analysis/</loc>
     <lastmod>2020-01-03T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>https://nervous-wright-ea05a8.netlify.app/tags/text-analysis/</loc>
+    <loc>https://nervous-wright-ea05a8.netlify.app/tags/sentiment-analysis/</loc>
     <lastmod>2020-01-03T00:00:00+00:00</lastmod>
   </url><url>
     <loc>https://nervous-wright-ea05a8.netlify.app/categories/text-analysis/</loc>
+    <lastmod>2020-01-03T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://nervous-wright-ea05a8.netlify.app/tags/text-analysis/</loc>
     <lastmod>2020-01-03T00:00:00+00:00</lastmod>
   </url><url>
     <loc>https://nervous-wright-ea05a8.netlify.app/post/twitter-sentiment-analysis-part-2/</loc>
@@ -65,16 +68,16 @@
     <loc>https://nervous-wright-ea05a8.netlify.app/post/twitter-sentiment-analysis/</loc>
     <lastmod>2019-12-10T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>https://nervous-wright-ea05a8.netlify.app/tags/arima/</loc>
-    <lastmod>2019-11-30T00:00:00+00:00</lastmod>
-  </url><url>
     <loc>https://nervous-wright-ea05a8.netlify.app/categories/arima/</loc>
     <lastmod>2019-11-30T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>https://nervous-wright-ea05a8.netlify.app/tags/time-series/</loc>
+    <loc>https://nervous-wright-ea05a8.netlify.app/tags/arima/</loc>
     <lastmod>2019-11-30T00:00:00+00:00</lastmod>
   </url><url>
     <loc>https://nervous-wright-ea05a8.netlify.app/categories/time-series/</loc>
+    <lastmod>2019-11-30T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://nervous-wright-ea05a8.netlify.app/tags/time-series/</loc>
     <lastmod>2019-11-30T00:00:00+00:00</lastmod>
   </url><url>
     <loc>https://nervous-wright-ea05a8.netlify.app/post/time-series-analysis-of-crude-oil/</loc>
@@ -88,8 +91,6 @@
   </url><url>
     <loc>https://nervous-wright-ea05a8.netlify.app/tools/</loc>
     <lastmod>2019-07-06T15:27:17+06:00</lastmod>
-  </url><url>
-    <loc>https://nervous-wright-ea05a8.netlify.app/tags/a/b-testing/</loc>
   </url><url>
     <loc>https://nervous-wright-ea05a8.netlify.app/author/</loc>
   </url><url>

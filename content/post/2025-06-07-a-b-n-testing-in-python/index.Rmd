@@ -19,19 +19,18 @@ tags:
 ```{r setup_options, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE, fig.path = "index_files/figure-html/", fig.width = 4 )
 knitr::include_graphics("post/2025-06-07-a-b-n-testing-in-python/variants2.png", error = FALSE, dpi = 100)
+knitr::include_graphics("post/2025-06-07-a-b-n-testing-in-python/index_files/figure-html/displot-1.png", error = FALSE, dpi = 100)
 # sys.stderr.flush()
 
 ```
 
-The following case study will illustrate how to analyze the results for an A/N Test (or multitest). An A/N Test is a type of A/B Test in which multiple variants are tested at the same time. <br> We'll compare 2 variants, against a control, to increase purchase rate on a fictional website. Since testing multiple variants at once increases the error rate (known as Family Wise Error Rate--FWER), we'll use a correction when determining statistical significance. <!--more-->
-
 The following case study will illustrate how to analyze the results for an A/N Test (or multitest). An A/N Test is a type of A/B Test in which multiple variants are tested at the same time. 
 
-We'll compare 2 variants, against a control, to increase purchase rate on a fictional website. Since testing multiple variants at once increases the error rate (known as Family Wise Error Rate--FWER), we'll use a correction when determining statistical significance. 
+We'll compare 2 variants, against a control, to increase purchase rate on a fictional website. Since testing multiple variants at once increases the error rate (known as Family Wise Error Rate--FWER), we'll use a correction when determining statistical significance. <!--more-->
 
 # Intro
 
-We're asked to analyze the results of an experiment, performed on the splash-page, for a fictional theme park called Redwood Ridge. The park wants to launch an AI assisted booking agent, referred to as Rocky Raccoon, to help customers book flights, rental cars, meals, etc. They wish to test 2 variants: Variant_A with a simplified widget; Variant_B with a more interactive wizard; against the control page with no agent. 
+We're asked to analyze the results of an experiment, performed on the splash-page, for a fictional theme park called Redwood Ridge. The park wants to launch an AI assisted booking agent, referred to as Rocky Raccoon, to help customers book flights, rental cars, meals, etc. They wish to test 2 variants: Variant_A with a simplified widget; Variant_B with a more interactive wizard; against the control page with no agent.
 
 <http>
 <center>
@@ -290,7 +289,7 @@ We see that the only test that is actually significant is the *Control* vs *vari
 Now let's bootstrap random sample and calculate the mean of each group: *Control* and *variation_B* to visualize the distributions. This will give us a sense of the difference between the groups visually. 
 
 
-```{python, class.source="my-python-code", warning=FALSE, message=FALSE, error=FALSE, results='hold', fig.show='asis'}
+```{python displot, class.source="my-python-code", warning=FALSE, message=FALSE, error=FALSE, results='hold'}
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
