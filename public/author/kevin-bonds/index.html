@@ -118,7 +118,39 @@
               <a href="/categories/eda">Eda</a>
               
             </div>
-            <p>A stakeholder may ask if a particular change, to an application, will make a user more likely to make a purchase (or more likely to make a larger purchase, etc.</p>
+            <p>
+<link href="/rmarkdown-libs/htmltools-fill/fill.css" rel="stylesheet" />
+<script src="/rmarkdown-libs/htmlwidgets/htmlwidgets.js"></script>
+<script src="/rmarkdown-libs/plotly-binding/plotly.js"></script>
+<script src="/rmarkdown-libs/typedarray/typedarray.min.js"></script>
+<script src="/rmarkdown-libs/jquery/jquery.min.js"></script>
+<link href="/rmarkdown-libs/crosstalk/css/crosstalk.min.css" rel="stylesheet" />
+<script src="/rmarkdown-libs/crosstalk/js/crosstalk.min.js"></script>
+<link href="/rmarkdown-libs/plotly-htmlwidgets-css/plotly-htmlwidgets.css" rel="stylesheet" />
+<script src="/rmarkdown-libs/plotly-main/plotly-latest.min.js"></script>
+<link href="/rmarkdown-libs/pagedtable/css/pagedtable.css" rel="stylesheet" />
+<script src="/rmarkdown-libs/pagedtable/js/pagedtable.js"></script>
+
+<div id="TOC">
+<ul>
+<li><a href="#method" id="toc-method">Method</a></li>
+<li><a href="#prepping-ab-test-data" id="toc-prepping-ab-test-data">Prepping A/B Test Data</a></li>
+<li><a href="#cleaning-data" id="toc-cleaning-data">Cleaning Data</a></li>
+<li><a href="#considerations" id="toc-considerations">Considerations</a></li>
+<li><a href="#what-about-the-duplicates" id="toc-what-about-the-duplicates">What about the Duplicates</a></li>
+<li><a href="#adding-purchased-column-and-calculating-some-rates" id="toc-adding-purchased-column-and-calculating-some-rates">Adding Purchased Column and Calculating some rates</a>
+<ul>
+<li><a href="#user-based" id="toc-user-based">User based</a></li>
+</ul></li>
+<li><a href="#power-calulations-2-methods" id="toc-power-calulations-2-methods">Power Calulations (2 methods)</a>
+<ul>
+<li><a href="#power-calculation-test-for-proportions-method" id="toc-power-calculation-test-for-proportions-method">Power Calculation Test for Proportions Method</a></li>
+<li><a href="#using-logistic-regression" id="toc-using-logistic-regression">Using Logistic Regression</a></li>
+</ul></li>
+</ul>
+</div>
+
+<p>A stakeholder may ask if a particular change, to an application, will make a user more likely to make a purchase (or more likely to make a larger purchase, etc.). These types of questions are excellent candidates for a controlled experiment–known as A/B Testing. To answer these questions, a data scientist must apply good testing methods; and understand well, certain statistical concepts to evaluate the experiment effectively. </p>
             <a href="https://nervous-wright-ea05a8.netlify.app/post/ab-test-p1/" class="btn btn-sm btn-outline-primary">read more</a>
           </article>
           
@@ -130,7 +162,7 @@
               <a href="/categories/job-hunting">Job hunting</a>
               
             </div>
-            <p>Having spent the last three years as a Data Scientist at Location Labs by Avast and later at Smith Micro Software Inc (following the division&rsquo;s acquisition from Avast), I am now seeking my next opportunity.</p>
+            <p>Having spent the last three years as a Data Scientist at Location Labs by Avast and later at Smith Micro Software Inc (following the division’s acquisition from Avast), I am now seeking my next opportunity.</p>
             <a href="https://nervous-wright-ea05a8.netlify.app/post/time-for-a-new-chapter/" class="btn btn-sm btn-outline-primary">read more</a>
           </article>
           
@@ -172,7 +204,25 @@
               <a href="/categories/feature-engineering">Feature engineering</a>
               
             </div>
-            <p><p>The following is an analysis of the <em>Twitter Sentiment Analysis Dataset</em> available at: <a href="http://thinknook.com/twitter-sentiment-analysis-training-corpus-dataset-2012-09-22/">http://thinknook.com/twitter-sentiment-analysis-training-corpus-dataset-2012-09-22/</a>. I will attempt to use this data to train a model to label unseen tweets into <strong>&ldquo;Positive&rdquo;</strong> or <strong>&ldquo;Negative&rdquo;</strong> sentiment. I will walk through my methodology and include code.</p></p>
+            <p>
+
+<div id="TOC">
+<ul>
+<li><a href="#libraries-used" id="toc-libraries-used">Libraries Used</a></li>
+<li><a href="#count-features" id="toc-count-features">Count Features</a></li>
+<li><a href="#some-manual-work" id="toc-some-manual-work">Some Manual Work</a></li>
+<li><a href="#visualize-distributions-of-engineered-features" id="toc-visualize-distributions-of-engineered-features">Visualize Distributions of Engineered Features</a></li>
+<li><a href="#stratified-sampling" id="toc-stratified-sampling">Stratified Sampling</a></li>
+<li><a href="#tokenization" id="toc-tokenization">Tokenization</a></li>
+<li><a href="#remove-stopwords" id="toc-remove-stopwords">Remove Stopwords</a></li>
+<li><a href="#stemming" id="toc-stemming">Stemming</a></li>
+<li><a href="#create-a-document-feature-matrix" id="toc-create-a-document-feature-matrix">Create a Document-Feature Matrix</a></li>
+<li><a href="#setting-up-for-k-fold-cross-validation" id="toc-setting-up-for-k-fold-cross-validation">Setting up for K-fold Cross Validation</a></li>
+<li><a href="#train-the-first-model" id="toc-train-the-first-model">Train the First Model</a></li>
+</ul>
+</div>
+
+<p>The following is an analysis of the <em>Twitter Sentiment Analysis Dataset</em> available at: <a href="http://thinknook.com/twitter-sentiment-analysis-training-corpus-dataset-2012-09-22/" class="uri">http://thinknook.com/twitter-sentiment-analysis-training-corpus-dataset-2012-09-22/</a>. I will attempt to use this data to train a model to label unseen tweets into <strong>“Positive”</strong> or <strong>“Negative”</strong> sentiment. I will walk through my methodology and include code. </p>
             <a href="https://nervous-wright-ea05a8.netlify.app/post/twitter-sentiment-analysis/" class="btn btn-sm btn-outline-primary">read more</a>
           </article>
           

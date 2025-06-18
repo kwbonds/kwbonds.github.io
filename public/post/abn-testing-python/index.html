@@ -100,33 +100,33 @@
           
         </div>
         
+        Add commentMore actions
+        
         <div class="content mb-5">
-          
-
-
-<p>The following case study will illustrate how to analyze the results of a type of experiment known as an A/N Test (or multitest). An A/N Test is an A/B Test in which multiple (N number of) variants are tested at the same time.</p>
-<p>Here we will compare 2 variants against a control to the increase purchase rate on a website. Since testing multiple variants at once will increase error the rate (known as Family Wise Error Rate–FWER), we will use a correction when determining statistical significance.</p>
-<div id="analyzing-results" class="section level1">
-<h1>Analyzing results</h1>
-<p>We are asked to analyze the results of an experiment, performed on the splash-page, for a fictional theme park called Redwood Ridge. The park wants to launch an AI assisted booking agent, referred to as Rocky Raccoon, to help customers book flights, rental cars, meals, etc. They wish to test: Variant_A with a simplified widget; Variant_B with a more complex interactive wizard; against the control page with no agent.</p>
+          </p>
+<p>The following case study will illustrate how to analyze the results for an A/N Test (or multitest). An A/N Test is a type of A/B Test in which multiple variants are tested at the same time.</p>
+<p>We’ll compare 2 variants, against a control, to increase purchase rate on a fictional website. Since testing multiple variants at once increases the error rate (known as Family Wise Error Rate–FWER), we’ll use a correction when determining statistical significance.</p>
+<div id="intro" class="section level1">
+<h1>Intro</h1>
+<p>We’re asked to analyze the results of an experiment, performed on the splash-page, for a fictional theme park called Redwood Ridge. The park wants to launch an AI assisted booking agent, referred to as Rocky Raccoon, to help customers book flights, rental cars, meals, etc. They wish to test 2 variants: Variant_A with a simplified widget; Variant_B with a more interactive wizard; against the control page with no agent.</p>
 <http>
 <center>
 <img src="variants2.png" alt = "The three pages"  width = "98%">
 </center>
 <p></http></p>
-<p>The test has already been performed. Therefore, we will skip the test planning and sample size calculations accepting this has all been done for us.</p>
 </div>
 <div id="formulating-the-hypothesis" class="section level1">
 <h1>Formulating the Hypothesis</h1>
-<p>First we formulate the alternate hypothesis. This is the one we are trying to accept by default of rejecting the Null Hypothesis.</p>
+<p>First we formulate the alternate hypothesis. This is the one we’re trying to find evidence to support–by default of rejecting the Null Hypothesis.</p>
 <p><strong>The Alternate Hypothesis: Adding an interactive travel planning wizard to the Homepage will boost ticket purchase conversion rates</strong></p>
-<p>The null hypothesis is always based on the idea that that every difference detected, in the measured statistic, is simply due to random chance. All hypothesis boils down to trying to reject the null hypothesis if there is enough evidence that it is unlikely the results due to chance.</p>
+<p>The null hypothesis always assumes the difference detected, in the measured statistic, is simply due to random chance. All hypothesis tests center on rejecting, or failing to reject, the null hypothesis. We reject the Null Hypothesis if there is enough evidence that it is unlikely the results are due to chance. We fail to reject whenever there is not enough evidence found in our experiment.</p>
 <p><strong>Null Hypothesis: An increase in ticket purchase rate can be explained as random chance</strong></p>
 <p>Our test statistic is defined as:</p>
 <p><strong>Test Statistic: Ticket Purchase Conversion Rate = (purchase count)/(unique visit count)</strong></p>
-<p>Let’s use Python to analyze the results and determine if it is safe to reject the Null Hypothesis.</p>
-<div id="load-python-libraries" class="section level2">
-<h2>Load Python libraries</h2>
+<p>Let’s use Python to analyze the results and determine if it’s safe to reject the Null Hypothesis.</p>
+</div>
+<div id="analysis" class="section level1">
+<h1>Analysis</h1>
 <pre class="python my-python-code"><code>import pandas as pd
 import numpy as np</code></pre>
 <pre class="python my-python-code"><code>rocky = pd.read_csv(&quot;../../../static/images/a-b-n-testing-in-python/data.csv&quot;)</code></pre>
@@ -146,18 +146,28 @@ import numpy as np</code></pre>
 ## 
 ## [264948 rows x 5 columns]</code></pre>
 </div>
-<div id="eda" class="section level2">
-<h2>EDA</h2>
-<div id="inspect-the-variants" class="section level3">
-<h3>Inspect the Variants</h3>
+<div id="eda" class="section level1">
+<h1>EDA</h1>
+<div id="inspect-the-variants" class="section level2">
+<h2>Inspect the Variants</h2>
+<p>What is the breakdown of purchases and non-purchases per treatment?</p>
+<pre class="python my-python-code"><code>rocky.groupby([&#39;treatment&#39;, &#39;ticket_purchased&#39;])[&#39;ticket_purchased&#39;].agg([&#39;count&#39;])</code></pre>
+<pre class="my-python-output"><code>##                               count
+## treatment   ticket_purchased       
+## control     0                 86413
+##             1                  1853
+## variation_A 0                 86130
+##             1                  1982
+## variation_B 0                 86462
+##             1                  2108</code></pre>
+<p>What is our raw purchase rates for each treatment?</p>
 <pre class="python my-python-code"><code>rocky.groupby(&#39;treatment&#39;)[&#39;ticket_purchased&#39;].agg([&#39;mean&#39;, &#39;count&#39;, &#39;std&#39;])</code></pre>
 <pre class="my-python-output"><code>##                  mean  count       std
 ## treatment                             
 ## control      0.020993  88266  0.143363
 ## variation_A  0.022494  88112  0.148285
 ## variation_B  0.023800  88570  0.152428</code></pre>
-<p>We see there is a difference in the means; with the <em>variation_B</em> showing the highest lift. But let’s make sure we don’t have duplicates.</p>
-</div>
+<p>We see there is a difference in the means; with the <em>variation_B</em> showing the highest possible lift. But let’s make sure we don’t have duplicates.</p>
 </div>
 <div id="check-for-duplicates" class="section level2">
 <h2>Check for Duplicates</h2>
@@ -195,7 +205,7 @@ rocky.groupby(&#39;treatment&#39;)[[&#39;trip_planner_engaged&#39;, &#39;ticket_
 </div>
 <div id="balancing-the-classes" class="section level2">
 <h2>Balancing the Classes</h2>
-<p>Now we should balance the groups by sampling from each equally and concatenating the data frames back together. This will insure group size doesn’t influence results.</p>
+<p>Now we should balance the groups (by sampling from each equally) and concatenate the data frames back together. This will insure group size doesn’t influence results.</p>
 <pre class="python my-python-code"><code>rocky_sample_control = rocky[rocky[&#39;treatment&#39;]==&#39;control&#39;].sample(n=85000, replace=False, random_state=42)
 rocky_sample_A = rocky[rocky[&#39;treatment&#39;]==&#39;variation_A&#39;].sample(n=85000, replace=False, random_state=42)
 rocky_sample_B = rocky[rocky[&#39;treatment&#39;]==&#39;variation_B&#39;].sample(n=85000, replace=False, random_state=42)
@@ -212,7 +222,7 @@ rocky = pd.concat([rocky_sample_control, rocky_sample_A, rocky_sample_B])</code>
 ##             1                     0.020739  23530
 ## variation_B 0                     0.024252  61686
 ##             1                     0.023076  23314</code></pre>
-<p>It doesn’t make sense to have trip planner engagment for the control group. Something is amiss. We should alert Engineering that our logging seems to be broken. Also, there is a large imbalance in the groups, but there is a bigger problem with the <em>trip_planner_engaged</em> field. We’ll ignore this field focusing on just the impact of the variants on ticket purchases.</p>
+<p>There is a problem with the <em>trip_planner_engaged</em> field. It doesn’t make sense to have trip planner engagement for the control group. Something is amiss. We should alert Engineering that our logging seems to be broken. We’ll ignore this field focusing on just the impact of the variants on ticket purchases.</p>
 </div>
 </div>
 <div id="checking-for-significance-in-the-difference-in-means" class="section level1">
@@ -245,7 +255,7 @@ print(f&#39;Group B 95% CI : [{B_lo95:.4f}, {B_up95:.4f}]&#39;)</code></pre>
 ## p-value: 0.000076
 ## Group C 95% CI : [0.0201, 0.0220]
 ## Group B 95% CI : [0.0229, 0.0250]</code></pre>
-<p>The confidence intervals above are for each group. We can calculate the confidence interval of the difference between the 2 groups to inform us on how large might the difference be. Let’s look at the difference between <em>control</em> and <em>variation_B</em></p>
+<p>These confidence intervals are for each group. We can calculate the confidence interval of the difference between the 2 groups to inform how large might the difference be. Let’s look at the difference between <em>control</em> and <em>variation_B</em></p>
 <pre class="python my-python-code"><code>low, upp = confint_proportions_2indep(signup_B, n_B, signup_C, n_C, method=None, compare=&#39;diff&#39;, alpha=0.05, correction=True)
 
 print(f&#39; Difference 95% CI [{low:.4f}, {upp:.4f}]&#39;)</code></pre>
@@ -391,19 +401,20 @@ print(f&quot;Size of each random sample: {sample_size}&quot;)</code></pre>
 ## Text(0.5, 1.0, &#39;Sampling Distributions (Normal Approximation)&#39;)
 ## Text(0.5, 0, &#39;Sample Mean Ticket Purchase Rate&#39;)
 ## Text(0, 0.5, &#39;Frequency&#39;)
-## &lt;matplotlib.legend.Legend object at 0x30583c160&gt;</code></pre>
-<p><img src="https://nervous-wright-ea05a8.netlify.app/post/abn-testing-python/index_files/figure-html/unnamed-chunk-16-1.png" width="576" /></p>
+## &lt;matplotlib.legend.Legend object at 0x3063ec040&gt;</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-17-1.png" width="576" /></p>
 <pre><code>## Control group size: 85000
 ## Variation B group size: 85000
 ## Number of random samples generated for each group: 1000
 ## Size of each random sample: 80000</code></pre>
 <p>If we take fairly large sample sizes and enough samples we can see that these two distributions are distinct.</p>
-<div id="recommendation" class="section level2">
-<h2>Recommendation</h2>
+</div>
+<div id="recommendation" class="section level1">
+<h1>Recommendation</h1>
 <p>We could recommend the <em>variation_B</em> as statistically significant at the 95% confidence level.</p>
 </div>
-<div id="alternate-consideration" class="section level2">
-<h2>Alternate Consideration</h2>
+<div id="alternate-consideration" class="section level1">
+<h1>Alternate Consideration</h1>
 <p>Since we saw that we cannot reject the null hypothesis at the 95% confidence level between <em>variant_A</em> and <em>variant_B</em> even after correction, we cannot say that they are statistically dissimilar from one another. It is possible that the slight differnce between them is just random chance. This may be important if one variant is more costly to implement than the other. For instance if <em>variation_A</em> is considerably cheaper than <em>variation_B</em> then we might want to loosen our confidence level a bit to see if we can reject the null for <em>variation_B</em> at a slightly lower confidence.</p>
 <p>If we go back to our Bonferroni correction calculation and lower our alpha to 0.10 (corresponding to 90% confidence)</p>
 <pre class="python my-python-code"><code># Bonferroni correction for 90% Confidence interval
@@ -421,7 +432,6 @@ print(&#39;Bonferroni Corrected alpha: {:.4f}&#39;.format(corrected[2]))</code><
 ## Corrected P-values: [0.14968898 0.00022752 0.13721744]
 ## Bonferroni Corrected alpha: 0.0345</code></pre>
 <p>We can see that now, even at 90% confidence level, the only test that is significant is the variation_B over control. Given this <em>variation_B</em> should be chosen.</p>
-</div>
 </div>
 
         </div>

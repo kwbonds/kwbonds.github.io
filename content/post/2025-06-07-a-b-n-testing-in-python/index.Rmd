@@ -3,6 +3,9 @@ title: A/B/N Testing in Python
 author: Package Build
 date: '2025-06-07'
 slug: abn-testing-python
+output:
+  blogdown::html_page:
+    toc: true
 categories:
   - "AB-Testing"
   - "Python"
@@ -20,11 +23,13 @@ knitr::include_graphics("post/2025-06-07-a-b-n-testing-in-python/variants2.png",
 
 ```
 
+The following case study will illustrate how to analyze the results for an A/N Test (or multitest). An A/N Test is a type of A/B Test in which multiple variants are tested at the same time. <br> We'll compare 2 variants, against a control, to increase purchase rate on a fictional website. Since testing multiple variants at once increases the error rate (known as Family Wise Error Rate--FWER), we'll use a correction when determining statistical significance. <!--more-->
+
 The following case study will illustrate how to analyze the results for an A/N Test (or multitest). An A/N Test is a type of A/B Test in which multiple variants are tested at the same time. 
 
 We'll compare 2 variants, against a control, to increase purchase rate on a fictional website. Since testing multiple variants at once increases the error rate (known as Family Wise Error Rate--FWER), we'll use a correction when determining statistical significance. 
 
-# Analyzing results
+# Intro
 
 We're asked to analyze the results of an experiment, performed on the splash-page, for a fictional theme park called Redwood Ridge. The park wants to launch an AI assisted booking agent, referred to as Rocky Raccoon, to help customers book flights, rental cars, meals, etc. They wish to test 2 variants: Variant_A with a simplified widget; Variant_B with a more interactive wizard; against the control page with no agent. 
 
@@ -59,7 +64,7 @@ py_config()
 
 Let's use Python to analyze the results and determine if it's safe to reject the Null Hypothesis. 
 
-## Load Python libraries
+# Analysis
 
 ```{python, include=TRUE, class.source="my-python-code", class.output="my-python-output", results='hold'}
 import pandas as pd
@@ -76,9 +81,9 @@ rocky = pd.read_csv("../../../static/images/a-b-n-testing-in-python/data.csv")
 print(rocky)
 
 ```
-## EDA
+# EDA
 
-### Inspect the Variants
+## Inspect the Variants
 
 What is the breakdown of purchases and non-purchases per treatment?
 
@@ -342,11 +347,11 @@ print(f"Size of each random sample: {sample_size}")
 
 If we take fairly large sample sizes and enough samples we can see that these two distributions are distinct. 
 
-## Recommendation
+# Recommendation
 
 We could recommend the *variation_B* as statistically significant at the 95% confidence level. 
 
-## Alternate Consideration
+# Alternate Consideration
 
 Since we saw that we cannot reject the null hypothesis at the 95% confidence level between *variant_A* and *variant_B* even after correction, we cannot say that they are statistically dissimilar from one another. It is possible that the slight differnce between them is just random chance. This may be important if one variant is more costly to implement than the other. For instance if *variation_A* is considerably cheaper than *variation_B* then we might want to loosen our confidence level a bit to see if we can reject the null for *variation_B* at a slightly lower confidence. 
 

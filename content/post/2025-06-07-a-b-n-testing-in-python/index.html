@@ -3,6 +3,9 @@ title: A/B/N Testing in Python
 author: Package Build
 date: '2025-06-07'
 slug: abn-testing-python
+output:
+  blogdown::html_page:
+    toc: true
 categories:
   - "AB-Testing"
   - "Python"
@@ -14,11 +17,31 @@ tags:
 ---
 
 
+<div id="TOC">
+<ul>
+<li><a href="#intro" id="toc-intro">Intro</a></li>
+<li><a href="#formulating-the-hypothesis" id="toc-formulating-the-hypothesis">Formulating the Hypothesis</a></li>
+<li><a href="#analysis" id="toc-analysis">Analysis</a></li>
+<li><a href="#eda" id="toc-eda">EDA</a>
+<ul>
+<li><a href="#inspect-the-variants" id="toc-inspect-the-variants">Inspect the Variants</a></li>
+<li><a href="#check-for-duplicates" id="toc-check-for-duplicates">Check for Duplicates</a></li>
+<li><a href="#drop-duplicates" id="toc-drop-duplicates">Drop Duplicates</a></li>
+<li><a href="#balancing-the-classes" id="toc-balancing-the-classes">Balancing the Classes</a></li>
+<li><a href="#group-and-inspect" id="toc-group-and-inspect">Group and Inspect</a></li>
+</ul></li>
+<li><a href="#checking-for-significance-in-the-difference-in-means" id="toc-checking-for-significance-in-the-difference-in-means">Checking for Significance in the Difference in Means</a></li>
+<li><a href="#visualizing-the-bootstrapped-data" id="toc-visualizing-the-bootstrapped-data">Visualizing the Bootstrapped Data</a></li>
+<li><a href="#recommendation" id="toc-recommendation">Recommendation</a></li>
+<li><a href="#alternate-consideration" id="toc-alternate-consideration">Alternate Consideration</a></li>
+</ul>
+</div>
 
+<p>The following case study will illustrate how to analyze the results for an A/N Test (or multitest). An A/N Test is a type of A/B Test in which multiple variants are tested at the same time. <br> We’ll compare 2 variants, against a control, to increase purchase rate on a fictional website. Since testing multiple variants at once increases the error rate (known as Family Wise Error Rate–FWER), we’ll use a correction when determining statistical significance. <!--more--></p>
 <p>The following case study will illustrate how to analyze the results for an A/N Test (or multitest). An A/N Test is a type of A/B Test in which multiple variants are tested at the same time.</p>
 <p>We’ll compare 2 variants, against a control, to increase purchase rate on a fictional website. Since testing multiple variants at once increases the error rate (known as Family Wise Error Rate–FWER), we’ll use a correction when determining statistical significance.</p>
-<div id="analyzing-results" class="section level1">
-<h1>Analyzing results</h1>
+<div id="intro" class="section level1">
+<h1>Intro</h1>
 <p>We’re asked to analyze the results of an experiment, performed on the splash-page, for a fictional theme park called Redwood Ridge. The park wants to launch an AI assisted booking agent, referred to as Rocky Raccoon, to help customers book flights, rental cars, meals, etc. They wish to test 2 variants: Variant_A with a simplified widget; Variant_B with a more interactive wizard; against the control page with no agent.</p>
 <http>
 <center>
@@ -35,8 +58,9 @@ tags:
 <p>Our test statistic is defined as:</p>
 <p><strong>Test Statistic: Ticket Purchase Conversion Rate = (purchase count)/(unique visit count)</strong></p>
 <p>Let’s use Python to analyze the results and determine if it’s safe to reject the Null Hypothesis.</p>
-<div id="load-python-libraries" class="section level2">
-<h2>Load Python libraries</h2>
+</div>
+<div id="analysis" class="section level1">
+<h1>Analysis</h1>
 <pre class="python my-python-code"><code>import pandas as pd
 import numpy as np</code></pre>
 <pre class="python my-python-code"><code>rocky = pd.read_csv(&quot;../../../static/images/a-b-n-testing-in-python/data.csv&quot;)</code></pre>
@@ -56,10 +80,10 @@ import numpy as np</code></pre>
 ## 
 ## [264948 rows x 5 columns]</code></pre>
 </div>
-<div id="eda" class="section level2">
-<h2>EDA</h2>
-<div id="inspect-the-variants" class="section level3">
-<h3>Inspect the Variants</h3>
+<div id="eda" class="section level1">
+<h1>EDA</h1>
+<div id="inspect-the-variants" class="section level2">
+<h2>Inspect the Variants</h2>
 <p>What is the breakdown of purchases and non-purchases per treatment?</p>
 <pre class="python my-python-code"><code>rocky.groupby([&#39;treatment&#39;, &#39;ticket_purchased&#39;])[&#39;ticket_purchased&#39;].agg([&#39;count&#39;])</code></pre>
 <pre class="my-python-output"><code>##                               count
@@ -78,7 +102,6 @@ import numpy as np</code></pre>
 ## variation_A  0.022494  88112  0.148285
 ## variation_B  0.023800  88570  0.152428</code></pre>
 <p>We see there is a difference in the means; with the <em>variation_B</em> showing the highest possible lift. But let’s make sure we don’t have duplicates.</p>
-</div>
 </div>
 <div id="check-for-duplicates" class="section level2">
 <h2>Check for Duplicates</h2>
@@ -312,19 +335,20 @@ print(f&quot;Size of each random sample: {sample_size}&quot;)</code></pre>
 ## Text(0.5, 1.0, &#39;Sampling Distributions (Normal Approximation)&#39;)
 ## Text(0.5, 0, &#39;Sample Mean Ticket Purchase Rate&#39;)
 ## Text(0, 0.5, &#39;Frequency&#39;)
-## &lt;matplotlib.legend.Legend object at 0x30ebf8a00&gt;</code></pre>
+## &lt;matplotlib.legend.Legend object at 0x3063ec040&gt;</code></pre>
 <p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-17-1.png" width="576" /></p>
 <pre><code>## Control group size: 85000
 ## Variation B group size: 85000
 ## Number of random samples generated for each group: 1000
 ## Size of each random sample: 80000</code></pre>
 <p>If we take fairly large sample sizes and enough samples we can see that these two distributions are distinct.</p>
-<div id="recommendation" class="section level2">
-<h2>Recommendation</h2>
+</div>
+<div id="recommendation" class="section level1">
+<h1>Recommendation</h1>
 <p>We could recommend the <em>variation_B</em> as statistically significant at the 95% confidence level.</p>
 </div>
-<div id="alternate-consideration" class="section level2">
-<h2>Alternate Consideration</h2>
+<div id="alternate-consideration" class="section level1">
+<h1>Alternate Consideration</h1>
 <p>Since we saw that we cannot reject the null hypothesis at the 95% confidence level between <em>variant_A</em> and <em>variant_B</em> even after correction, we cannot say that they are statistically dissimilar from one another. It is possible that the slight differnce between them is just random chance. This may be important if one variant is more costly to implement than the other. For instance if <em>variation_A</em> is considerably cheaper than <em>variation_B</em> then we might want to loosen our confidence level a bit to see if we can reject the null for <em>variation_B</em> at a slightly lower confidence.</p>
 <p>If we go back to our Bonferroni correction calculation and lower our alpha to 0.10 (corresponding to 90% confidence)</p>
 <pre class="python my-python-code"><code># Bonferroni correction for 90% Confidence interval
@@ -342,5 +366,4 @@ print(&#39;Bonferroni Corrected alpha: {:.4f}&#39;.format(corrected[2]))</code><
 ## Corrected P-values: [0.14968898 0.00022752 0.13721744]
 ## Bonferroni Corrected alpha: 0.0345</code></pre>
 <p>We can see that now, even at 90% confidence level, the only test that is significant is the variation_B over control. Given this <em>variation_B</em> should be chosen.</p>
-</div>
 </div>

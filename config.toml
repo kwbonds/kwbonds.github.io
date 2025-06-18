@@ -7,7 +7,7 @@ title = "Kevin Bonds | Portfolio"
 theme = "northendlab-hugo"
 author = "Kevin Bonds"
 # post pagination
-paginate = "5"
+paginate = "2"
 # post excerpt
 summaryLength = "5"
 # disqus short name
@@ -115,7 +115,7 @@ enable = true
 ####################### banner #######################################
 [params.banner]
 bgImage = "images/banner/banner-bg.svg"
-title = "<p style=\"font-size: 40px;\">Hi there, I'm Kevin Bonds</p> <br> <p style=\"font-size: 20px;\">I'm a Data Scientist helping companies make data driven decisions. This blog is all about Data Science! It functions as my personal portfolio. Please have a look and feel free to contact me. </p> "
+title = "<p style=\"font-size: 40px;\">Hi there, I'm Kevin Bonds</p> <p style=\"font-size: 20px;\">Welcome to my portfolio/blog! <br> <br> I'm a Data Scientist looking for my next remote/hybrid SF Bay based role. I enjoy helping companies make data driven decisions through analysis and experimentation. Below are examples of my work. Enjoy! </p> "
 summary = "about/index.html"
 image = "images/banner/Desk_back.png"
 copyright = "&copy; Icons made by [freepik](https://www.flaticon.com/authors/freepik)"

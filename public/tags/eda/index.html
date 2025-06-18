@@ -105,7 +105,29 @@
               <a href="/categories/eda">Eda</a>
               
             </div>
-            <p>The following case study will illustrate how to analyze the results of a type of experiment known as an A/N Test (or multitest).</p>
+            <p>
+
+<div id="TOC">
+<ul>
+<li><a href="#intro" id="toc-intro">Intro</a></li>
+<li><a href="#formulating-the-hypothesis" id="toc-formulating-the-hypothesis">Formulating the Hypothesis</a></li>
+<li><a href="#analysis" id="toc-analysis">Analysis</a></li>
+<li><a href="#eda" id="toc-eda">EDA</a>
+<ul>
+<li><a href="#inspect-the-variants" id="toc-inspect-the-variants">Inspect the Variants</a></li>
+<li><a href="#check-for-duplicates" id="toc-check-for-duplicates">Check for Duplicates</a></li>
+<li><a href="#drop-duplicates" id="toc-drop-duplicates">Drop Duplicates</a></li>
+<li><a href="#balancing-the-classes" id="toc-balancing-the-classes">Balancing the Classes</a></li>
+<li><a href="#group-and-inspect" id="toc-group-and-inspect">Group and Inspect</a></li>
+</ul></li>
+<li><a href="#checking-for-significance-in-the-difference-in-means" id="toc-checking-for-significance-in-the-difference-in-means">Checking for Significance in the Difference in Means</a></li>
+<li><a href="#visualizing-the-bootstrapped-data" id="toc-visualizing-the-bootstrapped-data">Visualizing the Bootstrapped Data</a></li>
+<li><a href="#recommendation" id="toc-recommendation">Recommendation</a></li>
+<li><a href="#alternate-consideration" id="toc-alternate-consideration">Alternate Consideration</a></li>
+</ul>
+</div>
+
+<p>The following case study will illustrate how to analyze the results for an A/N Test (or multitest). An A/N Test is a type of A/B Test in which multiple variants are tested at the same time. <br> We’ll compare 2 variants, against a control, to increase purchase rate on a fictional website. Since testing multiple variants at once increases the error rate (known as Family Wise Error Rate–FWER), we’ll use a correction when determining statistical significance. </p>
             <a href="https://nervous-wright-ea05a8.netlify.app/post/abn-testing-python/" class="btn btn-sm btn-outline-primary">read more</a>
           </article>
           
@@ -119,7 +141,39 @@
               <a href="/categories/eda">Eda</a>
               
             </div>
-            <p>A stakeholder may ask if a particular change, to an application, will make a user more likely to make a purchase (or more likely to make a larger purchase, etc.</p>
+            <p>
+<link href="/rmarkdown-libs/htmltools-fill/fill.css" rel="stylesheet" />
+<script src="/rmarkdown-libs/htmlwidgets/htmlwidgets.js"></script>
+<script src="/rmarkdown-libs/plotly-binding/plotly.js"></script>
+<script src="/rmarkdown-libs/typedarray/typedarray.min.js"></script>
+<script src="/rmarkdown-libs/jquery/jquery.min.js"></script>
+<link href="/rmarkdown-libs/crosstalk/css/crosstalk.min.css" rel="stylesheet" />
+<script src="/rmarkdown-libs/crosstalk/js/crosstalk.min.js"></script>
+<link href="/rmarkdown-libs/plotly-htmlwidgets-css/plotly-htmlwidgets.css" rel="stylesheet" />
+<script src="/rmarkdown-libs/plotly-main/plotly-latest.min.js"></script>
+<link href="/rmarkdown-libs/pagedtable/css/pagedtable.css" rel="stylesheet" />
+<script src="/rmarkdown-libs/pagedtable/js/pagedtable.js"></script>
+
+<div id="TOC">
+<ul>
+<li><a href="#method" id="toc-method">Method</a></li>
+<li><a href="#prepping-ab-test-data" id="toc-prepping-ab-test-data">Prepping A/B Test Data</a></li>
+<li><a href="#cleaning-data" id="toc-cleaning-data">Cleaning Data</a></li>
+<li><a href="#considerations" id="toc-considerations">Considerations</a></li>
+<li><a href="#what-about-the-duplicates" id="toc-what-about-the-duplicates">What about the Duplicates</a></li>
+<li><a href="#adding-purchased-column-and-calculating-some-rates" id="toc-adding-purchased-column-and-calculating-some-rates">Adding Purchased Column and Calculating some rates</a>
+<ul>
+<li><a href="#user-based" id="toc-user-based">User based</a></li>
+</ul></li>
+<li><a href="#power-calulations-2-methods" id="toc-power-calulations-2-methods">Power Calulations (2 methods)</a>
+<ul>
+<li><a href="#power-calculation-test-for-proportions-method" id="toc-power-calculation-test-for-proportions-method">Power Calculation Test for Proportions Method</a></li>
+<li><a href="#using-logistic-regression" id="toc-using-logistic-regression">Using Logistic Regression</a></li>
+</ul></li>
+</ul>
+</div>
+
+<p>A stakeholder may ask if a particular change, to an application, will make a user more likely to make a purchase (or more likely to make a larger purchase, etc.). These types of questions are excellent candidates for a controlled experiment–known as A/B Testing. To answer these questions, a data scientist must apply good testing methods; and understand well, certain statistical concepts to evaluate the experiment effectively. </p>
             <a href="https://nervous-wright-ea05a8.netlify.app/post/ab-test-p1/" class="btn btn-sm btn-outline-primary">read more</a>
           </article>
           
