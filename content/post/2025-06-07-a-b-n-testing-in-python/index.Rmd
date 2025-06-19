@@ -5,7 +5,7 @@ date: '2025-06-07'
 slug: abn-testing-python
 output:
   blogdown::html_page:
-    toc: true
+    toc: false
 categories:
   - "AB-Testing"
   - "Python"
