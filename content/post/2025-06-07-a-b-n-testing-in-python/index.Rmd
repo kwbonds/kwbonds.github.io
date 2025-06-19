@@ -1,6 +1,6 @@
 ---
 title: A/B/N Testing in Python
-author: Package Build
+author: Kevin Bonds
 date: '2025-06-07'
 slug: abn-testing-python
 output:
