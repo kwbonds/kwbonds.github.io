@@ -26,7 +26,10 @@ knitr::include_graphics("post/2025-06-07-a-b-n-testing-in-python/index_files/fig
 
 The following case study will illustrate how to analyze the results for an A/N Test (or multitest). An A/N Test is a type of A/B Test in which multiple variants are tested at the same time. 
 
-We'll compare 2 variants, against a control, to increase purchase rate on a fictional website. Since testing multiple variants at once increases the error rate (known as Family Wise Error Rate--FWER), we'll use a correction when determining statistical significance. <!--more-->
+We'll compare 2 variants, against a control, to increase purchase rate on a fictional website. Since testing multiple variants at once increases the error rate (known as Family Wise Error Rate--FWER), we'll use a correction when determining statistical significance. 
+
+Along the way, I'll warn against some common mistakes when designing and interpreting results of experiments. And touch on the sticky subject of *P-values* and what they mean (and don't mean). Hope you find it informative. 
+<!--more-->
 
 # Intro
 
