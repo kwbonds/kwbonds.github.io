@@ -102,14 +102,16 @@
         
         <div class="content mb-5">
           <p>The following case study will illustrate how to analyze the results for an A/N Test (or multitest). An A/N Test is a type of A/B Test in which multiple variants are tested at the same time.</p>
-<p>We’ll compare 2 variants, against a control, to increase purchase rate on a fictional website. Since testing multiple variants at once increases the error rate (known as Family Wise Error Rate–FWER), we’ll use a correction when determining statistical significance. 
+<p>We’ll compare 2 variants, against a control, to increase purchase rate on a fictional website. Since testing multiple variants at once increases the error rate (known as Family Wise Error Rate–FWER), we’ll use a correction when determining statistical significance.</p>
+<p>Along the way, I’ll warn against some common mistakes when designing and interpreting results of experiments. And touch on the sticky subject of <em>P-values</em> and what they mean (and don’t mean). Hope you find it informative.
+
 
 
 
 </p>
 <div id="intro" class="section level1">
 <h1>Intro</h1>
-<p>We’re asked to analyze the results of an experiment, performed on the splash-page, for a fictional theme park called Redwood Ridge. The park wants to launch an AI assisted booking agent, referred to as Rocky Raccoon, to help customers book flights, rental cars, meals, etc. They wish to test 2 variants: Variant_A with a simplified widget; Variant_B with a more interactive wizard; against the control page with no agent.</p>
+<p>We’re asked to analyze the results of an experiment, performed on the splash-page, for a fictional theme park called Redwood Ridge. The park wants to launch an AI assisted booking agent, referred to as Rocky Raccoon, to help customers booking flights, rental cars, meals, etc. They wish to test 2 variants: Variant_A with a simplified widget; Variant_B with a more interactive wizard; against the control page with no agent.</p>
 <http>
 <center>
 <img src="variants2.png" alt = "The three pages"  width = "98%">
@@ -120,10 +122,10 @@
 <h1>Formulating the Hypothesis</h1>
 <p>First we formulate the alternate hypothesis. This is the one we’re trying to find evidence to support–by default of rejecting the Null Hypothesis.</p>
 <p><strong>The Alternate Hypothesis: Adding an interactive travel planning wizard to the Homepage will boost ticket purchase conversion rates</strong></p>
-<p>The null hypothesis always assumes the difference detected, in the measured statistic, is simply due to random chance. All hypothesis tests center on rejecting, or failing to reject, the null hypothesis. We reject the Null Hypothesis if there is enough evidence that it is unlikely the results are due to chance. We fail to reject whenever there is not enough evidence found in our experiment.</p>
+<p>The null hypothesis always assumes any difference is simply due to random chance. All hypothesis tests center on rejecting, or failing to reject, the null hypothesis. We reject the Null Hypothesis if there is enough evidence that it is unlikely the results are due to chance. We fail to reject whenever there is not enough evidence found in our experiment.</p>
 <p><strong>Null Hypothesis: An increase in ticket purchase rate can be explained as random chance</strong></p>
-<p>Our test statistic is defined as:</p>
-<p><strong>Test Statistic: Ticket Purchase Conversion Rate = (purchase count)/(unique visit count)</strong></p>
+<p>Our KPI is defined as:</p>
+<p><strong>KPI: Ticket Purchase Conversion Rate = (purchase count)/(unique visit count)</strong></p>
 <p>Let’s use Python to analyze the results and determine if it’s safe to reject the Null Hypothesis.</p>
 </div>
 <div id="analysis" class="section level1">
@@ -226,9 +228,13 @@ rocky = pd.concat([rocky_sample_control, rocky_sample_A, rocky_sample_B])</code>
 <p>There is a problem with the <em>trip_planner_engaged</em> field. It doesn’t make sense to have trip planner engagement for the control group. Something is amiss. We should alert Engineering that our logging seems to be broken. We’ll ignore this field focusing on just the impact of the variants on ticket purchases.</p>
 </div>
 </div>
-<div id="checking-for-significance-in-the-difference-in-means" class="section level1">
-<h1>Checking for Significance in the Difference in Means</h1>
-<p>Since <em>varation_B</em> seems to have the highest lift let’s see if the results are significant (without correction).</p>
+<div id="testing-for-significance" class="section level1">
+<h1>Testing for Significance</h1>
+<p>Since <em>variation_B</em> seems to have the highest lift let’s see if the results are significant (without correction). Typical treatment is to set <em>Significance Threshold</em> at 0.05 equivalent to 5% <em>Confidence level</em> before the test. After the test the p-value is calculated and compared to this <em>Confidence Level</em>. If lower the <em>Null Hypothesis</em> is rejected.</p>
+<blockquote>
+<p><strong><em>Warning:</em></strong> <em>P-values</em> are often missunderstood and are a sticky subject. At the risk of oversimplifying: let me say a few things about them. <em>P-values</em> measure how likely is the value you found, or a larger one, <strong>if the <em>Null Hypothesis</em> is true</strong>. They DO NOT predict the false positive error rate. Recent Baeseyan techiniques have shown that the false positive error rate from 0.05 <em>p-value</em> is actually between 23%-50%. What we’re really interested in; is when <strong>the <em>Null Hypothesis</em> is FALSE</strong>. But <em>p-values</em> always assume it’s true. Low <em>p-values</em> are evidence and speak to better reproducibility. Lower the <em>p-value</em> the better. Actually a p-value of 0.002 corresponds more to a false positive error rate near 5%. We need to keep these facts in mind.</p>
+</blockquote>
+<p>We calculate the <em>p-value</em> and group <em>Confidence Level</em> like below:</p>
 <pre class="python my-python-code"><code>from statsmodels.stats.proportion import proportions_ztest, proportion_confint, confint_proportions_2indep
 # Calculate the number of visits
 n_C = rocky[rocky[&#39;treatment&#39;] == &#39;control&#39;][&#39;ticket_purchased&#39;].count()
@@ -256,13 +262,16 @@ print(f&#39;Group B 95% CI : [{B_lo95:.4f}, {B_up95:.4f}]&#39;)</code></pre>
 ## p-value: 0.000076
 ## Group C 95% CI : [0.0201, 0.0220]
 ## Group B 95% CI : [0.0229, 0.0250]</code></pre>
-<p>These confidence intervals are for each group. We can calculate the confidence interval of the difference between the 2 groups to inform how large might the difference be. Let’s look at the difference between <em>control</em> and <em>variation_B</em></p>
+<div id="practical-significance" class="section level2">
+<h2>Practical Significance</h2>
+<p>We see that the These <em>Confidence Intervals</em> are for each group. This speaks to the significance of the result of our test. But what about the practical significance of the difference we found? For that, we should calculate the confidence interval of the difference, between the 2 groups, to inform how large might the difference be. Let’s look at the difference between <em>control</em> and <em>variation_B</em></p>
 <pre class="python my-python-code"><code>low, upp = confint_proportions_2indep(signup_B, n_B, signup_C, n_C, method=None, compare=&#39;diff&#39;, alpha=0.05, correction=True)
 
 print(f&#39; Difference 95% CI [{low:.4f}, {upp:.4f}]&#39;)</code></pre>
 <pre><code>##  Difference 95% CI [0.0014, 0.0043]</code></pre>
 <p>This tells us the difference, in the two groups, falls somewhere between 0.0014 and 0.0043 We might ask ourselves if this difference is worth the effort in building the variation–since the true difference may be as little is 0.14%.</p>
-<p>Next let’s look at <em>control</em> vs <em>variation_A</em>:</p>
+<p>For good measure let’s look at the other possible comparisons:</p>
+<p><em>control</em> vs <em>variation_A</em>:</p>
 <pre class="python my-python-code"><code># Calculate the number of visits
 n_C = rocky[rocky[&#39;treatment&#39;] == &#39;control&#39;][&#39;ticket_purchased&#39;].count()
 n_B = rocky[rocky[&#39;treatment&#39;] == &#39;variation_A&#39;][&#39;ticket_purchased&#39;].count()
@@ -324,8 +333,8 @@ print(f&#39;Group B 95% CI : [{B_lo95:.4f}, {B_up95:.4f}]&#39;)</code></pre>
 <li><em>Control</em> vs <em>variant_B</em>: 0.0000758</li>
 <li><em>variant_A</em> vs <em>variant_B</em>: 0.0457</li>
 </ul>
-<p>Normally a pvalue less that 0.05 indicates strong evidence against the NULL hypothesis and that we should reject it. And since both variants show significance (uncorrected) we might be tempted to reject the NULL hypothesis and against each other–leading us to conclude the difference between the 2 variants is not significant (or is simply random chance). And secondly, that either would be preferable to the Control. But this would be a mistake.</p>
-<p>When performing an experiment with more than variation we need to apply a correction to account for Family Wise Eror Rate (FWER) since the probability of making at least one Type I error (a false positive) across all the hypothesis tests increases with each test. A simple correction is to use the Bonferroni correction. Essentially, this method divides the significance level (alpha) across the number of tests. This gives us a more conservative mark to hit.</p>
+<p>Normally a <em>p-value</em> less that 0.05 indicates strong enough evidence against the NULL hypothesis (see note above) and that we should reject it. And since both variants show significance (uncorrected) we might be tempted to reject the NULL hypothesis. And secondly, that either would be preferable to the Control. But this would be a mistake.</p>
+<p>When performing an experiment, with more than 1 variation, we need to apply a correction to account for Family Wise Eror Rate (FWER)–since the probability of making at least one Type I error (a false positive) across all the hypothesis tests increases with each variant. A simple correction is to use the Bonferroni correction. Essentially, this method divides the <em>Significance Level</em> across the number of tests. This gives us a more conservative mark to hit.</p>
 <p>If we use the 3 pvalues we calculated and apply this method:</p>
 <pre class="python my-python-code"><code># Bonferroni correction for 95% Confidence interval
 import statsmodels.stats.multitest as smt
@@ -342,6 +351,7 @@ print(&#39;Bonferroni Corrected alpha: {:.4f}&#39;.format(corrected[2]))</code><
 ## Corrected P-values: [0.14968898 0.00022752 0.13721744]
 ## Bonferroni Corrected alpha: 0.0170</code></pre>
 <p>We see that the only test that is actually significant is the <em>Control</em> vs <em>variation_B</em>. The [False, True, False] corresponds to the [Control_v_A, Control_v_B, vartiation_A_v_B] pvals that we supplied.</p>
+</div>
 </div>
 <div id="visualizing-the-bootstrapped-data" class="section level1">
 <h1>Visualizing the Bootstrapped Data</h1>
@@ -402,37 +412,17 @@ print(f&quot;Size of each random sample: {sample_size}&quot;)</code></pre>
 ## Text(0.5, 1.0, &#39;Sampling Distributions (Normal Approximation)&#39;)
 ## Text(0.5, 0, &#39;Sample Mean Ticket Purchase Rate&#39;)
 ## Text(0, 0.5, &#39;Frequency&#39;)
-## &lt;matplotlib.legend.Legend object at 0x316da4130&gt;</code></pre>
+## &lt;matplotlib.legend.Legend object at 0x3156c9930&gt;</code></pre>
 <p><img src="https://nervous-wright-ea05a8.netlify.app/post/abn-testing-python/index_files/figure-html/displot-1.png" width="576" /></p>
 <pre><code>## Control group size: 85000
 ## Variation B group size: 85000
 ## Number of random samples generated for each group: 1000
 ## Size of each random sample: 80000</code></pre>
-<p>If we take fairly large sample sizes and enough samples we can see that these two distributions are distinct.</p>
+<p>If we take fairly large sample sizes and enough samples we can see that these two distributions are distinct and our test tells us the results are likely significant and reproducible.</p>
 </div>
 <div id="recommendation" class="section level1">
 <h1>Recommendation</h1>
-<p>We could recommend the <em>variation_B</em> as statistically significant at the 95% confidence level.</p>
-</div>
-<div id="alternate-consideration" class="section level1">
-<h1>Alternate Consideration</h1>
-<p>Since we saw that we cannot reject the null hypothesis at the 95% confidence level between <em>variant_A</em> and <em>variant_B</em> even after correction, we cannot say that they are statistically dissimilar from one another. It is possible that the slight differnce between them is just random chance. This may be important if one variant is more costly to implement than the other. For instance if <em>variation_A</em> is considerably cheaper than <em>variation_B</em> then we might want to loosen our confidence level a bit to see if we can reject the null for <em>variation_B</em> at a slightly lower confidence.</p>
-<p>If we go back to our Bonferroni correction calculation and lower our alpha to 0.10 (corresponding to 90% confidence)</p>
-<pre class="python my-python-code"><code># Bonferroni correction for 90% Confidence interval
-import statsmodels.stats.multitest as smt
-
-pvals = [pvalue_C_A, pvalue_C_B, pvalue_A_B]
-
-# Perform a Bonferroni correction and print the output
-corrected = smt.multipletests(pvals, alpha = .10, method = &#39;bonferroni&#39;)
-
-print(&#39;Significant Test:&#39;, corrected[0])
-print(&#39;Corrected P-values:&#39;, corrected[1])
-print(&#39;Bonferroni Corrected alpha: {:.4f}&#39;.format(corrected[2]))</code></pre>
-<pre><code>## Significant Test: [False  True False]
-## Corrected P-values: [0.14968898 0.00022752 0.13721744]
-## Bonferroni Corrected alpha: 0.0345</code></pre>
-<p>We can see that now, even at 90% confidence level, the only test that is significant is the variation_B over control. Given this <em>variation_B</em> should be chosen.</p>
+<p>We could recommend the <em>variation_B</em> as statistically significant at the 95% confidence level if the CI for the difference represents a reasonable lift for our investment. We might want to argue that unless the lower end estimate of 0.14% we calculated would produce enough revenue to pay for the development; building it may not return the investment.</p>
 </div>
         </div>
       </div>
