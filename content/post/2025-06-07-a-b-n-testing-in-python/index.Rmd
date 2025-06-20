@@ -30,7 +30,7 @@ We'll compare 2 variants, against a control, to increase purchase rate on a fict
 
 # Intro
 
-We're asked to analyze the results of an experiment, performed on the splash-page, for a fictional theme park called Redwood Ridge. The park wants to launch an AI assisted booking agent, referred to as Rocky Raccoon, to help customers book flights, rental cars, meals, etc. They wish to test 2 variants: Variant_A with a simplified widget; Variant_B with a more interactive wizard; against the control page with no agent.
+We're asked to analyze the results of an experiment, performed on the splash-page, for a fictional theme park called Redwood Ridge. The park wants to launch an AI assisted booking agent, referred to as Rocky Raccoon, to help customers booking flights, rental cars, meals, etc. They wish to test 2 variants: Variant_A with a simplified widget; Variant_B with a more interactive wizard; against the control page with no agent.
 
 <http>
 <center>
@@ -45,13 +45,13 @@ First we formulate the alternate hypothesis. This is the one we're trying to fin
 
 __The Alternate Hypothesis: Adding an interactive travel planning wizard to the Homepage will boost ticket purchase conversion rates__
 
-The null hypothesis always assumes the difference detected, in the measured statistic, is simply due to random chance. All hypothesis tests center on rejecting, or failing to reject, the null hypothesis. We reject the Null Hypothesis if there is enough evidence that it is unlikely the results are due to chance. We fail to reject whenever there is not enough evidence found in our experiment. 
+The null hypothesis always assumes any difference is simply due to random chance. All hypothesis tests center on rejecting, or failing to reject, the null hypothesis. We reject the Null Hypothesis if there is enough evidence that it is unlikely the results are due to chance. We fail to reject whenever there is not enough evidence found in our experiment. 
 
 __Null Hypothesis: An increase in ticket purchase rate can be explained as random chance__
 
-Our test statistic is defined as:
+Our KPI is defined as:
 
-__Test Statistic: Ticket Purchase Conversion Rate = (purchase count)/(unique visit count)__
+__KPI: Ticket Purchase Conversion Rate = (purchase count)/(unique visit count)__
 
 ```{r, setup, include=FALSE}
 # Sys.setenv(RETICULATE_PYTHON = "/Users/kevinbonds/anaconda3/bin/python3")
@@ -156,9 +156,13 @@ rocky.groupby(['treatment', 'trip_planner_engaged'])[ 'ticket_purchased'].agg(['
 
 There is a problem with the *trip_planner_engaged* field. It doesn't make sense to have trip planner engagement for the control group. Something is amiss. We should alert Engineering that our logging seems to be broken. We'll ignore this field focusing on just the impact of the variants on ticket purchases.
 
-# Checking for Significance in the Difference in Means
+# Testing for Significance
 
-Since *varation_B* seems to have the highest lift let's see if the results are significant (without correction).
+Since *variation_B* seems to have the highest lift let's see if the results are significant (without correction). Typical treatment is to set *Significance Threshold* at 0.05 equivalent to 5% *Confidence level* before the test. After the test the p-value is calculated and compared to this *Confidence Level*. If lower the *Null Hypothesis* is rejected. 
+
+> **_Warning:_**  *P-values* are often missunderstood and are a sticky subject. At the risk of oversimplifying: let me say a few things about them. *P-values* measure how likely is the value you found, or a larger one, __if the *Null Hypothesis* is true__. They DO NOT predict the false positive error rate. Recent Baeseyan techiniques have shown that the false positive error rate from 0.05 *p-value* is actually between 23%-50%. What we're really interested in; is when __the *Null Hypothesis* is FALSE__. But *p-values* always assume it's true. Low *p-values* are evidence and speak to better reproducibility. Lower the *p-value* the better. Actually a p-value of 0.002 corresponds more to a false positive error rate near 5%. We need to keep these facts in mind. 
+
+We calculate the *p-value* and group *Confidence Level* like below:
 
 ```{python, class.source="my-python-code", results='hold'}
 from statsmodels.stats.proportion import proportions_ztest, proportion_confint, confint_proportions_2indep
@@ -185,7 +189,9 @@ print(f'Group C 95% CI : [{C_lo95:.4f}, {C_up95:.4f}]')
 print(f'Group B 95% CI : [{B_lo95:.4f}, {B_up95:.4f}]')
 ```
 
-These confidence intervals are for each group. We can calculate the confidence interval of the difference between the 2 groups to inform how large might the difference be. Let's look at the difference between *control* and *variation_B*
+## Practical Significance
+
+We see that the These *Confidence Intervals* are for each group. This speaks to the significance of the result of our test. But what about the practical significance of the difference we found? For that, we should calculate the confidence interval of the difference, between the 2 groups, to inform how large might the difference be. Let's look at the difference between *control* and *variation_B*
 
 ```{python, class.source="my-python-code", results='hold'}
 low, upp = confint_proportions_2indep(signup_B, n_B, signup_C, n_C, method=None, compare='diff', alpha=0.05, correction=True)
@@ -197,7 +203,9 @@ print(f' Difference 95% CI [{low:.4f}, {upp:.4f}]')
 This tells us the difference, in the two groups, falls somewhere between `r format(py$low, digits = 2)` and `r format(py$upp, digits = 2)` We might ask ourselves if this difference is worth the effort in building the variation--since the true difference may be as little is `r format(py$low * 100, digits = 2)`%. 
 
 
-Next let's look at *control* vs *variation_A*:
+For good measure let's look at the other possible comparisons:
+
+*control* vs *variation_A*:
 
 ```{python, class.source="my-python-code", results='hold'}
 
@@ -260,9 +268,9 @@ So the pvalues are:
 * *variant_A* vs *variant_B*: `r format(py$pvalue_A_B, digits = 3, scientific = FALSE)`
 
 
-Normally a pvalue less that 0.05 indicates strong evidence against the NULL hypothesis and that we should reject it. And since both variants show significance (uncorrected) we might be tempted to reject the NULL hypothesis and against each other--leading us to conclude the difference between the 2 variants is not significant (or is simply random chance). And secondly, that either would be preferable to the Control. But this would be a mistake. 
+Normally a *p-value* less that 0.05 indicates strong enough evidence against the NULL hypothesis (see note above) and that we should reject it. And since both variants show significance (uncorrected) we might be tempted to reject the NULL hypothesis. And secondly, that either would be preferable to the Control. But this would be a mistake. 
 
-When performing an experiment with more than variation we need to apply a correction to account for Family Wise Eror Rate (FWER) since the probability of making at least one Type I error (a false positive) across all the hypothesis tests increases with each test. A simple correction is to use the Bonferroni correction. Essentially, this method divides the significance level (alpha) across the number of tests. This gives us a more conservative mark to hit. 
+When performing an experiment, with more than 1 variation, we need to apply a correction to account for Family Wise Eror Rate (FWER)--since the probability of making at least one Type I error (a false positive) across all the hypothesis tests increases with each variant. A simple correction is to use the Bonferroni correction. Essentially, this method divides the *Significance Level* across the number of tests. This gives us a more conservative mark to hit. 
 
 If we use the 3 pvalues we calculated and apply this method:
 
@@ -344,31 +352,9 @@ print(f"Size of each random sample: {sample_size}")
 
 ```
 
-If we take fairly large sample sizes and enough samples we can see that these two distributions are distinct. 
+If we take fairly large sample sizes and enough samples we can see that these two distributions are distinct and our test tells us the results are likely significant and reproducible. 
 
 # Recommendation
 
-We could recommend the *variation_B* as statistically significant at the 95% confidence level. 
-
-# Alternate Consideration
-
-Since we saw that we cannot reject the null hypothesis at the 95% confidence level between *variant_A* and *variant_B* even after correction, we cannot say that they are statistically dissimilar from one another. It is possible that the slight differnce between them is just random chance. This may be important if one variant is more costly to implement than the other. For instance if *variation_A* is considerably cheaper than *variation_B* then we might want to loosen our confidence level a bit to see if we can reject the null for *variation_B* at a slightly lower confidence. 
-
-If we go back to our Bonferroni correction calculation and lower our alpha to 0.10 (corresponding to 90% confidence)
-
-```{python, results='hold', class.source="my-python-code", warning=FALSE, message=FALSE, error=FALSE,}
-# Bonferroni correction for 90% Confidence interval
-import statsmodels.stats.multitest as smt
-
-pvals = [pvalue_C_A, pvalue_C_B, pvalue_A_B]
-
-# Perform a Bonferroni correction and print the output
-corrected = smt.multipletests(pvals, alpha = .10, method = 'bonferroni')
-
-print('Significant Test:', corrected[0])
-print('Corrected P-values:', corrected[1])
-print('Bonferroni Corrected alpha: {:.4f}'.format(corrected[2]))
-```
-
-We can see that now, even at 90% confidence level, the only test that is significant is the variation_B over control. Given this *variation_B* should be chosen. 
+We could recommend the *variation_B* as statistically significant at the 95% confidence level if the CI for the difference represents a reasonable lift for our investment. We might want to argue that unless the lower end estimate of `r format(py$low * 100, digits = 2)`% we calculated would produce enough revenue to pay for the development; building it may not return the investment. 
 
