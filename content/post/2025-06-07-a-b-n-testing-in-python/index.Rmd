@@ -359,5 +359,5 @@ If we take fairly large sample sizes and enough samples we can see that these tw
 
 # Recommendation
 
-We could recommend the *variation_B* as statistically significant at the 95% confidence level if the CI for the difference represents a reasonable lift for our investment. We might want to argue that unless the lower end estimate of `r format(py$low * 100, digits = 2)`% we calculated would produce enough revenue to pay for the development; building it may not return the investment. 
+We can recommend *variation_B* as statistically significant, at the 95% confidence level, if the Confidence Interval for the difference represents a reasonable lift for our investment. We might argue, that unless the lower end estimate we calculated of `r format(py$low * 100, digits = 2)`% would produce enough revenue to pay for the development, building it may not return the investment. 
 
