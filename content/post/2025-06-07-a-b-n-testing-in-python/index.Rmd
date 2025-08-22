@@ -24,37 +24,35 @@ knitr::include_graphics("post/2025-06-07-a-b-n-testing-in-python/index_files/fig
 
 ```
 
-The following case study will illustrate how to analyze the results for an A/N Test (or multitest). An A/N Test is a type of A/B Test in which multiple variants are tested at the same time. 
+The following case study will illustrate how to analyze the results for an A/N Test (or multitest). An A/N Test is a type of A/B Test in which multiple variants are tested at the same time.
 
-We'll compare 2 variants, against a control, to increase purchase rate on a fictional website. Since testing multiple variants at once increases the error rate (known as Family Wise Error Rate--FWER), we'll use a correction when determining statistical significance. 
+We'll compare 2 variants, against a control, to increase purchase rate on a fictional website. Since testing multiple variants at once increases the error rate (known as Family Wise Error Rate--FWER), we'll use a correction when determining statistical significance.
 
-Along the way, I'll warn against some common mistakes when designing and interpreting results of experiments. And touch on the sticky subject of *P-values* and what they mean (and don't mean). Hope you find it informative. 
-<!--more-->
+Along the way, I'll warn against some common mistakes when designing and interpreting results of experiments. And touch on the sticky subject of *P-values* and what they mean (and don't mean). Hope you find it informative. <!--more-->
 
 # Intro
 
 We're asked to analyze the results of an experiment, performed on the splash-page, for a fictional theme park called Redwood Ridge. The park wants to launch an AI assisted booking agent, referred to as Rocky Raccoon, to help customers booking flights, rental cars, meals, etc. They wish to test 2 variants: Variant_A with a simplified widget; Variant_B with a more interactive wizard; against the control page with no agent.
 
 <http>
-<center>
-<img src="variants2.png" alt = "The three pages"  width = "98%">
-</center>
-</http>
 
+<center><img src="variants2.png" alt="The three pages" width="98%"/></center>
+
+</http>
 
 # Formulating the Hypothesis
 
 First we formulate the alternate hypothesis. This is the one we're trying to find evidence to support--by default of rejecting the Null Hypothesis.
 
-__The Alternate Hypothesis: Adding an interactive travel planning wizard to the Homepage will boost ticket purchase conversion rates__
+**The Alternate Hypothesis: Adding an interactive travel planning wizard to the Homepage will boost ticket purchase conversion rates**
 
-The null hypothesis always assumes any difference is simply due to random chance. All hypothesis tests center on rejecting, or failing to reject, the null hypothesis. We reject the Null Hypothesis if there is enough evidence that it is unlikely the results are due to chance. We fail to reject whenever there is not enough evidence found in our experiment. 
+The null hypothesis always assumes any difference is simply due to random chance. All hypothesis tests center on rejecting, or failing to reject, the null hypothesis. We reject the Null Hypothesis if there is enough evidence that it is unlikely the results are due to chance. We fail to reject whenever there is not enough evidence found in our experiment.
 
-__Null Hypothesis: An increase in ticket purchase rate can be explained as random chance__
+**Null Hypothesis: An increase in ticket purchase rate can be explained as random chance**
 
 Our KPI is defined as:
 
-__KPI: Ticket Purchase Conversion Rate = (purchase count)/(unique visit count)__
+**KPI: Ticket Purchase Conversion Rate = (purchase count)/(unique visit count)**
 
 ```{r, setup, include=FALSE}
 # Sys.setenv(RETICULATE_PYTHON = "/Users/kevinbonds/anaconda3/bin/python3")
@@ -64,7 +62,7 @@ use_python('/Users/kevinbonds/anaconda3/bin/python3', required = TRUE)
 py_config()
 ```
 
-Let's use Python to analyze the results and determine if it's safe to reject the Null Hypothesis. 
+Let's use Python to analyze the results and determine if it's safe to reject the Null Hypothesis.
 
 # Analysis
 
@@ -78,11 +76,11 @@ import numpy as np
 rocky = pd.read_csv("../../../static/images/a-b-n-testing-in-python/data.csv")
 ```
 
-
 ```{python echo=T, eval=T, class.source="my-python-code", class.output="my-python-output", results='hold' }
 print(rocky)
 
 ```
+
 # EDA
 
 ## Inspect the Variants
@@ -98,7 +96,6 @@ What is our raw purchase rates for each treatment?
 ```{python, class.source="my-python-code", class.output="my-python-output", results='hold'}
 rocky.groupby('treatment')['ticket_purchased'].agg(['mean', 'count', 'std'])
 ```
-
 
 We see there is a difference in the means; with the *variation_B* showing the highest possible lift. But let's make sure we don't have duplicates.
 
@@ -121,14 +118,13 @@ But there are some with different treatments for the same visit.
 print(len(rocky.drop_duplicates(subset=['visit_id','treatment'], keep=False)))
 ```
 
-There are some duplicate visit id's. Considering only visit_id and treatment there are no dupes. Therefore, some visits have multiple records for visit_id with diffent versions of the homepage. This may be a bug in the design if the intent was for a visit to have only one version of the homepage. 
+There are some duplicate visit id's. Considering only visit_id and treatment there are no dupes. Therefore, some visits have multiple records for visit_id with diffent versions of the homepage. This may be a bug in the design if the intent was for a visit to have only one version of the homepage.
 
 ## Drop Duplicates
 
 Now we can drop these duplicates and check lift for each variation again. We should exclude these visits where the same visit resulted in seeing more than one treatment. We'll use the `keep=False` argument to the `drop_duplicates()` method in Pandas.
 
-> **_NOTE:_** It is possible to run an experiment where someone sees multiple variants known as "paired samples"--using a different method known as a "paired" test to analyze. But these seem to be due to a flaw in the experiment, rather than intentional, and led to a small sample size. We'll focus on analyzing the rest as independent samples or "un-paired" samples. 
-
+> ***NOTE:*** It is possible to run an experiment where someone sees multiple variants known as "paired samples"--using a different method known as a "paired" test to analyze. But these seem to be due to a flaw in the experiment, rather than intentional, and led to a small sample size. We'll focus on analyzing the rest as independent samples or "un-paired" samples.
 
 ```{python, class.source="my-python-code", results='hold'}
 rocky = rocky.drop_duplicates(subset=['visit_id'], keep=False)
@@ -150,7 +146,6 @@ rocky_sample_B = rocky[rocky['treatment']=='variation_B'].sample(n=85000, replac
 rocky = pd.concat([rocky_sample_control, rocky_sample_A, rocky_sample_B])
 ```
 
-
 ## Group and Inspect
 
 ```{python, class.source="my-python-code", results='hold'}
@@ -161,9 +156,9 @@ There is a problem with the *trip_planner_engaged* field. It doesn't make sense 
 
 # Testing for Significance
 
-Since *variation_B* seems to have the highest lift let's see if the results are significant (without correction). Typical treatment is to set *Significance Threshold* at 0.05 equivalent to 5% *Confidence level* before the test. After the test the p-value is calculated and compared to this *Confidence Level*. If lower the *Null Hypothesis* is rejected. 
+Since *variation_B* seems to have the highest lift let's see if the results are significant (without correction). Typical treatment is to set *Significance Threshold* at 0.05 equivalent to 5% *Confidence level* before the test. After the test the p-value is calculated and compared to this *Confidence Level*. If lower the *Null Hypothesis* is rejected.
 
-> **_Warning:_**  *P-values* are often missunderstood and are a sticky subject. At the risk of oversimplifying: let me say a few things about them. *P-values* measure how likely is the value you found, or a larger one, __if the *Null Hypothesis* is true__. They DO NOT predict the false positive error rate. Recent Baeseyan techiniques have shown that the false positive error rate from 0.05 *p-value* is actually between 23%-50%. What we're really interested in; is when __the *Null Hypothesis* is FALSE__. But *p-values* always assume it's true. Low *p-values* are evidence and speak to better reproducibility. Lower the *p-value* the better. Actually a p-value of 0.002 corresponds more to a false positive error rate near 5%. We need to keep these facts in mind. 
+> ***Warning:*** *P-values* are often missunderstood and are a sticky subject. At the risk of oversimplifying: let me say a few things about them. *P-values* measure how likely is the value you found, or a larger one, **if the *Null Hypothesis* is true**. They DO NOT predict the false positive error rate. Recent Baeseyan techiniques have shown that the false positive error rate from 0.05 *p-value* is actually between 23%-50%. What we're really interested in; is when **the *Null Hypothesis* is FALSE**. But *p-values* always assume it's true. Low *p-values* are evidence and speak to better reproducibility. Lower the *p-value* the better. Actually a p-value of 0.002 corresponds more to a false positive error rate near 5%. We need to keep these facts in mind.
 
 We calculate the *p-value* and group *Confidence Level* like below:
 
@@ -203,8 +198,7 @@ print(f' Difference 95% CI [{low:.4f}, {upp:.4f}]')
 
 ```
 
-This tells us the difference, in the two groups, falls somewhere between `r format(py$low, digits = 2)` and `r format(py$upp, digits = 2)` We might ask ourselves if this difference is worth the effort in building the variation--since the true difference may be as little is `r format(py$low * 100, digits = 2)`%. 
-
+This tells us the difference, in the two groups, falls somewhere between `r format(py$low, digits = 2)` and `r format(py$upp, digits = 2)` We might ask ourselves if this difference is worth the effort in building the variation--since the true difference may be as little is `r format(py$low * 100, digits = 2)`%.
 
 For good measure let's look at the other possible comparisons:
 
@@ -266,14 +260,13 @@ print(f'Group B 95% CI : [{B_lo95:.4f}, {B_up95:.4f}]')
 
 So the pvalues are:
 
-* *Control* vs *variant_A*: `r format(py$pvalue_C_A, digits = 3, scientific = FALSE)`
-* *Control* vs *variant_B*: `r format(py$pvalue_C_B, digits = 3, scientific = FALSE)`
-* *variant_A* vs *variant_B*: `r format(py$pvalue_A_B, digits = 3, scientific = FALSE)`
+-   *Control* vs *variant_A*: `r format(py$pvalue_C_A, digits = 3, scientific = FALSE)`
+-   *Control* vs *variant_B*: `r format(py$pvalue_C_B, digits = 3, scientific = FALSE)`
+-   *variant_A* vs *variant_B*: `r format(py$pvalue_A_B, digits = 3, scientific = FALSE)`
 
+Normally a *p-value* less that 0.05 indicates strong enough evidence against the NULL hypothesis (see note above) and that we should reject it. And since both variants show significance (uncorrected) we might be tempted to reject the NULL hypothesis. And secondly, that either would be preferable to the Control. But this would be a mistake.
 
-Normally a *p-value* less that 0.05 indicates strong enough evidence against the NULL hypothesis (see note above) and that we should reject it. And since both variants show significance (uncorrected) we might be tempted to reject the NULL hypothesis. And secondly, that either would be preferable to the Control. But this would be a mistake. 
-
-When performing an experiment, with more than 1 variation, we need to apply a correction to account for Family Wise Eror Rate (FWER)--since the probability of making at least one Type I error (a false positive) across all the hypothesis tests increases with each variant. A simple correction is to use the Bonferroni correction. Essentially, this method divides the *Significance Level* across the number of tests. This gives us a more conservative mark to hit. 
+When performing an experiment, with more than 1 variation, we need to apply a correction to account for Family Wise Eror Rate (FWER)--since the probability of making at least one Type I error (a false positive) across all the hypothesis tests increases with each variant. A simple correction is to use the Bonferroni correction. Essentially, this method divides the *Significance Level* across the number of tests. This gives us a more conservative mark to hit.
 
 If we use the 3 pvalues we calculated and apply this method:
 
@@ -291,14 +284,11 @@ print('Corrected P-values:', corrected[1])
 print('Bonferroni Corrected alpha: {:.4f}'.format(corrected[2]))
 ```
 
-We see that the only test that is actually significant is the *Control* vs *variation_B*.  The [False, True, False] corresponds to the [Control_v_A, Control_v_B, vartiation_A_v_B] pvals that we supplied. 
-
-
+We see that the only test that is actually significant is the *Control* vs *variation_B*. The \[False, True, False\] corresponds to the \[Control_v_A, Control_v_B, vartiation_A_v_B\] pvals that we supplied.
 
 # Visualizing the Bootstrapped Data
 
-Now let's bootstrap random sample and calculate the mean of each group: *Control* and *variation_B* to visualize the distributions. This will give us a sense of the difference between the groups visually. 
-
+Now let's bootstrap random sample and calculate the mean of each group: *Control* and *variation_B* to visualize the distributions. This will give us a sense of the difference between the groups visually.
 
 ```{python displot, class.source="my-python-code", warning=FALSE, message=FALSE, error=FALSE, results='hold'}
 import pandas as pd
@@ -355,9 +345,8 @@ print(f"Size of each random sample: {sample_size}")
 
 ```
 
-If we take fairly large sample sizes and enough samples we can see that these two distributions are distinct and our test tells us the results are likely significant and reproducible. 
+If we take fairly large sample sizes and enough samples we can see that these two distributions are distinct and our test tells us the results are likely significant and reproducible.
 
 # Recommendation
 
-We can recommend *variation_B* as statistically significant, at the 95% confidence level, if the Confidence Interval for the difference represents a reasonable lift for our investment. We might argue, that unless the lower end estimate we calculated of `r format(py$low * 100, digits = 2)`% would produce enough revenue to pay for the development, building it may not return the investment. 
-
+We can recommend *variation_B* as statistically significant, at the 95% confidence level, if the Confidence Interval for the difference represents a reasonable lift for our investment. We might argue, that unless the lower end estimate we calculated of `r format(py$low * 100, digits = 2)`% would produce enough revenue to pay for the development, building it may not return the investment.

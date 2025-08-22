@@ -1,0 +1,188 @@
+---
+title: "Creating a Development Environment for SQL"
+author: "Kevin Bonds"
+date: '2025-08-21'
+slug: "PostgreSQL"
+output:
+  blogdown::html_page:
+    toc: false
+categories:
+- "sql"
+tags:
+- "sql"
+- "docker"
+- "container"
+---
+
+```{r setup_options, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+```
+
+My past few positions have had me using a lot of Python, R, Docker, Airflow etc., and not as much pure SQL for analysis. As a result, my SQL skills are a little rusty. So I decided to create a develpment environment for SQL in order to practice. In this quick post I'll outline how I setup a PostgreSQL environment in a docker container. There are plenty of practice environments online, but I want to have certain data tables available to practice analyzing business data specifically (MAU, ARPU, Revenue, etc.).
+
+Once finished We'll be able to connect, to the db, and query like below:
+
+```{r}
+library(DBI)
+library(RPostgres)
+
+con <- dbConnect(RPostgres::Postgres(), host="localhost", 
+                 port=5432, user="anton", password="gilfoyle", dbname="piper")
+```
+
+```{sql connection=con}
+select * from orders limit 5
+```
+
+# Setting up a Docker Container with Docker Compose
+
+Let's get started with a simple docker container using Docker Compose. Create a *docker-compose.yml* file with the below.
+
+```{bash eval=FALSE}
+version: '3.8'
+services:
+  db:
+    image: postgres:16-alpine # Or a specific version like postgres:14-alpine
+    restart: always
+    environment:
+      POSTGRES_DB: piper
+      POSTGRES_USER: anton
+      POSTGRES_PASSWORD: gilfoyle
+    ports:
+      - "5432:5432" # Maps host port 5432 to container port 5432
+    volumes:
+      - db_data:/var/lib/postgresql/data # Persists data in a named volume
+      - ./csv:/csv
+
+volumes:
+  db_data: # Define the named volume
+```
+
+This installs postgres16, creates the environment and mounts a few volumes. 
+
+We can start the container by:
+
+```{bash eval=FALSE}
+docker-compose up --build
+```
+
+To build and standup the image from a terminal window.
+
+make sure to have postgres and libpq installed using your preferred method (here homebrew):
+```{bash eval=FALSE}
+brew install postgresql 
+brew install libpq 
+```
+
+# Connect to the db with psql
+
+Then open an new terminal in our working directory and issue: 
+```{bash eval=FALSE}
+psql -h localhost -U anton -d piper 
+```
+
+This will open psql and allow us to execute sql commands. You should see `piper=#` as a prompt. 
+
+As a Hello World we can create a simple table. Paste in the code below:
+
+# Create mtcars table
+
+```{bash eval = FALSE}
+CREATE TABLE mtcars (
+    car_name VARCHAR(50) PRIMARY KEY,
+    mpg NUMERIC,
+    cyl INT,
+    disp NUMERIC,
+    hp INT,
+    drat NUMERIC,
+    wt NUMERIC,
+    qsec NUMERIC,
+    vs INT,
+    am INT,
+    gear INT,
+    carb INT
+);
+
+INSERT INTO mtcars
+  (car_name, mpg, cyl, disp, hp, drat, wt, qsec, vs, am, gear, carb)
+VALUES
+  ('Mazda RX4', 21, 6, 160, 110, 3.9, 2.62, 16.46, 0, 1, 4, 4),
+  ('Mazda RX4 Wag', 21, 6, 160, 110, 3.9, 2.875, 17.02, 0, 1, 4, 4),
+  ('Datsun 710', 22.8, 4, 108, 93, 3.85, 2.32, 18.61, 1, 1, 4, 1),
+  ('Hornet 4 Drive', 21.4, 6, 258, 110, 3.08, 3.215, 19.44, 1, 0, 3, 1),
+  ('Hornet Sportabout', 18.7, 8, 360, 175, 3.15, 3.44, 17.02, 0, 0, 3, 2),
+  ('Valiant', 18.1, 6, 225, 105, 2.76, 3.46, 20.22, 1, 0, 3, 1),
+  ('Duster 360', 14.3, 8, 360, 245, 3.21, 3.57, 15.84, 0, 0, 3, 4),
+  ('Merc 240D', 24.4, 4, 146.7, 62, 3.69, 3.19, 20, 1, 0, 4, 2),
+  ('Merc 230', 22.8, 4, 140.8, 95, 3.92, 3.15, 22.9, 1, 0, 4, 2),
+  ('Merc 280', 19.2, 6, 167.6, 123, 3.92, 3.44, 18.3, 1, 0, 4, 4),
+  ('Merc 280C', 17.8, 6, 167.6, 123, 3.92, 3.44, 18.9, 1, 0, 4, 4),
+  ('Merc 450SE', 16.4, 8, 275.8, 180, 3.07, 4.07, 17.4, 0, 0, 3, 3),
+  ('Merc 450SL', 17.3, 8, 275.8, 180, 3.07, 3.73, 17.6, 0, 0, 3, 3),
+  ('Merc 450SLC', 15.2, 8, 275.8, 180, 3.07, 3.78, 18, 0, 0, 3, 3),
+  ('Cadillac Fleetwood', 10.4, 8, 472, 205, 2.93, 5.25, 17.98, 0, 0, 3, 4),
+  ('Lincoln Continental', 10.4, 8, 460, 215, 3, 5.424, 17.82, 0, 0, 3, 4),
+  ('Chrysler Imperial', 14.7, 8, 440, 230, 3.23, 5.345, 17.42, 0, 0, 3, 4),
+  ('Fiat 128', 32.4, 4, 78.7, 66, 4.08, 2.2, 19.47, 1, 1, 4, 1),
+  ('Honda Civic', 30.4, 4, 75.7, 52, 4.93, 1.615, 18.52, 1, 1, 4, 2),
+  ('Toyota Corolla', 33.9, 4, 71.1, 65, 4.22, 1.835, 19.9, 1, 1, 4, 1),
+  ('Toyota Corona', 21.5, 4, 120.1, 97, 3.7, 2.465, 20.01, 1, 0, 3, 1),
+  ('Dodge Challenger', 15.5, 8, 318, 150, 2.76, 3.52, 16.87, 0, 0, 3, 2),
+  ('AMC Javelin', 15.2, 8, 304, 150, 3.15, 3.435, 17.3, 0, 0, 3, 2),
+  ('Camaro Z28', 13.3, 8, 350, 245, 3.73, 3.84, 15.41, 0, 0, 3, 4),
+  ('Pontiac Firebird', 19.2, 8, 400, 175, 3.08, 3.845, 17.05, 0, 0, 3, 2),
+  ('Fiat X1-9', 27.3, 4, 79, 66, 4.08, 1.935, 18.9, 1, 1, 4, 1),
+  ('Porsche 914-2', 26, 4, 120.3, 91, 4.43, 2.14, 16.7, 0, 1, 5, 2),
+  ('Lotus Europa', 30.4, 4, 95.1, 113, 3.77, 1.513, 16.9, 1, 1, 5, 2),
+  ('Ford Pantera L', 15.8, 8, 351, 264, 4.22, 3.17, 14.5, 0, 1, 5, 4),
+  ('Ferrari Dino', 19.7, 6, 145, 175, 3.62, 2.77, 15.5, 0, 1, 5, 6),
+  ('Maserati Bora', 15, 8, 301, 335, 3.54, 3.57, 14.6, 0, 1, 5, 8),
+  ('Volvo 142E', 21.4, 4, 121, 109, 4.11, 2.78, 18.6, 1, 1, 4, 2)
+;
+```
+
+```{sql connection=con}
+select * from mtcars limit 5
+```
+
+# Loading csv Files as Tables
+
+I won't go into great detail on how to load all the tables but here is a quick example. 
+
+A good way to populate some sample data is to curl some files exec int the container, copy the files. From the terminal:  
+
+```{bash eval=FALSE}
+curl "https://assets.datacamp.com/production/repositories/4016/datasets/606e6e9165c25477db078996fa7e0a3e994b93d3/orders.csv" > orders.csv
+
+docker exec -it <container-id> bash
+
+cp orders.csv var/lib/postgresql/.
+
+```
+
+Now create an orders table in the container using `psql` like: 
+
+```{bash eval=FALSE}
+DROP TABLE IF EXISTS "orders";
+CREATE TABLE orders (
+  order_date DATE,
+  user_id INT,
+  order_id INT,
+  meal_id INT,
+  order_quantity INT
+);
+```
+
+Now use the psql COPY command to copy the csv into the orders table
+
+```{sql eval=FALSE}
+COPY orders FROM '../orders.csv' DELIMITER ',' CSV HEADER;
+```
+
+Now you have a nice little development environment to practice SQL based data analysis. Enjoy!
+
+```{r include=FALSE}
+dbDisconnect(con)
+```
+
