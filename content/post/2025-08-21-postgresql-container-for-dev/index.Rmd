@@ -19,9 +19,9 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ```
 
-My past few jobs have had me using a lot of Python, R, Docker, Airflow etc. and not as much time using SQl. As a result my SQL skills are a little rusty. So I decided to create a develpment environment for SQL in order to practice. In this quick post I'll outline how I did that using PostgreSQL in a docker container. I'll go through mounting a volume for persisting data, and creating some tables populated with data. There are plenty of practice environments online, but I want to have certain data tables available to practice analyzing business data specifically.
+My past few positions have had me using a lot of Python, R, Docker, Airflow etc., and not as much pure SQL for analysis. As a result, my SQL skills are a little rusty. So I decided to create a develpment environment for SQL in order to practice. In this quick post I'll outline how I setup a PostgreSQL environment in a docker container. There are plenty of practice environments online, but I want to have certain data tables available to practice analyzing business data specifically (MAU, ARPU, Revenue, etc.).
 
-Once finished We'll be able to connect to the db and query like below:
+Once finished We'll be able to connect, to the db, and query like below:
 
 ```{r}
 library(DBI)
@@ -148,6 +148,8 @@ select * from mtcars limit 5
 
 # Loading csv Files as Tables
 
+I won't go into great detail on how to load all the tables but here is a quick example. 
+
 A good way to populate some sample data is to curl some files exec int the container, copy the files. From the terminal:  
 
 ```{bash eval=FALSE}
@@ -159,7 +161,7 @@ cp orders.csv var/lib/postgresql/.
 
 ```
 
-Now create an orders table like: 
+Now create an orders table in the container using `psql` like: 
 
 ```{bash eval=FALSE}
 DROP TABLE IF EXISTS "orders";
@@ -173,6 +175,7 @@ CREATE TABLE orders (
 ```
 
 Now use the psql COPY command to copy the csv into the orders table
+
 ```{sql eval=FALSE}
 COPY orders FROM '../orders.csv' DELIMITER ',' CSV HEADER;
 ```

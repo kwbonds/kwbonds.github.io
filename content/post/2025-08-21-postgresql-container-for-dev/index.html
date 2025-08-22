@@ -16,8 +16,8 @@ tags:
 
 
 
-<p>My past few jobs have had me using a lot of Python, R, Docker, Airflow etc. and not as much time using SQl. As a result my SQL skills are a little rusty. So I decided to create a develpment environment for SQL in order to practice. In this quick post I’ll outline how I did that using PostgreSQL in a docker container. I’ll go through mounting a volume for persisting data, and creating some tables populated with data. There are plenty of practice environments online, but I want to have certain data tables available to practice analyzing business data specifically.</p>
-<p>Once finished We’ll be able to connect to the db and query like below:</p>
+<p>My past few positions have had me using a lot of Python, R, Docker, Airflow etc., and not as much pure SQL for analysis. As a result, my SQL skills are a little rusty. So I decided to create a develpment environment for SQL in order to practice. In this quick post I’ll outline how I setup a PostgreSQL environment in a docker container. There are plenty of practice environments online, but I want to have certain data tables available to practice analyzing business data specifically (MAU, ARPU, Revenue, etc.).</p>
+<p>Once finished We’ll be able to connect, to the db, and query like below:</p>
 <pre class="r"><code>library(DBI)
 library(RPostgres)
 
@@ -274,6 +274,7 @@ VALUES
 </div>
 <div id="loading-csv-files-as-tables" class="section level1">
 <h1>Loading csv Files as Tables</h1>
+<p>I won’t go into great detail on how to load all the tables but here is a quick example.</p>
 <p>A good way to populate some sample data is to curl some files exec int the container, copy the files. From the terminal:</p>
 <pre class="bash"><code>curl &quot;https://assets.datacamp.com/production/repositories/4016/datasets/606e6e9165c25477db078996fa7e0a3e994b93d3/orders.csv&quot; &gt; orders.csv
 
@@ -281,7 +282,7 @@ docker exec -it &lt;container-id&gt; bash
 
 cp orders.csv var/lib/postgresql/.
 </code></pre>
-<p>Now create an orders table like:</p>
+<p>Now create an orders table in the container using <code>psql</code> like:</p>
 <pre class="bash"><code>DROP TABLE IF EXISTS &quot;orders&quot;;
 CREATE TABLE orders (
   order_date DATE,
