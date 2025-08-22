@@ -2,6 +2,33 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
+    <loc>https://nervous-wright-ea05a8.netlify.app/categories/</loc>
+    <lastmod>2025-08-21T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://nervous-wright-ea05a8.netlify.app/tags/container/</loc>
+    <lastmod>2025-08-21T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://nervous-wright-ea05a8.netlify.app/tags/docker/</loc>
+    <lastmod>2025-08-21T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://nervous-wright-ea05a8.netlify.app/</loc>
+    <lastmod>2025-08-21T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://nervous-wright-ea05a8.netlify.app/post/postgresql/</loc>
+    <lastmod>2025-08-21T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://nervous-wright-ea05a8.netlify.app/post/</loc>
+    <lastmod>2025-08-21T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://nervous-wright-ea05a8.netlify.app/categories/sql/</loc>
+    <lastmod>2025-08-21T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://nervous-wright-ea05a8.netlify.app/tags/sql/</loc>
+    <lastmod>2025-08-21T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://nervous-wright-ea05a8.netlify.app/tags/</loc>
+    <lastmod>2025-08-21T00:00:00+00:00</lastmod>
+  </url><url>
     <loc>https://nervous-wright-ea05a8.netlify.app/post/abn-testing-python/</loc>
     <lastmod>2025-06-07T00:00:00+00:00</lastmod>
   </url><url>
@@ -11,28 +38,16 @@
     <loc>https://nervous-wright-ea05a8.netlify.app/tags/ab-testing/</loc>
     <lastmod>2025-06-07T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>https://nervous-wright-ea05a8.netlify.app/categories/</loc>
-    <lastmod>2025-06-07T00:00:00+00:00</lastmod>
-  </url><url>
     <loc>https://nervous-wright-ea05a8.netlify.app/categories/eda/</loc>
     <lastmod>2025-06-07T00:00:00+00:00</lastmod>
   </url><url>
     <loc>https://nervous-wright-ea05a8.netlify.app/tags/eda/</loc>
     <lastmod>2025-06-07T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>https://nervous-wright-ea05a8.netlify.app/</loc>
-    <lastmod>2025-06-07T00:00:00+00:00</lastmod>
-  </url><url>
-    <loc>https://nervous-wright-ea05a8.netlify.app/post/</loc>
-    <lastmod>2025-06-07T00:00:00+00:00</lastmod>
-  </url><url>
     <loc>https://nervous-wright-ea05a8.netlify.app/categories/python/</loc>
     <lastmod>2025-06-07T00:00:00+00:00</lastmod>
   </url><url>
     <loc>https://nervous-wright-ea05a8.netlify.app/tags/python/</loc>
-    <lastmod>2025-06-07T00:00:00+00:00</lastmod>
-  </url><url>
-    <loc>https://nervous-wright-ea05a8.netlify.app/tags/</loc>
     <lastmod>2025-06-07T00:00:00+00:00</lastmod>
   </url><url>
     <loc>https://nervous-wright-ea05a8.netlify.app/tags/a/b-testing/</loc>

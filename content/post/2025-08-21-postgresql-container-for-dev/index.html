@@ -1,0 +1,296 @@
+---
+title: "Creating a Development Environment for SQL"
+author: "Kevin Bonds"
+date: '2025-08-21'
+slug: "PostgreSQL"
+output:
+  blogdown::html_page:
+    toc: false
+categories:
+- "sql"
+tags:
+- "sql"
+- "docker"
+- "container"
+---
+
+
+
+<p>My past few jobs have had me using a lot of Python, R, Docker, Airflow etc. and not as much time using SQl. As a result my SQL skills are a little rusty. So I decided to create a develpment environment for SQL in order to practice. In this quick post I’ll outline how I did that using PostgreSQL in a docker container. I’ll go through mounting a volume for persisting data, and creating some tables populated with data. There are plenty of practice environments online, but I want to have certain data tables available to practice analyzing business data specifically.</p>
+<p>Once finished We’ll be able to connect to the db and query like below:</p>
+<pre class="r"><code>library(DBI)
+library(RPostgres)
+
+con &lt;- dbConnect(RPostgres::Postgres(), host=&quot;localhost&quot;, 
+                 port=5432, user=&quot;anton&quot;, password=&quot;gilfoyle&quot;, dbname=&quot;piper&quot;)</code></pre>
+<pre class="sql"><code>select * from orders limit 5</code></pre>
+<div class="knitsql-table">
+<table>
+<caption><span id="tab:unnamed-chunk-2">Table 1: </span>5 records</caption>
+<thead>
+<tr class="header">
+<th align="left">order_date</th>
+<th align="right">user_id</th>
+<th align="right">order_id</th>
+<th align="right">meal_id</th>
+<th align="right">order_quantity</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">2018-06-01</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">14</td>
+<td align="right">2</td>
+</tr>
+<tr class="even">
+<td align="left">2018-06-01</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">15</td>
+<td align="right">1</td>
+</tr>
+<tr class="odd">
+<td align="left">2018-06-01</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">17</td>
+<td align="right">1</td>
+</tr>
+<tr class="even">
+<td align="left">2018-06-01</td>
+<td align="right">1</td>
+<td align="right">1</td>
+<td align="right">16</td>
+<td align="right">2</td>
+</tr>
+<tr class="odd">
+<td align="left">2018-06-01</td>
+<td align="right">1</td>
+<td align="right">1</td>
+<td align="right">17</td>
+<td align="right">1</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div id="setting-up-a-docker-container-with-docker-compose" class="section level1">
+<h1>Setting up a Docker Container with Docker Compose</h1>
+<p>Let’s get started with a simple docker container using Docker Compose. Create a <em>docker-compose.yml</em> file with the below.</p>
+<pre class="bash"><code>version: &#39;3.8&#39;
+services:
+  db:
+    image: postgres:16-alpine # Or a specific version like postgres:14-alpine
+    restart: always
+    environment:
+      POSTGRES_DB: piper
+      POSTGRES_USER: anton
+      POSTGRES_PASSWORD: gilfoyle
+    ports:
+      - &quot;5432:5432&quot; # Maps host port 5432 to container port 5432
+    volumes:
+      - db_data:/var/lib/postgresql/data # Persists data in a named volume
+      - ./csv:/csv
+
+volumes:
+  db_data: # Define the named volume</code></pre>
+<p>This installs postgres16, creates the environment and mounts a few volumes.</p>
+<p>We can start the container by:</p>
+<pre class="bash"><code>docker-compose up --build</code></pre>
+<p>To build and standup the image from a terminal window.</p>
+<p>make sure to have postgres and libpq installed using your preferred method (here homebrew):</p>
+<pre class="bash"><code>brew install postgresql 
+brew install libpq </code></pre>
+</div>
+<div id="connect-to-the-db-with-psql" class="section level1">
+<h1>Connect to the db with psql</h1>
+<p>Then open an new terminal in our working directory and issue:</p>
+<pre class="bash"><code>psql -h localhost -U anton -d piper </code></pre>
+<p>This will open psql and allow us to execute sql commands. You should see <code>piper=#</code> as a prompt.</p>
+<p>As a Hello World we can create a simple table. Paste in the code below:</p>
+</div>
+<div id="create-mtcars-table" class="section level1">
+<h1>Create mtcars table</h1>
+<pre class="bash"><code>CREATE TABLE mtcars (
+    car_name VARCHAR(50) PRIMARY KEY,
+    mpg NUMERIC,
+    cyl INT,
+    disp NUMERIC,
+    hp INT,
+    drat NUMERIC,
+    wt NUMERIC,
+    qsec NUMERIC,
+    vs INT,
+    am INT,
+    gear INT,
+    carb INT
+);
+
+INSERT INTO mtcars
+  (car_name, mpg, cyl, disp, hp, drat, wt, qsec, vs, am, gear, carb)
+VALUES
+  (&#39;Mazda RX4&#39;, 21, 6, 160, 110, 3.9, 2.62, 16.46, 0, 1, 4, 4),
+  (&#39;Mazda RX4 Wag&#39;, 21, 6, 160, 110, 3.9, 2.875, 17.02, 0, 1, 4, 4),
+  (&#39;Datsun 710&#39;, 22.8, 4, 108, 93, 3.85, 2.32, 18.61, 1, 1, 4, 1),
+  (&#39;Hornet 4 Drive&#39;, 21.4, 6, 258, 110, 3.08, 3.215, 19.44, 1, 0, 3, 1),
+  (&#39;Hornet Sportabout&#39;, 18.7, 8, 360, 175, 3.15, 3.44, 17.02, 0, 0, 3, 2),
+  (&#39;Valiant&#39;, 18.1, 6, 225, 105, 2.76, 3.46, 20.22, 1, 0, 3, 1),
+  (&#39;Duster 360&#39;, 14.3, 8, 360, 245, 3.21, 3.57, 15.84, 0, 0, 3, 4),
+  (&#39;Merc 240D&#39;, 24.4, 4, 146.7, 62, 3.69, 3.19, 20, 1, 0, 4, 2),
+  (&#39;Merc 230&#39;, 22.8, 4, 140.8, 95, 3.92, 3.15, 22.9, 1, 0, 4, 2),
+  (&#39;Merc 280&#39;, 19.2, 6, 167.6, 123, 3.92, 3.44, 18.3, 1, 0, 4, 4),
+  (&#39;Merc 280C&#39;, 17.8, 6, 167.6, 123, 3.92, 3.44, 18.9, 1, 0, 4, 4),
+  (&#39;Merc 450SE&#39;, 16.4, 8, 275.8, 180, 3.07, 4.07, 17.4, 0, 0, 3, 3),
+  (&#39;Merc 450SL&#39;, 17.3, 8, 275.8, 180, 3.07, 3.73, 17.6, 0, 0, 3, 3),
+  (&#39;Merc 450SLC&#39;, 15.2, 8, 275.8, 180, 3.07, 3.78, 18, 0, 0, 3, 3),
+  (&#39;Cadillac Fleetwood&#39;, 10.4, 8, 472, 205, 2.93, 5.25, 17.98, 0, 0, 3, 4),
+  (&#39;Lincoln Continental&#39;, 10.4, 8, 460, 215, 3, 5.424, 17.82, 0, 0, 3, 4),
+  (&#39;Chrysler Imperial&#39;, 14.7, 8, 440, 230, 3.23, 5.345, 17.42, 0, 0, 3, 4),
+  (&#39;Fiat 128&#39;, 32.4, 4, 78.7, 66, 4.08, 2.2, 19.47, 1, 1, 4, 1),
+  (&#39;Honda Civic&#39;, 30.4, 4, 75.7, 52, 4.93, 1.615, 18.52, 1, 1, 4, 2),
+  (&#39;Toyota Corolla&#39;, 33.9, 4, 71.1, 65, 4.22, 1.835, 19.9, 1, 1, 4, 1),
+  (&#39;Toyota Corona&#39;, 21.5, 4, 120.1, 97, 3.7, 2.465, 20.01, 1, 0, 3, 1),
+  (&#39;Dodge Challenger&#39;, 15.5, 8, 318, 150, 2.76, 3.52, 16.87, 0, 0, 3, 2),
+  (&#39;AMC Javelin&#39;, 15.2, 8, 304, 150, 3.15, 3.435, 17.3, 0, 0, 3, 2),
+  (&#39;Camaro Z28&#39;, 13.3, 8, 350, 245, 3.73, 3.84, 15.41, 0, 0, 3, 4),
+  (&#39;Pontiac Firebird&#39;, 19.2, 8, 400, 175, 3.08, 3.845, 17.05, 0, 0, 3, 2),
+  (&#39;Fiat X1-9&#39;, 27.3, 4, 79, 66, 4.08, 1.935, 18.9, 1, 1, 4, 1),
+  (&#39;Porsche 914-2&#39;, 26, 4, 120.3, 91, 4.43, 2.14, 16.7, 0, 1, 5, 2),
+  (&#39;Lotus Europa&#39;, 30.4, 4, 95.1, 113, 3.77, 1.513, 16.9, 1, 1, 5, 2),
+  (&#39;Ford Pantera L&#39;, 15.8, 8, 351, 264, 4.22, 3.17, 14.5, 0, 1, 5, 4),
+  (&#39;Ferrari Dino&#39;, 19.7, 6, 145, 175, 3.62, 2.77, 15.5, 0, 1, 5, 6),
+  (&#39;Maserati Bora&#39;, 15, 8, 301, 335, 3.54, 3.57, 14.6, 0, 1, 5, 8),
+  (&#39;Volvo 142E&#39;, 21.4, 4, 121, 109, 4.11, 2.78, 18.6, 1, 1, 4, 2)
+;</code></pre>
+<pre class="sql"><code>select * from mtcars limit 5</code></pre>
+<div class="knitsql-table">
+<table style="width:100%;">
+<caption><span id="tab:unnamed-chunk-8">Table 2: </span>5 records</caption>
+<colgroup>
+<col width="26%" />
+<col width="7%" />
+<col width="5%" />
+<col width="7%" />
+<col width="5%" />
+<col width="7%" />
+<col width="8%" />
+<col width="8%" />
+<col width="4%" />
+<col width="4%" />
+<col width="7%" />
+<col width="7%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="left">car_name</th>
+<th align="right">mpg</th>
+<th align="right">cyl</th>
+<th align="right">disp</th>
+<th align="right">hp</th>
+<th align="right">drat</th>
+<th align="right">wt</th>
+<th align="right">qsec</th>
+<th align="right">vs</th>
+<th align="right">am</th>
+<th align="right">gear</th>
+<th align="right">carb</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">Mazda RX4</td>
+<td align="right">21.0</td>
+<td align="right">6</td>
+<td align="right">160</td>
+<td align="right">110</td>
+<td align="right">3.90</td>
+<td align="right">2.620</td>
+<td align="right">16.46</td>
+<td align="right">0</td>
+<td align="right">1</td>
+<td align="right">4</td>
+<td align="right">4</td>
+</tr>
+<tr class="even">
+<td align="left">Mazda RX4 Wag</td>
+<td align="right">21.0</td>
+<td align="right">6</td>
+<td align="right">160</td>
+<td align="right">110</td>
+<td align="right">3.90</td>
+<td align="right">2.875</td>
+<td align="right">17.02</td>
+<td align="right">0</td>
+<td align="right">1</td>
+<td align="right">4</td>
+<td align="right">4</td>
+</tr>
+<tr class="odd">
+<td align="left">Datsun 710</td>
+<td align="right">22.8</td>
+<td align="right">4</td>
+<td align="right">108</td>
+<td align="right">93</td>
+<td align="right">3.85</td>
+<td align="right">2.320</td>
+<td align="right">18.61</td>
+<td align="right">1</td>
+<td align="right">1</td>
+<td align="right">4</td>
+<td align="right">1</td>
+</tr>
+<tr class="even">
+<td align="left">Hornet 4 Drive</td>
+<td align="right">21.4</td>
+<td align="right">6</td>
+<td align="right">258</td>
+<td align="right">110</td>
+<td align="right">3.08</td>
+<td align="right">3.215</td>
+<td align="right">19.44</td>
+<td align="right">1</td>
+<td align="right">0</td>
+<td align="right">3</td>
+<td align="right">1</td>
+</tr>
+<tr class="odd">
+<td align="left">Hornet Sportabout</td>
+<td align="right">18.7</td>
+<td align="right">8</td>
+<td align="right">360</td>
+<td align="right">175</td>
+<td align="right">3.15</td>
+<td align="right">3.440</td>
+<td align="right">17.02</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">3</td>
+<td align="right">2</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div id="loading-csv-files-as-tables" class="section level1">
+<h1>Loading csv Files as Tables</h1>
+<p>A good way to populate some sample data is to curl some files exec int the container, copy the files. From the terminal:</p>
+<pre class="bash"><code>curl &quot;https://assets.datacamp.com/production/repositories/4016/datasets/606e6e9165c25477db078996fa7e0a3e994b93d3/orders.csv&quot; &gt; orders.csv
+
+docker exec -it &lt;container-id&gt; bash
+
+cp orders.csv var/lib/postgresql/.
+</code></pre>
+<p>Now create an orders table like:</p>
+<pre class="bash"><code>DROP TABLE IF EXISTS &quot;orders&quot;;
+CREATE TABLE orders (
+  order_date DATE,
+  user_id INT,
+  order_id INT,
+  meal_id INT,
+  order_quantity INT
+);</code></pre>
+<p>Now use the psql COPY command to copy the csv into the orders table</p>
+<pre class="sql"><code>COPY orders FROM &#39;../orders.csv&#39; DELIMITER &#39;,&#39; CSV HEADER;</code></pre>
+<p>Now you have a nice little development environment to practice SQL based data analysis. Enjoy!</p>
+</div>
