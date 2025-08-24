@@ -336,6 +336,7 @@ inner join
     count_all_users
     on count_frequent.delivr_month = count_all_users.delivr_month;
 
+
 ```
 
 The ratio of frequent to infrequent customers is increasing over time. As well, total orders and customer counts are also growing. These are good signs of a healthy service. 
