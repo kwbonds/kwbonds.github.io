@@ -16,7 +16,7 @@ tags:
 
 
 
-<p>My past few positions have had me using a lot of Python, R, Docker, Airflow etc., and not as much pure SQL for analysis. As a result, my SQL skills are a little rusty. So I decided to create a develpment environment for SQL in order to practice. In this quick post I’ll outline how I setup a PostgreSQL environment in a docker container. There are plenty of practice environments online, but I want to have certain data tables available to practice analyzing business data specifically (MAU, ARPU, Revenue, etc.).</p>
+<p>My past few positions have had me using a lot of Python, R, Docker, Airflow etc., and not as much pure SQL for analysis. As a result, my SQL skills are a little rusty. So I decided to create a development environment for SQL in order to practice. In this quick post I’ll outline how I setup a PostgreSQL environment in a docker container. There are plenty of practice environments online, but I want to have certain data tables available to practice analyzing business data specifically (MAU, ARPU, Revenue, etc.).</p>
 <p>Once finished We’ll be able to connect, to the db, and query like below:</p>
 <pre class="r"><code>library(DBI)
 library(RPostgres)
@@ -98,20 +98,19 @@ volumes:
 <p>This installs postgres16, creates the environment and mounts a few volumes.</p>
 <p>We can start the container by:</p>
 <pre class="bash"><code>docker-compose up --build</code></pre>
-<p>To build and standup the image from a terminal window.</p>
+<p>To build and stand-up the image from a terminal window.</p>
 <p>make sure to have postgres and libpq installed using your preferred method (here homebrew):</p>
 <pre class="bash"><code>brew install postgresql 
 brew install libpq </code></pre>
-</div>
-<div id="connect-to-the-db-with-psql" class="section level1">
-<h1>Connect to the db with psql</h1>
+<div id="connect-to-the-database-with-psql" class="section level2">
+<h2>Connect to the Database with psql</h2>
 <p>Then open an new terminal in our working directory and issue:</p>
 <pre class="bash"><code>psql -h localhost -U anton -d piper </code></pre>
 <p>This will open psql and allow us to execute sql commands. You should see <code>piper=#</code> as a prompt.</p>
 <p>As a Hello World we can create a simple table. Paste in the code below:</p>
 </div>
-<div id="create-mtcars-table" class="section level1">
-<h1>Create mtcars table</h1>
+<div id="create-example-mtcars-table" class="section level2">
+<h2>Create Example <strong>MTCARS</strong> Table</h2>
 <pre class="bash"><code>CREATE TABLE mtcars (
     car_name VARCHAR(50) PRIMARY KEY,
     mpg NUMERIC,
@@ -163,6 +162,7 @@ VALUES
   (&#39;Maserati Bora&#39;, 15, 8, 301, 335, 3.54, 3.57, 14.6, 0, 1, 5, 8),
   (&#39;Volvo 142E&#39;, 21.4, 4, 121, 109, 4.11, 2.78, 18.6, 1, 1, 4, 2)
 ;</code></pre>
+<p>MTCARS is a famous sample data set. Now we can query it.</p>
 <pre class="sql"><code>select * from mtcars limit 5</code></pre>
 <div class="knitsql-table">
 <table style="width:100%;">
@@ -272,8 +272,8 @@ VALUES
 </table>
 </div>
 </div>
-<div id="loading-csv-files-as-tables" class="section level1">
-<h1>Loading csv Files as Tables</h1>
+<div id="loading-csv-files-as-tables" class="section level2">
+<h2>Loading csv Files as Tables</h2>
 <p>I won’t go into great detail on how to load all the tables but here is a quick example.</p>
 <p>A good way to populate some sample data is to curl some files exec int the container, copy the files. From the terminal:</p>
 <pre class="bash"><code>curl &quot;https://assets.datacamp.com/production/repositories/4016/datasets/606e6e9165c25477db078996fa7e0a3e994b93d3/orders.csv&quot; &gt; orders.csv
@@ -294,4 +294,217 @@ CREATE TABLE orders (
 <p>Now use the psql COPY command to copy the csv into the orders table</p>
 <pre class="sql"><code>COPY orders FROM &#39;../orders.csv&#39; DELIMITER &#39;,&#39; CSV HEADER;</code></pre>
 <p>Now you have a nice little development environment to practice SQL based data analysis. Enjoy!</p>
+</div>
+</div>
+<div id="some-analysis-of-customer-order-data" class="section level1">
+<h1>Some Analysis of Customer Order Data</h1>
+<p>Let’s say you want to take a look at the change in frequent vs infrequent customers over time. We’ll user data from a fictional food delivery service. We’ll define “frequent” users as those who place 4 or more orders a month and infrequent as those who placed less. Let’s look at the sum of orders for both groups to see how many orders each place in total each month (i.e. How many total orders each group contributes to the total).</p>
+<pre class="sql"><code>-- frequent vs infrequent
+
+with order_count_by_user as (
+select user_id, 
+	DATE_TRUNC(&#39;month&#39;, order_date) :: DATE AS delivr_month, 
+	COUNT(distinct order_id) as order_count
+FROM orders
+GROUP BY delivr_month, user_id),
+
+frequent_users as ( select user_id, delivr_month, order_count 
+from order_count_by_user
+where order_count &gt;= 4
+order by user_id),
+
+sum_frequent as (
+select frequent_users.delivr_month, sum(frequent_users.order_count) as order_sum_frequent
+from frequent_users
+group by frequent_users.delivr_month
+order by frequent_users.delivr_month),
+
+infrequent_users as ( select user_id, delivr_month, order_count 
+from order_count_by_user
+where order_count &lt; 4
+order by user_id),
+
+sum_infrequent as (
+select infrequent_users.delivr_month, sum(infrequent_users.order_count) as order_sum_infrequent
+from infrequent_users
+group by infrequent_users.delivr_month
+order by infrequent_users.delivr_month)
+
+select sum_frequent.delivr_month, order_sum_frequent, order_sum_infrequent 
+from sum_frequent 
+join sum_infrequent 
+	on sum_frequent.delivr_month = sum_infrequent.delivr_month;</code></pre>
+<div class="knitsql-table">
+<table>
+<caption><span id="tab:unnamed-chunk-13">Table 3: </span>7 records</caption>
+<thead>
+<tr class="header">
+<th align="left">delivr_month</th>
+<th align="right">order_sum_frequent</th>
+<th align="right">order_sum_infrequent</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">2018-06-01</td>
+<td align="right">74</td>
+<td align="right">208</td>
+</tr>
+<tr class="even">
+<td align="left">2018-07-01</td>
+<td align="right">95</td>
+<td align="right">350</td>
+</tr>
+<tr class="odd">
+<td align="left">2018-08-01</td>
+<td align="right">122</td>
+<td align="right">548</td>
+</tr>
+<tr class="even">
+<td align="left">2018-09-01</td>
+<td align="right">214</td>
+<td align="right">791</td>
+</tr>
+<tr class="odd">
+<td align="left">2018-10-01</td>
+<td align="right">505</td>
+<td align="right">1044</td>
+</tr>
+<tr class="even">
+<td align="left">2018-11-01</td>
+<td align="right">1198</td>
+<td align="right">1386</td>
+</tr>
+<tr class="odd">
+<td align="left">2018-12-01</td>
+<td align="right">3472</td>
+<td align="right">1344</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>Now let’s calculate the percent of users that are frequent vs infrequent, by count of users, to see how this is trending.</p>
+<pre class="sql"><code>-- percent frequent users by count
+
+with order_count_by_user as (
+select user_id, 
+	DATE_TRUNC(&#39;month&#39;, order_date) :: DATE AS delivr_month, 
+	COUNT(distinct order_id) as order_count
+FROM orders
+GROUP BY delivr_month, user_id),
+
+frequent_users as ( select user_id, delivr_month, order_count 
+from order_count_by_user
+where order_count &gt;= 4
+order by user_id),
+
+count_frequent as (
+select frequent_users.delivr_month, count(distinct frequent_users.user_id) as user_count_frequent
+from frequent_users
+group by frequent_users.delivr_month
+order by frequent_users.delivr_month),
+
+infrequent_users as ( select user_id, delivr_month, order_count 
+from order_count_by_user
+where order_count &lt; 4
+order by user_id),
+
+count_infrequent as (
+select infrequent_users.delivr_month, count(distinct infrequent_users.user_id) as user_count_infrequent
+from infrequent_users
+group by infrequent_users.delivr_month
+order by infrequent_users.delivr_month),
+
+all_users as ( select user_id, delivr_month, order_count 
+from order_count_by_user
+order by user_id),
+
+count_all_users as (
+select all_users.delivr_month, count(distinct all_users.user_id) as user_count_total
+from all_users
+group by all_users.delivr_month
+order by all_users.delivr_month
+)
+
+select count_frequent.delivr_month, user_count_frequent, user_count_infrequent, user_count_total, 
+round(user_count_frequent/user_count_total::numeric, 3) as perc_users_frequent 
+from count_frequent 
+join count_infrequent 
+	on count_frequent.delivr_month = count_infrequent.delivr_month
+join count_all_users on count_all_users.delivr_month = count_frequent.delivr_month;
+</code></pre>
+<div class="knitsql-table">
+<table style="width:100%;">
+<caption><span id="tab:unnamed-chunk-14">Table 4: </span>7 records</caption>
+<colgroup>
+<col width="14%" />
+<col width="21%" />
+<col width="23%" />
+<col width="18%" />
+<col width="21%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="left">delivr_month</th>
+<th align="right">user_count_frequent</th>
+<th align="right">user_count_infrequent</th>
+<th align="right">user_count_total</th>
+<th align="right">perc_users_frequent</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">2018-06-01</td>
+<td align="right">17</td>
+<td align="right">106</td>
+<td align="right">123</td>
+<td align="right">0.138</td>
+</tr>
+<tr class="even">
+<td align="left">2018-07-01</td>
+<td align="right">22</td>
+<td align="right">204</td>
+<td align="right">226</td>
+<td align="right">0.097</td>
+</tr>
+<tr class="odd">
+<td align="left">2018-08-01</td>
+<td align="right">28</td>
+<td align="right">309</td>
+<td align="right">337</td>
+<td align="right">0.083</td>
+</tr>
+<tr class="even">
+<td align="left">2018-09-01</td>
+<td align="right">48</td>
+<td align="right">441</td>
+<td align="right">489</td>
+<td align="right">0.098</td>
+</tr>
+<tr class="odd">
+<td align="left">2018-10-01</td>
+<td align="right">113</td>
+<td align="right">576</td>
+<td align="right">689</td>
+<td align="right">0.164</td>
+</tr>
+<tr class="even">
+<td align="left">2018-11-01</td>
+<td align="right">257</td>
+<td align="right">687</td>
+<td align="right">944</td>
+<td align="right">0.272</td>
+</tr>
+<tr class="odd">
+<td align="left">2018-12-01</td>
+<td align="right">668</td>
+<td align="right">599</td>
+<td align="right">1267</td>
+<td align="right">0.527</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>The ratio of frequent to infrequent customers is increasing over time. As well, total orders and customer counts are also growing. These are good signs of a healthy service.</p>
+<p>… to be continued</p>
 </div>
