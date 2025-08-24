@@ -196,38 +196,60 @@ Let's say you want to take a look at the change in frequent vs infrequent custom
 -- frequent vs infrequent
 
 with order_count_by_user as (
-select user_id, 
-	DATE_TRUNC('month', order_date) :: DATE AS delivr_month, 
-	COUNT(distinct order_id) as order_count
-FROM orders
-GROUP BY delivr_month, user_id),
+    select
+        user_id,
+        DATE_TRUNC('month', order_date)::DATE as delivr_month,
+        COUNT(distinct order_id) as order_count
+    from orders
+    group by delivr_month, user_id
+),
 
-frequent_users as ( select user_id, delivr_month, order_count 
-from order_count_by_user
-where order_count >= 4
-order by user_id),
+frequent_users as (
+    select
+        user_id,
+        delivr_month,
+        order_count
+    from order_count_by_user
+    where order_count >= 4
+    order by user_id
+),
 
 sum_frequent as (
-select frequent_users.delivr_month, sum(frequent_users.order_count) as order_sum_frequent
-from frequent_users
-group by frequent_users.delivr_month
-order by frequent_users.delivr_month),
+    select
+        frequent_users.delivr_month,
+        SUM(frequent_users.order_count) as order_sum_frequent
+    from frequent_users
+    group by frequent_users.delivr_month
+    order by frequent_users.delivr_month
+),
 
-infrequent_users as ( select user_id, delivr_month, order_count 
-from order_count_by_user
-where order_count < 4
-order by user_id),
+infrequent_users as (
+    select
+        user_id,
+        delivr_month,
+        order_count
+    from order_count_by_user
+    where order_count < 4
+    order by user_id
+),
 
 sum_infrequent as (
-select infrequent_users.delivr_month, sum(infrequent_users.order_count) as order_sum_infrequent
-from infrequent_users
-group by infrequent_users.delivr_month
-order by infrequent_users.delivr_month)
+    select
+        infrequent_users.delivr_month,
+        SUM(infrequent_users.order_count) as order_sum_infrequent
+    from infrequent_users
+    group by infrequent_users.delivr_month
+    order by infrequent_users.delivr_month
+)
 
-select sum_frequent.delivr_month, order_sum_frequent, order_sum_infrequent 
-from sum_frequent 
-join sum_infrequent 
-	on sum_frequent.delivr_month = sum_infrequent.delivr_month;
+select
+    sum_frequent.delivr_month,
+    order_sum_frequent,
+    order_sum_infrequent
+from sum_frequent
+inner join sum_infrequent
+    on sum_frequent.delivr_month = sum_infrequent.delivr_month;
+
 ```
 
 Now let's calculate the percent of users that are frequent vs infrequent, by count of users, to see how this is trending. 
@@ -236,51 +258,84 @@ Now let's calculate the percent of users that are frequent vs infrequent, by cou
 -- percent frequent users by count
 
 with order_count_by_user as (
-select user_id, 
-	DATE_TRUNC('month', order_date) :: DATE AS delivr_month, 
-	COUNT(distinct order_id) as order_count
-FROM orders
-GROUP BY delivr_month, user_id),
+    select
+        user_id,
+        DATE_TRUNC('month', order_date)::DATE as delivr_month,
+        COUNT(distinct order_id) as order_count
+    from orders
+    group by delivr_month, user_id
+),
 
-frequent_users as ( select user_id, delivr_month, order_count 
-from order_count_by_user
-where order_count >= 4
-order by user_id),
+frequent_users as (
+    select
+        user_id,
+        delivr_month,
+        order_count
+    from order_count_by_user
+    where order_count >= 4
+    order by user_id
+),
 
 count_frequent as (
-select frequent_users.delivr_month, count(distinct frequent_users.user_id) as user_count_frequent
-from frequent_users
-group by frequent_users.delivr_month
-order by frequent_users.delivr_month),
+    select
+        frequent_users.delivr_month,
+        COUNT(distinct frequent_users.user_id) as user_count_frequent
+    from frequent_users
+    group by frequent_users.delivr_month
+    order by frequent_users.delivr_month
+),
 
-infrequent_users as ( select user_id, delivr_month, order_count 
-from order_count_by_user
-where order_count < 4
-order by user_id),
+infrequent_users as (
+    select
+        user_id,
+        delivr_month,
+        order_count
+    from order_count_by_user
+    where order_count < 4
+    order by user_id
+),
 
 count_infrequent as (
-select infrequent_users.delivr_month, count(distinct infrequent_users.user_id) as user_count_infrequent
-from infrequent_users
-group by infrequent_users.delivr_month
-order by infrequent_users.delivr_month),
+    select
+        infrequent_users.delivr_month,
+        COUNT(distinct infrequent_users.user_id) as user_count_infrequent
+    from infrequent_users
+    group by infrequent_users.delivr_month
+    order by infrequent_users.delivr_month
+),
 
-all_users as ( select user_id, delivr_month, order_count 
-from order_count_by_user
-order by user_id),
+all_users as (
+    select
+        user_id,
+        delivr_month,
+        order_count
+    from order_count_by_user
+    order by user_id
+),
 
 count_all_users as (
-select all_users.delivr_month, count(distinct all_users.user_id) as user_count_total
-from all_users
-group by all_users.delivr_month
-order by all_users.delivr_month
+    select
+        all_users.delivr_month,
+        COUNT(distinct all_users.user_id) as user_count_total
+    from all_users
+    group by all_users.delivr_month
+    order by all_users.delivr_month
 )
 
-select count_frequent.delivr_month, user_count_frequent, user_count_infrequent, user_count_total, 
-round(user_count_frequent/user_count_total::numeric, 3) as perc_users_frequent 
-from count_frequent 
-join count_infrequent 
-	on count_frequent.delivr_month = count_infrequent.delivr_month
-join count_all_users on count_all_users.delivr_month = count_frequent.delivr_month;
+select
+    count_frequent.delivr_month,
+    user_count_frequent,
+    user_count_infrequent,
+    user_count_total,
+    ROUND(user_count_frequent / user_count_total::NUMERIC, 3)
+        as perc_users_frequent
+from count_frequent
+inner join count_infrequent
+    on count_frequent.delivr_month = count_infrequent.delivr_month
+inner join
+    count_all_users
+    on count_frequent.delivr_month = count_all_users.delivr_month;
+
 
 ```
 
