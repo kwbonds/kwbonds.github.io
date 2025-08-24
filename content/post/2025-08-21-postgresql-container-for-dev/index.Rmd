@@ -19,7 +19,7 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ```
 
-My past few positions have had me using a lot of Python, R, Docker, Airflow etc., and not as much pure SQL for analysis. As a result, my SQL skills are a little rusty. So I decided to create a develpment environment for SQL in order to practice. In this quick post I'll outline how I setup a PostgreSQL environment in a docker container. There are plenty of practice environments online, but I want to have certain data tables available to practice analyzing business data specifically (MAU, ARPU, Revenue, etc.).
+My past few positions have had me using a lot of Python, R, Docker, Airflow etc., and not as much pure SQL for analysis. As a result, my SQL skills are a little rusty. So I decided to create a development environment for SQL in order to practice. In this quick post I'll outline how I setup a PostgreSQL environment in a docker container. There are plenty of practice environments online, but I want to have certain data tables available to practice analyzing business data specifically (MAU, ARPU, Revenue, etc.).
 
 Once finished We'll be able to connect, to the db, and query like below:
 
@@ -67,7 +67,7 @@ We can start the container by:
 docker-compose up --build
 ```
 
-To build and standup the image from a terminal window.
+To build and stand-up the image from a terminal window.
 
 make sure to have postgres and libpq installed using your preferred method (here homebrew):
 ```{bash eval=FALSE}
@@ -75,7 +75,7 @@ brew install postgresql
 brew install libpq 
 ```
 
-# Connect to the db with psql
+## Connect to the Database with psql
 
 Then open an new terminal in our working directory and issue: 
 ```{bash eval=FALSE}
@@ -86,7 +86,7 @@ This will open psql and allow us to execute sql commands. You should see `piper=
 
 As a Hello World we can create a simple table. Paste in the code below:
 
-# Create mtcars table
+## Create Example __MTCARS__ Table
 
 ```{bash eval = FALSE}
 CREATE TABLE mtcars (
@@ -142,11 +142,17 @@ VALUES
 ;
 ```
 
+MTCARS is a famous sample data set. Now we can query it.
+
 ```{sql connection=con}
 select * from mtcars limit 5
 ```
 
-# Loading csv Files as Tables
+```{sql connection=con, output.var="mtcars_df", include=FALSE}
+select * from mtcars limit 5
+```
+
+## Loading csv Files as Tables
 
 I won't go into great detail on how to load all the tables but here is a quick example. 
 
@@ -181,6 +187,106 @@ COPY orders FROM '../orders.csv' DELIMITER ',' CSV HEADER;
 ```
 
 Now you have a nice little development environment to practice SQL based data analysis. Enjoy!
+
+# Some Analysis of Customer Order Data
+
+Let's say you want to take a look at the change in frequent vs infrequent customers over time. We'll user data from a fictional food delivery service. We'll define "frequent" users as those who place 4 or more orders a month and infrequent as those who placed less. Let's look at the sum of orders for both groups to see how many orders each place in total each month (i.e. How many total orders each group contributes to the total).
+
+```{sql connection=con}
+-- frequent vs infrequent
+
+with order_count_by_user as (
+select user_id, 
+	DATE_TRUNC('month', order_date) :: DATE AS delivr_month, 
+	COUNT(distinct order_id) as order_count
+FROM orders
+GROUP BY delivr_month, user_id),
+
+frequent_users as ( select user_id, delivr_month, order_count 
+from order_count_by_user
+where order_count >= 4
+order by user_id),
+
+sum_frequent as (
+select frequent_users.delivr_month, sum(frequent_users.order_count) as order_sum_frequent
+from frequent_users
+group by frequent_users.delivr_month
+order by frequent_users.delivr_month),
+
+infrequent_users as ( select user_id, delivr_month, order_count 
+from order_count_by_user
+where order_count < 4
+order by user_id),
+
+sum_infrequent as (
+select infrequent_users.delivr_month, sum(infrequent_users.order_count) as order_sum_infrequent
+from infrequent_users
+group by infrequent_users.delivr_month
+order by infrequent_users.delivr_month)
+
+select sum_frequent.delivr_month, order_sum_frequent, order_sum_infrequent 
+from sum_frequent 
+join sum_infrequent 
+	on sum_frequent.delivr_month = sum_infrequent.delivr_month;
+```
+
+Now let's calculate the percent of users that are frequent vs infrequent, by count of users, to see how this is trending. 
+
+```{sql connection=con}
+-- percent frequent users by count
+
+with order_count_by_user as (
+select user_id, 
+	DATE_TRUNC('month', order_date) :: DATE AS delivr_month, 
+	COUNT(distinct order_id) as order_count
+FROM orders
+GROUP BY delivr_month, user_id),
+
+frequent_users as ( select user_id, delivr_month, order_count 
+from order_count_by_user
+where order_count >= 4
+order by user_id),
+
+count_frequent as (
+select frequent_users.delivr_month, count(distinct frequent_users.user_id) as user_count_frequent
+from frequent_users
+group by frequent_users.delivr_month
+order by frequent_users.delivr_month),
+
+infrequent_users as ( select user_id, delivr_month, order_count 
+from order_count_by_user
+where order_count < 4
+order by user_id),
+
+count_infrequent as (
+select infrequent_users.delivr_month, count(distinct infrequent_users.user_id) as user_count_infrequent
+from infrequent_users
+group by infrequent_users.delivr_month
+order by infrequent_users.delivr_month),
+
+all_users as ( select user_id, delivr_month, order_count 
+from order_count_by_user
+order by user_id),
+
+count_all_users as (
+select all_users.delivr_month, count(distinct all_users.user_id) as user_count_total
+from all_users
+group by all_users.delivr_month
+order by all_users.delivr_month
+)
+
+select count_frequent.delivr_month, user_count_frequent, user_count_infrequent, user_count_total, 
+round(user_count_frequent/user_count_total::numeric, 3) as perc_users_frequent 
+from count_frequent 
+join count_infrequent 
+	on count_frequent.delivr_month = count_infrequent.delivr_month
+join count_all_users on count_all_users.delivr_month = count_frequent.delivr_month;
+
+```
+
+The ratio of frequent to infrequent customers is increasing over time. As well, total orders and customer counts are also growing. These are good signs of a healthy service. 
+
+... to be continued
 
 ```{r include=FALSE}
 dbDisconnect(con)
